@@ -3,7 +3,9 @@
 //
 
 #include "daemon.h"
+#include <stdio.h>
+#include <bass.h>
 
-void daemon() {
-    
+void daemon_func() {
+    printf("asd");
 }

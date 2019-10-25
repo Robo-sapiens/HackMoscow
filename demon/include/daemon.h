@@ -5,6 +5,6 @@
 #ifndef DEMON_DEMON_H
 #define DEMON_DEMON_H
 
-void daemon();
+void daemon_func();
 
 #endif //DEMON_DEMON_H

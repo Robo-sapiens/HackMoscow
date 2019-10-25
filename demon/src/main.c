@@ -14,14 +14,14 @@ int main(int argc, char **argv) {
     }
 
     if (strncmp(argv[1], "-i", 1) == 0) {
-        daemon();
+        daemon_func();
         return 0;
     }
 
     if (strncmp(argv[1], "-d", 1) == 0) {
         pid_t pid = fork(); // create child
 
-        if (pid < -1) {
+        if (pid < 0) {
             printf("Error: Start Daemon failed (%s)\n", strerror(errno));
             exit(1);
         }
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
         close(STDOUT_FILENO);
         close(STDERR_FILENO); // close stdin, stdout, stderr, because they're not need
 
-        demon();
+        daemon_func();
 
         return 0;
     }
