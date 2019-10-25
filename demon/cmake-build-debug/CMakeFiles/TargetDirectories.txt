@@ -1,0 +1,3 @@
+/home/antonrampage/Projects/Other/HackMoscow/demon/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/antonrampage/Projects/Other/HackMoscow/demon/cmake-build-debug/CMakeFiles/demon.dir
+/home/antonrampage/Projects/Other/HackMoscow/demon/cmake-build-debug/CMakeFiles/edit_cache.dir

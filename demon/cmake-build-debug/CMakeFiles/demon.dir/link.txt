@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/demon.dir/src/main.c.o CMakeFiles/demon.dir/src/demon.c.o  -o demon 
