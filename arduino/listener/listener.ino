@@ -1,16 +1,13 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-
-#define updateLEDS 1 // Number of LEDS to update every millisecond
-
-#define NUM_LEDS 100 // Number of LEDS in a strip with default value
+#define updateLEDS 8
+#define NUM_LEDS 256
+#define MAX_BRGHT 255
+#define LED_PIN 9
+#define DELAY 30
 
 CRGB leds[NUM_LEDS];
-
-// Number of control pin on Arduino
-#define LED_PIN 13
-
 
 void recv();
 void parse_new_data();
@@ -42,7 +39,8 @@ void setup() {
     msg_continuous = {received_chars, false, '<', '>'};
     msg_cmd = {received_cmds, false, '{', '}'};
 
-    Serial.begin(9600);
+    Serial.begin(19200);
+
     
     FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
 
@@ -50,13 +48,15 @@ void setup() {
         leds[i] = CRGB(0,0,0);
     }
     FastLED.show();
+    while (!Serial.available());
+    leds[0] = CRGB(100,0,50);
 }
 
 void loop() {
     recv();
     parse_new_data();
     led_show();
-    delay(20);
+    delay(DELAY);
 }
 
 void recv() {
@@ -69,16 +69,15 @@ void recv() {
     }
     while (Serial.available() > 0) {
         rc = Serial.read();
-
         if (recv_in_progress) {
             if (rc != msg_continuous.end_marker) {
-                received_chars[ndx] = rc;
+                msg_continuous.received_chars[ndx] = rc;
                 ndx++;
                 if (ndx >= msg_size) {
                     ndx = msg_size - 1;
                 }
             } else {
-                received_chars[ndx] = '\0'; // terminate the string
+                msg_continuous.received_chars[ndx] = '\0'; // terminate the string
                 recv_in_progress = false;
                 ndx = 0;
                 msg_continuous.new_data = true;
@@ -92,9 +91,6 @@ void recv() {
 void parse_new_data() {
     if (!msg_continuous.new_data) {
         return;
-    }
-    for (int i = 0; i < 9; ++i) {
-        Serial.println(msg_continuous.received_chars[i]);
     }
     led_rgb.r = (msg_continuous.received_chars[0] - '0') * 100 +
                 (msg_continuous.received_chars[1] - '0') * 10 +
@@ -115,34 +111,31 @@ void parse_new_data() {
     if (led_rgb.b < 0) {
         led_rgb.b = 0;
     }
-    if (led_rgb.r > 255) {
-        led_rgb.r = 255;
+    if (led_rgb.r > MAX_BRGHT) {
+        led_rgb.r = MAX_BRGHT;
     }
-    if (led_rgb.r > 255) {
-        led_rgb.r = 255;
+    if (led_rgb.r > MAX_BRGHT) {
+        led_rgb.r = MAX_BRGHT;
     }
-    if (led_rgb.r > 255) {
-        led_rgb.r = 255;
+    if (led_rgb.r > MAX_BRGHT) {
+        led_rgb.r = MAX_BRGHT;
     }
-    
-    Serial.println(led_rgb.r);
-    Serial.println(led_rgb.g);
-    Serial.println(led_rgb.b);
     msg_continuous.new_data = false;
 }
 
 
 void led_show() {
-    // Shift all LEDs to the right by updateLEDS number each time
-    for (int i = NUM_LEDS - 1; i >= updateLEDS; --i) {
+    for (int i = NUM_LEDS - 1; i >= updateLEDS + NUM_LEDS / 2; --i) {
         leds[i] = leds[i - updateLEDS];
     }
+    // Shift all LEDs to the right by updateLEDS number each time
+    for (int i = 0; i < NUM_LEDS / 2 - updateLEDS; ++i) {
+        leds[i] = leds[i + updateLEDS];
+    }
     // Set the left most updateLEDs with the new color
-    for (int i = 0; i < updateLEDS; ++i) {
+    for (int i = NUM_LEDS / 2 - updateLEDS; i < NUM_LEDS / 2 + updateLEDS; ++i) {
         leds[i] = CRGB(led_rgb.r, led_rgb.g, led_rgb.b);
     }
+    
     FastLED.show();
-    led_rgb.r = 0;
-    led_rgb.g = 0;
-    led_rgb.b = 0;
 }

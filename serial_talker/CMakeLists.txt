@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(test_talker)
 
 set(CMAKE_CXX_STANDARD 17)
-set(SRC src/arduino_serial.cpp
-        src/main.cpp)
+set(SRC src/arduino_serial.cpp)
 
 add_library(talker STATIC ${SRC})
 include_directories(include)

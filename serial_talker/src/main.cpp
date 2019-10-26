@@ -14,14 +14,14 @@ int main(int argc, char *argv[]) {
     int fd = serialport_init(argv[1], 9600);
     char msg[MSG_SIZE];
     while (true) {
-        std::cin >> msg;
-        std::string msg_s = "<ффф>";
+//        std::cin >> msg;
+        std::string msg_s = "<100000100>";
         int write_check = serialport_write(fd, msg_s.data());
         if (write_check == -1) {
             break;
         }
-        std::cout << msg << std::endl;
-        usleep(20000);
+//        std::cout << msg << std::endl;
+        usleep(100000);
     }
 
     serialport_flush(fd);
