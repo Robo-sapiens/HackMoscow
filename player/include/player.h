@@ -13,6 +13,9 @@ public:
     void pause();
     void resume();
     void stop();
+    void setVolume(const float &vol);
+    void setPosition(const float &pos);
+    unsigned getPosition();
 
 private:
     static const int32_t HZ = 44100;
@@ -20,7 +23,7 @@ private:
     HSAMPLE smp;
     HSTREAM str;
 
-    unsigned volume;
+    float volume;
 
     bool InitDefaultDevice;
 
