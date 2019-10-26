@@ -34,11 +34,20 @@ int main(int argc, char **argv)
             cin >> param;
             player->setVolume(param / 100.0);
         }
+        else if (command == "pos") {
+            int param;
+            cin >> param;
+            player->setPosition(param / 100.0);
+        }
         else if (command == "list") {
             cout << "TODO" << '\n';
         }
         else if (command == "info") {
+            cout << "------------------" << '\n';
             cout << "Playing: " << fileName << '\n';
+            cout << "Volume: " << player->getVolume() << '\n';
+            cout << "Position: " << player->getRelativePosition() << '\n';
+            cout << "------------------" << '\n';
         }
         else if (command == "help") {
             cout << "------------------" << '\n';
@@ -47,6 +56,8 @@ int main(int argc, char **argv)
             cout << "- pause" << '\n';
             cout << "- resume" << '\n';
             cout << "- stop" << '\n';
+            cout << "- vol <0-100:volume>" << '\n';
+            cout << "- pos <0-100:position>" << '\n';
             cout << "- info" << '\n';
             cout << "- help" << '\n';
             cout << "- list" << '\n';

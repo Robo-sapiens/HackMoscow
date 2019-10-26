@@ -1,4 +1,5 @@
 #include "player.h"
+#include <iostream>
 
 Player::Player() {
     BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, 0);
@@ -49,7 +50,33 @@ void Player::setVolume(const float &vol) {
     BASS_ChannelSetAttribute(str, BASS_ATTRIB_VOL, volume);
 }
 
-void Player::setPosition(const float &pos) {
-
+float Player::getVolume() {
+    long level = BASS_ChannelGetLevel(str);
+    return (float)level/4294967295;
 }
 
+void Player::setPosition(const float &pos) {
+    if (pos > 0.0) {
+        unsigned long position = BASS_ChannelSeconds2Bytes(str, pos * getLength());
+        std::cout << position << "\n" << getLength() << '\n';
+        BASS_ChannelSetPosition(str, position, BASS_POS_BYTE);
+    }
+}
+
+unsigned long Player::getPosition() {
+    unsigned long pos = BASS_ChannelGetPosition(str, BASS_POS_BYTE);
+    unsigned long posSec = (unsigned long)BASS_ChannelBytes2Seconds(str, pos);
+
+    return posSec;
+}
+
+unsigned long Player::getLength() {
+    long TimeBytes = BASS_ChannelGetLength(str, BASS_POS_BYTE);
+    double Time = BASS_ChannelBytes2Seconds(str, TimeBytes);
+
+    return (int)Time;
+}
+
+float Player::getRelativePosition() {
+    return (float)getPosition() / getLength();
+}

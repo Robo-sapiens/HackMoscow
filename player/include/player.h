@@ -14,8 +14,11 @@ public:
     void resume();
     void stop();
     void setVolume(const float &vol);
+    float getVolume();
     void setPosition(const float &pos);
-    unsigned getPosition();
+    unsigned long getPosition();
+    unsigned long getLength();
+    float getRelativePosition();
 
 private:
     static const int32_t HZ = 44100;
