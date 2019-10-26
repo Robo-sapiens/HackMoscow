@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./out/player
+./out/player ~/Music/
