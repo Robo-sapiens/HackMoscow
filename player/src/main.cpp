@@ -1,7 +1,7 @@
 #include <iostream>
-#include <string.h>
+#include <cstring>
 #include "bass.h"
-#include "stdio.h"
+#include <cstdio>
 #include "player.h"
 
 using namespace std;

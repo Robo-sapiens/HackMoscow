@@ -1,6 +1,6 @@
-#pragma once
+//#pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include "bass.h"
 
 class Player
@@ -20,7 +20,7 @@ public:
     unsigned long getLength();
     float getRelativePosition();
 
-    float* getFFT(float *fft);
+    int getFFT(float *fft);
 
 private:
     static const int32_t HZ = 44100;
