@@ -8,7 +8,7 @@
 
 Player::Player() {
     initBass(HZ);
-    currentPlaylistPosition - 0;
+    currentPlaylistPosition = 0;
 }
 
 Player::~Player() {
@@ -77,7 +77,7 @@ void Player::pause() {
 }
 
 void Player::resume() {
-    if (!BASS_ChannelPlay(str, false));
+    BASS_ChannelPlay(str, false);
 }
 
 void Player::stop() {
