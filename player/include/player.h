@@ -17,5 +17,12 @@ public:
 private:
     static const int32_t HZ = 44100;
 
+    HSAMPLE smp;
+    HSTREAM str;
+
+    unsigned volume;
+
+    bool InitDefaultDevice;
+
     bool initBass(int32_t hz);
 };

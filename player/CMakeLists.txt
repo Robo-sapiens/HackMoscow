@@ -20,6 +20,4 @@ include_directories(${ROOT}/include)
 ## srcs
 add_executable(${PROJECT_NAME} src/main.cpp src/player.cpp)
 
-#find_package(Bass)
-
 target_link_libraries(player bass)

@@ -27,6 +27,10 @@ int main(int argc, char **argv)
         cout << "command: " << command << '\n';
 
         if (command == "exit") break;
+        else if (command == "play") player->play(fileName);
+        else if (command == "pause") player->pause();
+        else if (command == "resume") player->resume();
+        else if (command == "stop") player->stop();
     }
 
     cout << "exit" << '\n';
