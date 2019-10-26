@@ -54,6 +54,7 @@ private:
 
 void msg_sender(Player &player);
 void parseFFT(Player &player);
+void command_parser(Player &player);
 
 
 #endif
