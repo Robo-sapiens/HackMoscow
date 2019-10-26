@@ -1,5 +1,10 @@
 #include "player.h"
 #include <iostream>
+#include <arduino_serial.h>
+
+#define DEVICE "/dev/ttyUSB0"
+#define PEAK 1024
+
 
 Player::Player() {
     initBass(HZ);
@@ -10,18 +15,53 @@ Player::~Player() {
     BASS_Free();
 }
 
-void Player::play(size_t number)
-{
+void Player::play(size_t number) {
     if (!playList.empty() && number < playList.size())
         play(playList.at(number).c_str());
 }
 
-void Player::play(const string fileName)
-{
+void Player::play(const string fileName) {
     stop();
     str = BASS_StreamCreateFile(FALSE, fileName.c_str(), 0, 0, 0);
     BASS_ChannelSetAttribute(str, BASS_ATTRIB_VOL, 1.0);
     BASS_ChannelPlay(str, false);
+
+    int filed = serialport_init(DEVICE, 9600);
+    std::string msg = "<000000000>";
+    float * fft = new float[1024];
+    while (getFFT(fft) != -1) {
+        float r = 0, g = 0, b = 0;
+        for (int i = 0; i < PEAK; ++i) {
+            r += fft[i] * ((float)(PEAK - i) / PEAK) * 16;
+        }
+        for (int j = 0; j < PEAK / 2; ++j) {
+            b += fft[j] * ((float)j / PEAK) * 32;
+        }
+        for (int k = PEAK / 2; k < PEAK; ++k) {
+            b += fft[k] * ((float)(PEAK - k) / PEAK) * 32;
+        }
+        for (int l = 0; l < PEAK; ++l) {
+            g += fft[l] * ((float)l / PEAK) * 128;
+        }
+        //std::cout << (int)r << ' ' << (int)g << ' ' << (int)b << "\n";
+        msg[1] = '1';
+        msg[2] = '0';
+        msg[3] = '0';
+        msg[4] = '0';
+        msg[5] = '0';
+        msg[6] = '0';
+        msg[7] = '1';
+        msg[8] = '0';
+        msg[9] = '0';
+//            if (serialport_write(filed, msg.data()) == -1) {
+//                break;
+//            }
+        //std::cout << msg << std::endl;
+//            usleep(20000);
+    }
+        serialport_flush(filed);
+        serialport_close(filed);
+        delete[] fft;
 }
 
 bool Player::initBass(int32_t hz) {
@@ -88,11 +128,6 @@ float Player::getRelativePosition() {
     return (float)getPosition() / getLength();
 }
 
-float* Player::getFFT(float *fft){
-    BASS_ChannelGetData(str, fft, BASS_DATA_FFT2048);
-    return fft;
-}
-
 void Player::showPlaylist() {
     std::cout << "---Playlist---" << '\n';
     for (size_t i = 0; i < playList.size(); ++i) {
@@ -112,4 +147,8 @@ size_t Player::getCurrentPlaylistPosition() {
 string Player::getMusicName() {
     if(!playList.empty())
         return playList.at(currentPlaylistPosition);
+}
+
+int Player::getFFT(float *fft){
+    return BASS_ChannelGetData(str, fft, BASS_DATA_FFT2048);
 }

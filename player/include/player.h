@@ -1,6 +1,7 @@
 #ifndef __PLAYERH__
 #define __PLAYERH__
 
+#include <cstdint>
 #include "bass.h"
 #include "dirutils.h"
 #include <string.h>
@@ -23,7 +24,7 @@ public:
     unsigned long getLength();
     float getRelativePosition();
 
-    float* getFFT(float *fft);
+    int getFFT(float *fft);
 
     void uploadFromDir(const char *dir);
     void showPlaylist();
