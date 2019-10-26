@@ -4,13 +4,10 @@
 #include <cstdint>
 #include "bass.h"
 #include "dirutils.h"
-#include <string.h>
+#include <cstring>
+#include <thread>
+#include <mutex>
 
-typedef struct rgb {
-    int r;
-    int g;
-    int b;
-};
 
 class Player
 {
@@ -38,6 +35,7 @@ public:
     size_t getCurrentPlaylistPosition();
     string getMusicName();
 
+    std::string msg;
 
 private:
     static const int32_t HZ = 44100;
@@ -52,7 +50,10 @@ private:
     std::vector<string> playList;
 
     bool initBass(int32_t hz);
-    void parseFFT();
 };
+
+void msg_sender(Player &player);
+void parseFFT(Player &player);
+
 
 #endif

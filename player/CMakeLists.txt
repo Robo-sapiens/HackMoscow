@@ -14,6 +14,8 @@ set(LIB ${PROJECT_SOURCE_DIR}/lib)
 set(ARDU_SRC src/arduino_serial.cpp)
 add_library(talker STATIC ${ARDU_SRC})
 
+## Thread support
+find_package(Threads)
 
 ## Out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT}/out)
@@ -25,4 +27,4 @@ include_directories(${ROOT}/include)
 ## srcs
 add_executable(${PROJECT_NAME} src/main.cpp src/player.cpp src/visualizer.cpp src/dirutils.cpp)
 
-target_link_libraries(player bass talker)
+target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT})

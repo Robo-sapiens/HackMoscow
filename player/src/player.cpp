@@ -1,12 +1,18 @@
 #include "player.h"
 #include <iostream>
 #include <arduino_serial.h>
+#include <cmath>
 
 #define DEVICE "/dev/ttyUSB0"
 #define PEAK 1024
+#define MIN_VAL 12
+#define FILTER 4
+#define GAIN 1.1
+
+std::mutex g_lock;
 
 
-Player::Player() {
+Player::Player() : msg("<000000000>") {
     initBass(HZ);
     currentPlaylistPosition = 0;
 }
@@ -25,43 +31,12 @@ void Player::play(const string fileName) {
     str = BASS_StreamCreateFile(FALSE, fileName.c_str(), 0, 0, 0);
     BASS_ChannelSetAttribute(str, BASS_ATTRIB_VOL, 1.0);
     BASS_ChannelPlay(str, false);
+    this->msg = "<000000000>";
 
-    int filed = serialport_init(DEVICE, 9600);
-    std::string msg = "<000000000>";
-    float * fft = new float[1024];
-    while (getFFT(fft) != -1) {
-        float r = 0, g = 0, b = 0;
-        for (int i = 0; i < PEAK; ++i) {
-            r += fft[i] * ((float)(PEAK - i) / PEAK) * 16;
-        }
-        for (int j = 0; j < PEAK / 2; ++j) {
-            b += fft[j] * ((float)j / PEAK) * 32;
-        }
-        for (int k = PEAK / 2; k < PEAK; ++k) {
-            b += fft[k] * ((float)(PEAK - k) / PEAK) * 32;
-        }
-        for (int l = 0; l < PEAK; ++l) {
-            g += fft[l] * ((float)l / PEAK) * 128;
-        }
-        //std::cout << (int)r << ' ' << (int)g << ' ' << (int)b << "\n";
-        msg[1] = '1';
-        msg[2] = '0';
-        msg[3] = '0';
-        msg[4] = '0';
-        msg[5] = '0';
-        msg[6] = '0';
-        msg[7] = '1';
-        msg[8] = '0';
-        msg[9] = '0';
-//            if (serialport_write(filed, msg.data()) == -1) {
-//                break;
-//            }
-        //std::cout << msg << std::endl;
-//            usleep(20000);
-    }
-        serialport_flush(filed);
-        serialport_close(filed);
-        delete[] fft;
+    std::thread t1(msg_sender, std::ref(*this));
+    std::thread t2(parseFFT, std::ref(*this));
+    t1.join();
+    t2.join();
 }
 
 bool Player::initBass(int32_t hz) {
@@ -151,4 +126,64 @@ string Player::getMusicName() {
 
 int Player::getFFT(float *fft){
     return BASS_ChannelGetData(str, fft, BASS_DATA_FFT2048);
+}
+
+void parseFFT(Player &player) {
+    auto * fft = new float[1024];
+    while (player.getFFT(fft) != -1) {
+        float r = 0, g = 0, b = 0;
+        for (int i = 0; i < PEAK; ++i) {
+            r += fft[i] * ((float) (PEAK - i) / PEAK) * 16;
+        }
+        for (int j = 0; j < PEAK / 2; ++j) {
+            g += fft[j] * ((float) j / PEAK) * 64;
+        }
+        for (int k = PEAK / 2; k < PEAK; ++k) {
+            g += fft[k] * ((float) (PEAK - k) / PEAK) * 64;
+        }
+        for (int l = 0; l < PEAK; ++l) {
+            b += fft[l] * ((float) l / PEAK) * 128;
+        }
+        if (r > 255) {
+            r = 255;
+        }
+        if (g > 255) {
+            g = 255;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+        if (r < MIN_VAL && g < MIN_VAL && b < MIN_VAL
+//        && r > FILTER_RGB && g > FILTER_RGB && b > FILTER_RGB
+            ) {
+//            float tmp = std::max(std::max(r, g), b);
+//            r = r / tmp * MIN_VAL;
+//            g = g / tmp * MIN_VAL;
+//            b = b / tmp * MIN_VAL;
+            r = std::pow(r, GAIN);
+            g = std::pow(g, GAIN);
+            b = std::pow(b, GAIN);
+        }
+        g_lock.lock();
+        player.msg[1] = '0' + (char)((int)r / 100);
+        player.msg[2] = '0' + (char)((int)r / 10 % 10);
+        player.msg[3] = '0' + (char)((int)r % 10);
+        player.msg[4] = '0' + (char)((int)g / 100);
+        player.msg[5] = '0' + (char)((int)g / 10 % 10);
+        player.msg[6] = '0' + (char)((int)g % 10);
+        player.msg[7] = '0' + (char)((int)b / 100);
+        player.msg[8] = '0' + (char)((int)b / 10 % 10);
+        player.msg[9] = '0' + (char)((int)b % 10);
+        g_lock.unlock();
+    }
+    delete[] fft;
+}
+
+void msg_sender(Player & player) {
+    int filed = serialport_init(DEVICE, 9600);
+    while (serialport_write(filed, player.msg.data()) != -1) {
+        usleep(50000);
+    }
+    serialport_flush(filed);
+    serialport_close(filed);
 }
