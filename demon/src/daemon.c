@@ -9,27 +9,62 @@
 #include <string.h>
 
 void daemon_func() {
-//    DWORD chan;
-
-    if (!BASS_RecordInit(-1)) {
-        printf("error");
-        return;
+    BASS_DEVICEINFO di;
+    int a;
+    printf("Output Devices\n");
+    for (a=1;BASS_GetDeviceInfo(a,&di);a++) {
+        printf("%d: ",a);
+        DisplayDeviceInfo(&di);
     }
-//    chan = BASS_RecordStart(44100, 2, 0, 0, 0); // Recording Channel
-//    if ((!r_init) || (!chan)) {
-//        BASS_Free();
-//    }
-    printf("her\n");
-
-    char *str = "";
-    for (int i = 0; str = BASS_RecordInit(i); i++) {
-        printf("%s\n", str);
+    printf("\nInput Devices\n");
+    for (a=0;BASS_RecordGetDeviceInfo(a,&di);a++) {
+        printf("%d: ",a);
+        DisplayDeviceInfo(&di);
     }
-//    printf("f\n");
-//    while (!str) {
-//        printf("%s\n", str);
-//        ++a;
-//        str = strdup(BASS_RecordGetInputName(a));
-//    }
-    printf("f\n");
+
+}
+
+void DisplayDeviceInfo(BASS_DEVICEINFO *di) {
+    printf("%s\n\tdriver: %s\n\ttype: ",di->name,di->driver);
+    switch (di->flags&BASS_DEVICE_TYPE_MASK) {
+        case BASS_DEVICE_TYPE_NETWORK:
+            printf("Remote Network");
+            break;
+        case BASS_DEVICE_TYPE_SPEAKERS:
+            printf("Speakers");
+            break;
+        case BASS_DEVICE_TYPE_LINE:
+            printf("Line");
+            break;
+        case BASS_DEVICE_TYPE_HEADPHONES:
+            printf("Headphones");
+            break;
+        case BASS_DEVICE_TYPE_MICROPHONE:
+            printf("Microphone");
+            break;
+        case BASS_DEVICE_TYPE_HEADSET:
+            printf("Headset");
+            break;
+        case BASS_DEVICE_TYPE_HANDSET:
+            printf("Handset");
+            break;
+        case BASS_DEVICE_TYPE_DIGITAL:
+            printf("Digital");
+            break;
+        case BASS_DEVICE_TYPE_SPDIF:
+            printf("SPDIF");
+            break;
+        case BASS_DEVICE_TYPE_HDMI:
+            printf("HDMI");
+            break;
+        case BASS_DEVICE_TYPE_DISPLAYPORT:
+            printf("DisplayPort");
+            break;
+        default:
+            printf("Unknown");
+    }
+    printf("\n\tflags:");
+    if (di->flags&BASS_DEVICE_ENABLED) printf(" enabled");
+    if (di->flags&BASS_DEVICE_DEFAULT) printf(" default");
+    printf(" (%x)\n",di->flags);
 }
