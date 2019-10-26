@@ -1,7 +1,9 @@
-#pragma once
+#ifndef __PLAYERH__
+#define __PLAYERH__
 
-#include <stdint.h>
 #include "bass.h"
+#include "dirutils.h"
+#include <string.h>
 
 class Player
 {
@@ -9,7 +11,8 @@ public:
     explicit Player();
     ~Player();
 
-    void play(char *fileName);
+    void play(size_t number);
+    void play(const string fileName);
     void pause();
     void resume();
     void stop();
@@ -22,15 +25,26 @@ public:
 
     float* getFFT(float *fft);
 
+    void uploadFromDir(const char *dir);
+    void showPlaylist();
+
+    size_t getCurrentPlaylistPosition();
+    string getMusicName();
+
+
 private:
     static const int32_t HZ = 44100;
 
     HSAMPLE smp;
     HSTREAM str;
 
+    size_t currentPlaylistPosition;
     float volume;
-
     bool InitDefaultDevice;
+
+    std::vector<string> playList;
 
     bool initBass(int32_t hz);
 };
+
+#endif

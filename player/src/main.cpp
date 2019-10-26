@@ -1,22 +1,14 @@
 #include <iostream>
 #include <string.h>
-#include "bass.h"
-#include "stdio.h"
 #include "player.h"
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
-    if (argc != 2) {
-        cout << "Format: ./player <audio>" << '\n';
-        return 0;
-    }
-
-    char *fileName = argv[1];
-    cout << "Bass library test: " << fileName << '\n';
-
     Player *player = new Player();
+    player->uploadFromDir("/home/vadim/Music");
+    player->showPlaylist();
 
     string command;
     
@@ -25,7 +17,7 @@ int main(int argc, char **argv)
         cin >> command;
 
         if (command == "exit") break;
-        else if (command == "play") player->play(fileName);
+        else if (command == "play") player->play(0);
         else if (command == "pause") player->pause();
         else if (command == "resume") player->resume();
         else if (command == "stop") player->stop();
@@ -40,11 +32,11 @@ int main(int argc, char **argv)
             player->setPosition(param / 100.0);
         }
         else if (command == "list") {
-            cout << "TODO" << '\n';
+            player->showPlaylist();
         }
         else if (command == "info") {
             cout << "------------------" << '\n';
-            cout << "Playing: " << fileName << '\n';
+            cout << "Playing: " << player->getMusicName() << '\n';
             cout << "Volume: " << player->getVolume() << '\n';
             cout << "Position: " << player->getRelativePosition() << '\n';
             cout << "------------------" << '\n';
@@ -61,9 +53,15 @@ int main(int argc, char **argv)
             cout << "- info" << '\n';
             cout << "- help" << '\n';
             cout << "- list" << '\n';
+            cout << "- ch <number>" << '\n';
             cout << "------------------" << '\n';
+        } else if (command == "ch") {
+            int number;
+            cin >> number;
+            player->play(number);
         }
     }
+
 
     cout << "exit" << '\n';
 

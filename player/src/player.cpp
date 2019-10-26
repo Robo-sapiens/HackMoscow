@@ -2,17 +2,24 @@
 #include <iostream>
 
 Player::Player() {
-    BASS_Init(-1, 44100, BASS_DEVICE_3D, 0, 0);
+    initBass(HZ);
+    currentPlaylistPosition - 0;
 }
 
 Player::~Player() {
     BASS_Free();
 }
 
-void Player::play(char *fileName)
+void Player::play(size_t number)
+{
+    if (!playList.empty() && number < playList.size())
+        play(playList.at(number).c_str());
+}
+
+void Player::play(const string fileName)
 {
     stop();
-    str = BASS_StreamCreateFile(FALSE, fileName, 0, 0, 0);
+    str = BASS_StreamCreateFile(FALSE, fileName.c_str(), 0, 0, 0);
     BASS_ChannelSetAttribute(str, BASS_ATTRIB_VOL, 1.0);
     BASS_ChannelPlay(str, false);
 }
@@ -84,4 +91,25 @@ float Player::getRelativePosition() {
 float* Player::getFFT(float *fft){
     BASS_ChannelGetData(str, fft, BASS_DATA_FFT2048);
     return fft;
+}
+
+void Player::showPlaylist() {
+    std::cout << "---Playlist---" << '\n';
+    for (size_t i = 0; i < playList.size(); ++i) {
+        std::cout << i << ": " << playList.at(i) << '\n';
+    }
+}
+
+void Player::uploadFromDir(const char *dir) {
+    cout << "parsing" << '\n';
+    UD::parse_dir(playList, dir);
+}
+
+size_t Player::getCurrentPlaylistPosition() {
+    return currentPlaylistPosition;
+}
+
+string Player::getMusicName() {
+    if(!playList.empty())
+        return playList.at(currentPlaylistPosition);
 }
