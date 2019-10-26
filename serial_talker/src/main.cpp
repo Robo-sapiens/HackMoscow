@@ -1,3 +1,4 @@
+
 #include <arduino_serial.h>
 #include <iostream>
 #include <unistd.h>
@@ -12,16 +13,15 @@ int main(int argc, char *argv[]) {
 
     int fd = serialport_init(argv[1], 9600);
     char msg[MSG_SIZE];
-//    std::stringstream ss;
     while (true) {
         std::cin >> msg;
-//        ss << ;
-        //    sprintf(msg, "<%d>", );
-        int write_check = serialport_write(fd, msg);
+        std::string msg_s = "<ффф>";
+        int write_check = serialport_write(fd, msg_s.data());
         if (write_check == -1) {
             break;
         }
-        usleep(60000);
+        std::cout << msg << std::endl;
+        usleep(20000);
     }
 
     serialport_flush(fd);
