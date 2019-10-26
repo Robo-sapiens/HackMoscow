@@ -6,6 +6,12 @@
 #include "dirutils.h"
 #include <string.h>
 
+typedef struct rgb {
+    int r;
+    int g;
+    int b;
+};
+
 class Player
 {
 public:
