@@ -4,7 +4,7 @@ set(PROJECT_NAME player)
 
 project(${PROJECT_NAME})
 
-set(CMAKE_CXX_STANDARD "17")
+set(CMAKE_CXX_STANDARD 17)
 
 ## set up variables
 set(ROOT ${PROJECT_SOURCE_DIR})
@@ -18,6 +18,6 @@ include_directories(${ROOT}/include)
 #include_directories(${ROOT}/lib)
 
 ## srcs
-add_executable(${PROJECT_NAME} src/main.cpp src/player.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/player.cpp src/visualizer.cpp src/dirutils.cpp)
 
 target_link_libraries(player bass)

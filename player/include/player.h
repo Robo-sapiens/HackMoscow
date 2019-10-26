@@ -20,6 +20,8 @@ public:
     unsigned long getLength();
     float getRelativePosition();
 
+    float* getFFT(float *fft);
+
 private:
     static const int32_t HZ = 44100;
 

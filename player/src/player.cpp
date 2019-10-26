@@ -80,3 +80,8 @@ unsigned long Player::getLength() {
 float Player::getRelativePosition() {
     return (float)getPosition() / getLength();
 }
+
+float* Player::getFFT(float *fft){
+    BASS_ChannelGetData(str, fft, BASS_DATA_FFT2048);
+    return fft;
+}
