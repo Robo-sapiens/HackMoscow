@@ -46,6 +46,7 @@ private:
     std::vector<string> playList;
 
     bool initBass(int32_t hz);
+    void parseFFT();
 };
 
 #endif
