@@ -1,3 +1,5 @@
 demon/cmake-build-debug
 .idea
 pulseaudio
+cmake-build-debug/
+test/parec.out
