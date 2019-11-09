@@ -1,6 +1,0 @@
-build/*
-out/*
-bass24*
-.vscode
-.idea
-cmake-build-debug

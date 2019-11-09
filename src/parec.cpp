@@ -10,7 +10,7 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
-#include "arduino_serial.h"
+#include <arduino_serial.h>
 enum {re, im}; //real and imaginary
 #define BUFSIZE 1024
 
