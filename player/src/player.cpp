@@ -1,6 +1,6 @@
 #include "player.h"
 #include <iostream>
-#include <arduino_serial.h>
+#include "../../arduino_lib/arduino_serial.h"
 #include <cmath>
 
 #define MIN_VAL 12

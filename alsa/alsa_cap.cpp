@@ -8,9 +8,9 @@ int main (int argc, char **argv) {
     snd_pcm_hw_params_t *hw_params;
     unsigned rate = 44100;
 
-    if ((err = snd_pcm_open (&capture_handle, argv[1], SND_PCM_STREAM_CAPTURE, 0)) < 0) {
+    if ((err = snd_pcm_open (&capture_handle, "default", SND_PCM_STREAM_CAPTURE, 0)) < 0) {
         fprintf (stderr, "cannot open audio device %s (%s)\n",
-                 argv[1],
+                 "default",
                  snd_strerror (err));
         exit (1);
     }
