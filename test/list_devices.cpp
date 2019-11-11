@@ -1,25 +1,8 @@
-#include <stdio.h>
-#include <string.h>
-#include <pulse/pulseaudio.h>
-
-
-
-// Field list is here: http://0pointer.de/lennart/projects/pulseaudio/doxygen/structpa__sink__info.html
-typedef struct pa_devicelist {
-	uint8_t initialized;
-	char name[512];
-	uint32_t index;
-	char description[256];
-} pa_devicelist_t;
-
-void pa_state_cb(pa_context *c, void *userdata);
-void pa_sinklist_cb(pa_context *c, const pa_sink_info *l, int eol, void *userdata);
-void pa_sourcelist_cb(pa_context *c, const pa_source_info *l, int eol, void *userdata);
-int pa_get_devicelist(pa_devicelist_t *input, pa_devicelist_t *output);
+#include "list_devices.hpp"
 
 // This callback gets called when our context changes state. We really only
 // care about when it's ready or if it has failed
-void pa_state_cb(pa_context *c, void *userdata) {
+static void pa_state_cb(pa_context *c, void *userdata) {
 	pa_context_state_t state;
 	int *pa_ready = (int *)userdata;
 
@@ -45,7 +28,7 @@ void pa_state_cb(pa_context *c, void *userdata) {
 // pa_mainloop will call this function when it's ready to tell us about a sink.
 // Since we're not threading, there's no need for mutexes on the devicelist
 // structure
-void pa_sinklist_cb(pa_context *c, const pa_sink_info *l, int eol, void *userdata) {
+static void pa_sinklist_cb(pa_context *c, const pa_sink_info *l, int eol, void *userdata) {
     pa_devicelist_t *pa_devicelist = (pa_devicelist_t *)userdata;
     int ctr = 0;
 
@@ -71,7 +54,7 @@ void pa_sinklist_cb(pa_context *c, const pa_sink_info *l, int eol, void *userdat
 }
 
 // See above.  This callback is pretty much identical to the previous
-void pa_sourcelist_cb(pa_context *c, const pa_source_info *l, int eol, void *userdata) {
+static void pa_sourcelist_cb(pa_context *c, const pa_source_info *l, int eol, void *userdata) {
     pa_devicelist_t *pa_devicelist = (pa_devicelist_t *)userdata;
     int ctr = 0;
 
@@ -103,8 +86,8 @@ int pa_get_devicelist(pa_devicelist_t *input, pa_devicelist_t *output) {
     int pa_ready = 0;
 
     // Initialize our device lists
-    memset(input, 0, sizeof(pa_devicelist_t) * 16);
-    memset(output, 0, sizeof(pa_devicelist_t) * 16);
+//    memset(input, 0, sizeof(pa_devicelist_t) * 16);
+//    memset(output, 0, sizeof(pa_devicelist_t) * 16);
 
     // Create a mainloop API and connection to the default server
     pa_ml = pa_mainloop_new();
@@ -120,7 +103,7 @@ int pa_get_devicelist(pa_devicelist_t *input, pa_devicelist_t *output) {
     // modify the variable to 1 so we know when we have a connection and it's
     // ready.
     // If there's an error, the callback will set pa_ready to 2
-    pa_context_set_state_callback(pa_ctx, pa_state_cb, &pa_ready);
+    pa_context_set_state_callback(pa_ctx, pa_state_cb, &pa_ready); // second parameter is ptr on func
 
     // Now we'll enter into an infinite loop until we get the data we receive
     // or if there's an error
@@ -195,40 +178,3 @@ int pa_get_devicelist(pa_devicelist_t *input, pa_devicelist_t *output) {
     }
 }
 
-int main(int argc, char *argv[]) {
-    int ctr;
-
-    // This is where we'll store the input device list
-    pa_devicelist_t pa_input_devicelist[16];
-
-    // This is where we'll store the output device list
-    pa_devicelist_t pa_output_devicelist[16];
-
-    if (pa_get_devicelist(pa_input_devicelist, pa_output_devicelist) < 0) {
-	fprintf(stderr, "failed to get device list\n");
-	return 1;
-    }
-
-    for (ctr = 0; ctr < 16; ctr++) {
-	if (! pa_output_devicelist[ctr].initialized) {
-	    break;
-	}
-	printf("=======[ Output Device #%d ]=======\n", ctr+1);
-	printf("Description: %s\n", pa_output_devicelist[ctr].description);
-	printf("Name: %s\n", pa_output_devicelist[ctr].name);
-	printf("Index: %d\n", pa_output_devicelist[ctr].index);
-	printf("\n");
-    }
-
-    for (ctr = 0; ctr < 16; ctr++) {
-	if (! pa_input_devicelist[ctr].initialized) {
-	    break;
-	}
-	printf("=======[ Input Device #%d ]=======\n", ctr+1);
-	printf("Description: %s\n", pa_input_devicelist[ctr].description);
-	printf("Name: %s\n", pa_input_devicelist[ctr].name);
-	printf("Index: %d\n", pa_input_devicelist[ctr].index);
-	printf("\n");
-    }
-    return 0;
-}
