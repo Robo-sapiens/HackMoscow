@@ -1,5 +1,5 @@
 demon/cmake-build-debug
-.idea
-pulseaudio
+.idea/
+pulseaudio/
 cmake-build-debug/
 arduino_lib/parec.out
