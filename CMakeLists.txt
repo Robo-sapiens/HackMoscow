@@ -1,13 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(PROJECT_NAME demon)
-project(${PROJECT_NAME})
+project(demon)
 
 set(CMAKE_CXX_STANDARD 17)
 include_directories(test)
-
-## set up variables
-set(ROOT ${PROJECT_SOURCE_DIR})
 
 ## Ardulib
 add_library(ardu STATIC test/arduino_serial.cpp)
@@ -15,7 +11,14 @@ add_library(ardu STATIC test/arduino_serial.cpp)
 ## Thread support
 find_package(Threads)
 
-add_executable(${PROJECT_NAME} test/parec.cpp)
+## pulseaudio lib
+find_path(PULSEAUDIO_INCLUDE_DIR NAMES pulse/pulseaudio.h)
+find_library(PULSEAUDIO_LIBRARY NAMES pulse)
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(${PROJECT_NAME} pulse pulse-simple fftw3 ardu)
+## pulseaudio device parsing
+add_library(pulse_device STATIC test/list_devices.cpp)
+target_link_libraries(pulse_device pulse)
+
+##
+add_executable(pulse_device_usage test/main.cpp)
+target_link_libraries(pulse_device_usage pulse_device)
