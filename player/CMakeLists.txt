@@ -1,30 +1,43 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(PROJECT_NAME player)
-
-project(${PROJECT_NAME})
-
-set(CMAKE_CXX_STANDARD 11)
-
+project(player)
 ## set up variables
+set(CMAKE_CXX_STANDARD 17)
 set(ROOT ${PROJECT_SOURCE_DIR})
 set(LIB ${PROJECT_SOURCE_DIR}/lib)
 
-## ardu lib
-set(ARDU_SRC src/arduino_serial.cpp)
-add_library(talker STATIC ${ARDU_SRC})
+## include directories
+include_directories(${LIB})
+include_directories(${LIB}/player)
+include_directories(${LIB}/serial)
+include_directories(${LIB}/pulse_device)
+include_directories(${LIB}/pulse_capture)
 
-## Thread support
-find_package(Threads)
-
-## Out directory
+## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT}/out)
 
-## include directories
-include_directories(${ROOT}/include)
-#include_directories(${ROOT}/lib)
+## serial lib
+add_library(talker STATIC ${LIB}/serial/serial.cpp)
 
-## srcs
-add_executable(${PROJECT_NAME} src/main.cpp src/player.cpp src/visualizer.cpp src/dirutils.cpp)
+## thread support
+find_package(Threads)
 
-target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT})
+## pulseaudio lib
+find_path(PULSEAUDIO_INCLUDE_DIR NAMES pulse/pulseaudio.h)
+find_library(PULSEAUDIO_LIBRARY NAMES pulse)
+
+## pulseaudio device parsing
+add_library(pulse_device STATIC ${LIB}/pulse_device/list_devices.cpp)
+target_link_libraries(pulse_device pulse)
+
+## pulseaudio capture
+add_library(pulse_capture STATIC ${LIB}/pulse_capture/capture.cpp)
+target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
+
+## player
+add_library(player STATIC ${LIB}/player/player.cpp)
+target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
+
+## main
+add_executable(player_usage src/main.cpp)
+target_link_libraries(player_usage player)

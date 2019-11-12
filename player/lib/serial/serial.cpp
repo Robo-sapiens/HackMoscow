@@ -1,4 +1,4 @@
-#include "arduino_serial.h"
+#include "serial.h"
 
 // uncomment this to debug reads
 //#define SERIALPORTDEBUG

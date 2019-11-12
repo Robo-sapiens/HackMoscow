@@ -1,24 +1,27 @@
 #include <iostream>
-#include <string.h>
-#include <cstring>
-#include "bass.h"
-#include <cstdio>
 #include "player.h"
 
-using namespace std;
-
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        cout << "enter music dir please\n";
+    if (argc != 4) {
+        std::cout << "Usage: [send delay(=60000)] [device(serial port)]\n"
+                     "  fft options: [sample size]" << std::endl;
         return 1;
     }
-    Player *player = new Player();
-    player->uploadFromDir(argv[1]);
-    player->showPlaylist();
+    RGBParameters params = {
+            .width = 512,
+            .filter = 0, // [0..step=0.001..0.05]
+            .slope = 256, // [0..width]
+            .red_peak = 0,    // [0..1024]
+            .green_peak = 512, // [0..1024]
+            .blue_peak = 256  // [0..1024]
+    }; // TODO
 
-    command_parser(*player);
-
-    cout << "exit" << '\n';
-
+    Player player(std::atoi(argv[1]), argv[2], std::atoi(argv[3]), params);
+    std::thread t1(get_fft, std::ref(player));
+    std::thread t2(parse_fft, std::ref(player));
+    std::thread t3(msg_sender, std::ref(player));
+    t1.join();
+    t2.join();
+    t3.join();
     return 0;
 }
