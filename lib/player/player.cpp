@@ -8,19 +8,18 @@
 #include "capture.h"
 
 #define BAUDRATE 9600
-#define FREQ 44100 // or 48000 hz
+#define FREQ 44100
 
 std::mutex g_lock;
 
 
 Player::Player(size_t delay, const char * device, size_t sample_size, RGBParameters params) :
-delay(delay), device(device), msg("<000000000>", sample_size), error_code(0), hsample(), hstream(),
+delay(delay), device(device), msg("<000000000>", sample_size), rgb({0, 0, 0}), error_code(0), hsample(), hstream(),
 rgb_parameters(params), capture_device() {
     if (!(BASS_Init(0, FREQ, BASS_DEVICE_DEFAULT, NULL, NULL))) {
         error_handler();
     }
     hstream = BASS_StreamCreate(44100, 1, BASS_STREAM_DECODE | BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, NULL);
-//    BASS_ChannelSetAttribute(hstream, BASS_ATTRIB_VOL, 1.0);
     error_handler();
 }
 
@@ -38,36 +37,13 @@ Player::Msg::~Msg() {
     free(fft);
 }
 
-static uint32_t which_flag(size_t sample_size) {
-    switch (sample_size) {
-        case 128:
-            return BASS_DATA_FFT256;
-        case 256:
-            return BASS_DATA_FFT512;
-        case 512:
-            return BASS_DATA_FFT1024;
-        case 1024:
-            return BASS_DATA_FFT2048;
-        case 2048:
-            return BASS_DATA_FFT4096;
-        case 4096:
-            return BASS_DATA_FFT8192;
-        case 8192:
-            return BASS_DATA_FFT16384;
-        case 16384:
-            return BASS_DATA_FFT32768;
-        default:
-            return BASS_DATA_FFT_NYQUIST;
-    }
-}
 
 void get_fft(Player &player) {
     auto in = (float *)calloc(player.msg.sample_size, sizeof(float));
-    static uint32_t flag = which_flag(player.msg.sample_size);
     while (true) {
         player.capture_device.get_sample(in, player.msg.sample_size);
         BASS_StreamPutData(player.hstream, in, player.msg.sample_size);
-        if (BASS_ChannelGetData(player.hstream, player.msg.fft, BASS_DATA_FFT1024) == -1) { // TODO
+        if (BASS_ChannelGetData(player.hstream, player.msg.fft, BASS_DATA_FFT1024) == -1) {
             break;
         }
     }
@@ -75,34 +51,38 @@ void get_fft(Player &player) {
     player.error_handler();
 }
 
+
 void parse_fft(Player &player) {
     auto p = player.rgb_parameters;
     while (!player.error_code) {
-        float r = 0, g = 0, b = 0;
-        for (int32_t i = (int32_t)std::max(0.f, p.red_peak - p.width + p.slope);
-        i < (int32_t)std::min((float)player.msg.sample_size, p.red_peak + p.width - p.slope); ++i) {
+        int32_t r = 0, g = 0, b = 0;
+        for (int32_t i = std::max(0, p.red_peak - p.width);
+        i < std::min(player.msg.sample_size, p.red_peak + p.width); ++i) {
             if (player.msg.fft[i] > p.filter) {
-                r += player.msg.fft[i]
-                        * std::abs(p.width - p.slope - (p.red_peak - (float) i)) / (p.width - p.slope)
-                        * 8 * pow(2, (int32_t) (p.red_peak / 256));
+                r += player.msg.fft[i] * std::abs(p.width - (p.red_peak -   (float)i)) / (p.width) * i;
             }
         }
-        for (int32_t i = (int32_t)std::max(0.f, p.green_peak - p.width + p.slope);
-        i < (int32_t)std::min((float)player.msg.sample_size, p.green_peak + p.width - p.slope); ++i) {
+        for (int32_t i = std::max(0, p.green_peak - p.width);
+        i < std::min(player.msg.sample_size, p.green_peak + p.width); ++i) {
             if (player.msg.fft[i] > p.filter) {
-                g += player.msg.fft[i]
-                        * std::abs(p.width - p.slope - (p.green_peak - (float) i)) / (p.width - p.slope)
-                        * 8 * pow(2, (int32_t) (p.green_peak / 256));
+                g += player.msg.fft[i] * std::abs(p.width - (p.green_peak - (float)i)) / (p.width) * i;
             }
         }
-        for (int32_t i = (int32_t)std::max(0.f, p.blue_peak - p.width + p.slope);
-        i < (int32_t)std::min((float)player.msg.sample_size, p.blue_peak + p.width - p.slope); ++i) {
+        for (int32_t i = std::max(0, p.blue_peak - p.width);
+        i < std::min(player.msg.sample_size, p.blue_peak + p.width); ++i) {
             if (player.msg.fft[i] > p.filter) {
-                b += player.msg.fft[i]
-                        * std::abs(p.width - p.slope - (p.blue_peak - (float) i)) / (p.width - p.slope)
-                        * 8 * pow(2, (int32_t) (p.blue_peak / 256));
+                b += player.msg.fft[i] * std::abs(p.width - (p.blue_peak -  (float)i)) / (p.width) * i;
             }
         }
+        if (p.tweak_by_min) {
+            int32_t min_val = std::min(r, std::min(g, b));
+            r -= min_val;
+            g -= min_val;
+            b -= min_val;
+        }
+        r *= p.sensitivity;
+        g *= p.sensitivity;
+        b *= p.sensitivity;
         if (r > 255) {
             r = 255;
         }
@@ -112,12 +92,11 @@ void parse_fft(Player &player) {
         if (b > 255) {
             b = 255;
         }
-//        float min_val = std::min(r, std::min(g, b));
-//        r -= min_val;
-//        g -= min_val;
-//        b -= min_val;
         std::cout << r << ' ' << g << ' ' << b << std::endl;
         g_lock.lock();
+        player.rgb.r = r;
+        player.rgb.g = g;
+        player.rgb.b = b;
         player.msg.text[1] = '0' + (char)((int32_t)r / 100);
         player.msg.text[2] = '0' + (char)((int32_t)r / 10 % 10);
         player.msg.text[3] = '0' + (char)((int32_t)r % 10);
@@ -261,4 +240,8 @@ void Player::error_handler() {
             std::cout << "error code isn't even unknown, hmmmm...." << std::endl;
             break;
     }
+}
+
+void Player::tweak_rgb(RGBParameters rgb_params) {
+    this->rgb_parameters = rgb_params;
 }
