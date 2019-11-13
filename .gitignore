@@ -1,5 +1,7 @@
 build/*
-out/player_usage
+build-*
+out/
+*.user
 bass24*
 .vscode
 .idea

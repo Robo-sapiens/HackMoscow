@@ -8,6 +8,7 @@ set(LIB ${PROJECT_SOURCE_DIR}/lib)
 
 ## include directories
 include_directories(${LIB})
+include_directories(ui)
 include_directories(${LIB}/player)
 include_directories(${LIB}/serial)
 include_directories(${LIB}/pulse_device)
@@ -38,6 +39,29 @@ target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
 add_library(player STATIC ${LIB}/player/player.cpp)
 target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
-## main
-add_executable(player_usage src/main.cpp)
+## main console
+add_executable(player_usage player_console/main.cpp)
 target_link_libraries(player_usage player)
+
+## ui requirements
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(UI_DIR player_ui)
+set(UI_SRC
+        ${UI_DIR}/main.cpp
+        ${UI_DIR}/mainwindow.cpp
+        ${UI_DIR}/mainwindow.h
+        ${UI_DIR}/mainwindow.ui
+        )
+
+find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+
+add_executable(player_ui ${UI_SRC})
+
+target_link_libraries(player_ui PRIVATE
+        player
+        Qt5::Widgets
+        Qt5::Core
+        Qt5::Gui
+        )

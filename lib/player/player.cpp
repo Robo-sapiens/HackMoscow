@@ -7,7 +7,7 @@
 #include "serial.h"
 #include "capture.h"
 
-#define BAUDRATE 9600
+#define BAUDRATE 19200
 #define FREQ 44100
 
 std::mutex g_lock;
@@ -92,7 +92,7 @@ void parse_fft(Player &player) {
         if (b > 255) {
             b = 255;
         }
-        std::cout << r << ' ' << g << ' ' << b << std::endl;
+//        std::cout << r << ' ' << g << ' ' << b << std::endl;
         g_lock.lock();
         player.rgb.r = r;
         player.rgb.g = g;
