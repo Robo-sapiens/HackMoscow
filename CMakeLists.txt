@@ -4,21 +4,20 @@ project(player_ui LANGUAGES CXX)
 
 ## set up variables
 set(CMAKE_CXX_STANDARD 17)
-set(ROOT ..)
-set(LIB ../lib)
+set(LIB lib)
+set(UI_DIR player_ui)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## include directories
 include_directories(${LIB})
-include_directories(styles)
 include_directories(${LIB}/player)
 include_directories(${LIB}/serial)
 include_directories(${LIB}/pulse_device)
 include_directories(${LIB}/pulse_capture)
-
+include_directories(cmake-build-debug/player_ui_autogen/include)
 ## out directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT}/out)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY out)
 
 ## serial lib
 add_library(talker STATIC ${LIB}/serial/serial.cpp)
@@ -43,15 +42,13 @@ add_library(player STATIC ${LIB}/player/player.cpp)
 target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
 ## main console
-add_executable(player_usage main.cpp)
+add_executable(player_usage player_ui/main.cpp)
 target_link_libraries(player_usage player)
 
 ## ui requirements
-set(CMAKE_CXX_FLAGS "-DWITH_GUI")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(UI_DIR .)
 set(UI_SRC
         ${UI_DIR}/main.cpp
         ${UI_DIR}/main_window.cpp

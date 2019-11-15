@@ -6,7 +6,6 @@
 #include "color.h"
 #include "devices.h"
 #define DELAY 60000
-#define DEVICE "/dev/ttyACM0"
 #define SAMPLE_SIZE 512  // connected to BASS_FFT_1024
 
 int main(int argc, char *argv[])
@@ -21,7 +20,7 @@ int main(int argc, char *argv[])
             .sensitivity = 255. / 5000, // [0..idk]
             .tweak_by_min = false         //
     };
-    Player player(DELAY, DEVICE, SAMPLE_SIZE, params);
+    Player player(DELAY, SAMPLE_SIZE, params);
     Animation animation(nullptr, &player);
     Color color(nullptr, &player);
     Devices devices(nullptr, &player);

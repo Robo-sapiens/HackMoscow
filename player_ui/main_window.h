@@ -10,7 +10,7 @@ QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr, Player *player = nullptr);
@@ -20,14 +20,14 @@ signals:
     void open_colors();
     void open_animation();
     void open_devices();
+
 private slots:
     void on_colors_clicked();
     void on_devices_clicked();
-
     void on_animation_clicked();
 
 private:
     Ui::MainWindow *ui;
-    Player * player;
+    Player *player;
 };
 #endif // MAINWINDOW_H

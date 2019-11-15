@@ -41,14 +41,13 @@ class Player
     } RGB;
 
 public:
-    explicit Player(size_t delay, const char * device, size_t sample_size, RGBParameters params);
+    explicit Player(size_t delay, size_t sample_size, RGBParameters params);
     ~Player();
 
     void error_handler();
     void tweak_rgb(RGBParameters rgb_params);
 
     size_t delay;
-    std::string device;
     Msg msg;
     RGB rgb;
     int8_t error_code;

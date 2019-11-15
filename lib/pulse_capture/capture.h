@@ -14,14 +14,11 @@ namespace pa {
     public:
         Capture();
         ~Capture();
+        int32_t set_device(std::string device);
         uint32_t get_sample(void *buf, size_t sample_size);
     private:
-        const pa_sample_spec ss = {
-                .format = PA_SAMPLE_FLOAT32,
-                .rate = 44100,
-                .channels = 2
-        };
-        pa_simple *simple;
+        pa_sample_spec ss;
+        pa_simple *simple{};
     };
 }
 #endif //PLAYER_CAPTURE_H

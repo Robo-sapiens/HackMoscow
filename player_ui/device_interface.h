@@ -7,12 +7,10 @@
 
 #include <QSerialPort>
 
-class device_interface {
+class DeviceInterface {
 public:
-    device_interface();
-    ~device_interface();
-
-private:
+    DeviceInterface();
+    ~DeviceInterface();
     QSerialPort *serial_port;
 };
 

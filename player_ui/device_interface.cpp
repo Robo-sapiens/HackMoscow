@@ -3,9 +3,8 @@
 //
 
 #include "device_interface.h"
-#include <QSerialPortInfo>
 
-device_interface::device_interface()
+DeviceInterface::DeviceInterface()
 : serial_port(new QSerialPort()) {
     serial_port->setBaudRate(QSerialPort::Baud19200);
     serial_port->setDataBits(QSerialPort::Data8);
@@ -14,7 +13,7 @@ device_interface::device_interface()
     serial_port->setFlowControl(QSerialPort::NoFlowControl);
 }
 
-device_interface::~device_interface() {
+DeviceInterface::~DeviceInterface() {
     serial_port->close();
     delete serial_port;
 }
