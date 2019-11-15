@@ -41,3 +41,7 @@ target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture
 ## main
 add_executable(player_usage src/main.cpp)
 target_link_libraries(player_usage player)
+
+## test_serial
+add_executable(test_serial src/test_serial.cpp)
+target_link_libraries(test_serial talker)
