@@ -12,7 +12,6 @@
 
 #define POSSIBLE_AMOUNT_OF_DEVICES 32
 
-
 pa::Capture::Capture() {
     auto pa_input_devicelist =  (pa_devicelist_t *)calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
     auto pa_output_devicelist = (pa_devicelist_t *)calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
@@ -20,7 +19,9 @@ pa::Capture::Capture() {
     if (pa_get_devicelist(pa_input_devicelist, pa_output_devicelist) < 0) {
         return;
     }
-
+    int32_t device = 0;
+    std::string device_name = pa_input_devicelist[device].name;
+#ifndef WITH_GUI
     for (int32_t i = 0; i < POSSIBLE_AMOUNT_OF_DEVICES; i++) {
         if (!pa_output_devicelist[i].initialized) {
             break;
@@ -30,7 +31,6 @@ pa::Capture::Capture() {
         std::cout << "Name: " << pa_output_devicelist[i].name << std::endl;
         std::cout << "Index: " << pa_output_devicelist[i].index << std::endl << std::endl;
     }
-
     for (int32_t i = 0; i < POSSIBLE_AMOUNT_OF_DEVICES; i++) {
         if (!pa_input_devicelist[i].initialized) {
             break;
@@ -41,9 +41,7 @@ pa::Capture::Capture() {
         std::cout << "Index: " << pa_input_devicelist[i].index << std::endl << std::endl;
     }
 
-    int32_t device = 0;
-    std::string device_name = pa_input_devicelist[device].name;
-//#ifdef WITHOUT_GUI
+    std::cout << "wogui" << std::endl;
     bool yes = false;
     std::cout << "input ?" << std::endl;
     std::cin >> yes;
@@ -54,7 +52,7 @@ pa::Capture::Capture() {
     } else {
         device_name = pa_output_devicelist[device].name;
     }
-//#endif // WITH_GUI
+#endif // WITH_GUI
     int32_t error = 0;
     simple = pa_simple_new(NULL, "player_usage", PA_STREAM_RECORD,
                   device_name.c_str(),"record", &ss, NULL, NULL, &error);

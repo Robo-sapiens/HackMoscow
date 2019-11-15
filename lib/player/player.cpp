@@ -1,25 +1,32 @@
 #include <iostream>
 #include <cmath>
 #include <utility>
-#include <mutex>
 
 #include "player.h"
 #include "serial.h"
-#include "capture.h"
 
 #define BAUDRATE 19200
 #define FREQ 44100
 
+#ifndef WITH_GUI
+#include <mutex>
 std::mutex g_lock;
+#endif
 
-
-Player::Player(size_t delay, const char * device, size_t sample_size, RGBParameters params) :
-delay(delay), device(device), msg("<000000000>", sample_size), rgb({0, 0, 0}), error_code(0), hsample(), hstream(),
-rgb_parameters(params), capture_device() {
-    if (!(BASS_Init(0, FREQ, BASS_DEVICE_DEFAULT, NULL, NULL))) {
+Player::Player(size_t delay, const char * device, size_t sample_size, RGBParameters params)
+: delay(delay),
+device(device),
+msg("<000000000>", sample_size),
+rgb({0, 0, 0}),
+error_code(0),
+hsample(),
+hstream(),
+rgb_parameters(params),
+capture_device() {
+    if (!(BASS_Init(0, FREQ, BASS_DEVICE_LOOPBACK, NULL, NULL))) {
         error_handler();
     }
-    hstream = BASS_StreamCreate(44100, 1, BASS_STREAM_DECODE | BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, NULL);
+    hstream = BASS_StreamCreate(44100, 2, BASS_STREAM_DECODE | BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, NULL);
     error_handler();
 }
 
@@ -92,8 +99,10 @@ void parse_fft(Player &player) {
         if (b > 255) {
             b = 255;
         }
-//        std::cout << r << ' ' << g << ' ' << b << std::endl;
+        std::cout << r << ' ' << g << ' ' << b << std::endl;
+#ifndef WITH_GUI
         g_lock.lock();
+#endif
         player.rgb.r = r;
         player.rgb.g = g;
         player.rgb.b = b;
@@ -106,7 +115,9 @@ void parse_fft(Player &player) {
         player.msg.text[7] = '0' + (char)((int32_t)b / 100);
         player.msg.text[8] = '0' + (char)((int32_t)b / 10 % 10);
         player.msg.text[9] = '0' + (char)((int32_t)b % 10);
+#ifndef WITH_GUI
         g_lock.unlock();
+#endif
     }
 }
 

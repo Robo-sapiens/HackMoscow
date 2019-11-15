@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.5)
 project(player)
 ## set up variables
 set(CMAKE_CXX_STANDARD 17)
-set(ROOT ${PROJECT_SOURCE_DIR})
-set(LIB ${PROJECT_SOURCE_DIR}/lib)
+set(ROOT ..)
+set(LIB ../lib)
 
 ## include directories
 include_directories(${LIB})
@@ -40,28 +40,5 @@ add_library(player STATIC ${LIB}/player/player.cpp)
 target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
 ## main console
-add_executable(player_usage player_console/main.cpp)
+add_executable(player_usage main.cpp)
 target_link_libraries(player_usage player)
-
-## ui requirements
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(UI_DIR player_ui)
-set(UI_SRC
-        ${UI_DIR}/main.cpp
-        ${UI_DIR}/mainwindow.cpp
-        ${UI_DIR}/mainwindow.h
-        ${UI_DIR}/mainwindow.ui
-        )
-
-find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
-
-add_executable(player_ui ${UI_SRC})
-
-target_link_libraries(player_ui PRIVATE
-        player
-        Qt5::Widgets
-        Qt5::Core
-        Qt5::Gui
-        )

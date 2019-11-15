@@ -2,14 +2,11 @@
 #include "player.h"
 
 #define SAMPLE_SIZE 512  // connected to BASS_FFT_1024
-#define WITHOUT_GUI
+#define DELAY 60000
+#define DEVICE "/dev/ttyACM0"
+#define SAMPLE_SIZE 512  // connected to BASS_FFT_1024
 
 int main(int argc, char **argv) {
-    if (argc != 3) {
-        std::cout << "Usage: [send delay(=60000usec)] [device(serial port)]\n" << std::endl;
-        return 1;
-    }
-
     RGBParameters params = {
             .width = SAMPLE_SIZE / 2,    // [0..SAMPLE_SIZE]
             .filter = 0,                 // [0..idk]
@@ -20,7 +17,7 @@ int main(int argc, char **argv) {
             .tweak_by_min = false         //
     };
 
-    Player player(std::atoi(argv[1]), argv[2], SAMPLE_SIZE, params);
+    Player player(DELAY, DEVICE, SAMPLE_SIZE, params);
     std::thread t1(get_fft, std::ref(player));
     std::thread t2(parse_fft, std::ref(player));
     std::thread t3(msg_sender, std::ref(player));

@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="devices">
     <property name="geometry">
      <rect>
       <x>640</x>
@@ -24,7 +24,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>settings</string>
+     <string>devices</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="animation">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>50</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>animation</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="colors">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>90</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>colors</string>
     </property>
    </widget>
   </widget>

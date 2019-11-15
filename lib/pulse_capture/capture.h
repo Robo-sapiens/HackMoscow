@@ -19,7 +19,7 @@ namespace pa {
         const pa_sample_spec ss = {
                 .format = PA_SAMPLE_FLOAT32,
                 .rate = 44100,
-                .channels = 1
+                .channels = 2
         };
         pa_simple *simple;
     };
