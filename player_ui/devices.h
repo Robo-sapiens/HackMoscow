@@ -5,7 +5,7 @@
 #include <QtCore/QStringListModel>
 #include <QSerialPort>
 #include "player.h"
-#include "device_interface.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class devices; }
@@ -19,16 +19,23 @@ public:
     explicit Devices(QWidget *parent = nullptr, Player *player = nullptr);
     ~Devices();
 
+private:
+    void load_ports();
+    void load_cards();
+
 private slots:
     void on_select_card_clicked();
     void on_select_port_clicked();
+
+signals:
+    void start_capture();
+    void start_port(const QSerialPortInfo & q_serial_port_info);
 
 private:
     Ui::devices *ui;
     Player *player;
     QStringListModel *sound_card_list;
     QStringListModel *ports_list;
-    DeviceInterface serial_device;
 };
 
 #endif // DEVICES_H

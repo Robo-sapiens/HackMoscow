@@ -5,22 +5,17 @@ project(player_ui LANGUAGES CXX)
 ## set up variables
 set(CMAKE_CXX_STANDARD 17)
 set(LIB lib)
-set(UI_DIR player_ui)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## include directories
 include_directories(${LIB})
 include_directories(${LIB}/player)
-include_directories(${LIB}/serial)
 include_directories(${LIB}/pulse_device)
 include_directories(${LIB}/pulse_capture)
 include_directories(cmake-build-debug/player_ui_autogen/include)
 ## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY out)
-
-## serial lib
-add_library(talker STATIC ${LIB}/serial/serial.cpp)
 
 ## thread support
 find_package(Threads)
@@ -39,7 +34,7 @@ target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
 
 ## player
 add_library(player STATIC ${LIB}/player/player.cpp)
-target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
+target_link_libraries(player bass ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
 ## main console
 add_executable(player_usage player_ui/main.cpp)
@@ -50,23 +45,25 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(UI_SRC
-        ${UI_DIR}/main.cpp
-        ${UI_DIR}/main_window.cpp
-        ${UI_DIR}/main_window.h
-        ${UI_DIR}/main_window.ui
-        ${UI_DIR}/player_threads.cpp
-        ${UI_DIR}/player_threads.h
-        ${UI_DIR}/devices.cpp
-        ${UI_DIR}/devices.h
-        ${UI_DIR}/devices.ui
-        ${UI_DIR}/color.cpp
-        ${UI_DIR}/color.h
-        ${UI_DIR}/color.ui
-        ${UI_DIR}/animation.cpp
-        ${UI_DIR}/animation.ui
-        ${UI_DIR}/animation.h
-        ${UI_DIR}/device_interface.cpp
-        ${UI_DIR}/device_interface.h
+        player_ui/main.cpp
+        player_ui/main_window.cpp
+        player_ui/main_window.h
+        player_ui/main_window.ui
+        player_ui/serial_thread.cpp
+        player_ui/serial_thread.h
+        player_ui/audio_thread.cpp
+        player_ui/audio_thread.h
+        player_ui/fft_thread.cpp
+        player_ui/fft_thread.h
+        player_ui/devices.cpp
+        player_ui/devices.h
+        player_ui/devices.ui
+        player_ui/color.cpp
+        player_ui/color.h
+        player_ui/color.ui
+        player_ui/animation.cpp
+        player_ui/animation.ui
+        player_ui/animation.h
         )
 
 find_package(Qt5 COMPONENTS Widgets Core Gui SerialPort REQUIRED)

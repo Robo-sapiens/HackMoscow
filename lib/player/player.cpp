@@ -3,14 +3,9 @@
 #include <utility>
 
 #include "player.h"
-#include "serial.h"
 
 #define FREQ 44100
 
-#ifndef WITH_GUI
-#include <mutex>
-std::mutex g_lock;
-#endif
 
 Player::Player(size_t delay, size_t sample_size, RGBParameters params)
         : delay(delay),
@@ -43,91 +38,10 @@ Player::Msg::~Msg() {
 }
 
 
-void get_fft(Player &player) {
-    auto in = (float *)calloc(player.msg.sample_size, sizeof(float));
-    while (true) {
-        player.capture_device.get_sample(in, player.msg.sample_size);
-        BASS_StreamPutData(player.hstream, in, player.msg.sample_size);
-        if (BASS_ChannelGetData(player.hstream, player.msg.fft, BASS_DATA_FFT1024) == -1) {
-            break;
-        }
-    }
-    free(in);
-    player.error_handler();
+void Player::tweak_rgb(RGBParameters rgb_params) {
+    rgb_parameters = rgb_params;
 }
 
-
-void parse_fft(Player &player) {
-    auto p = player.rgb_parameters;
-    while (!player.error_code) {
-        int32_t r = 0, g = 0, b = 0;
-        for (int32_t i = std::max(0, p.red_peak - p.width);
-        i < std::min(player.msg.sample_size, p.red_peak + p.width); ++i) {
-            if (player.msg.fft[i] > p.filter) {
-                r += player.msg.fft[i] * std::abs(p.width - (p.red_peak -   (float)i)) / (p.width) * i;
-            }
-        }
-        for (int32_t i = std::max(0, p.green_peak - p.width);
-        i < std::min(player.msg.sample_size, p.green_peak + p.width); ++i) {
-            if (player.msg.fft[i] > p.filter) {
-                g += player.msg.fft[i] * std::abs(p.width - (p.green_peak - (float)i)) / (p.width) * i;
-            }
-        }
-        for (int32_t i = std::max(0, p.blue_peak - p.width);
-        i < std::min(player.msg.sample_size, p.blue_peak + p.width); ++i) {
-            if (player.msg.fft[i] > p.filter) {
-                b += player.msg.fft[i] * std::abs(p.width - (p.blue_peak -  (float)i)) / (p.width) * i;
-            }
-        }
-        if (p.tweak_by_min) {
-            int32_t min_val = std::min(r, std::min(g, b));
-            r -= min_val;
-            g -= min_val;
-            b -= min_val;
-        }
-        r *= p.sensitivity;
-        g *= p.sensitivity;
-        b *= p.sensitivity;
-        if (r > 255) {
-            r = 255;
-        }
-        if (g > 255) {
-            g = 255;
-        }
-        if (b > 255) {
-            b = 255;
-        }
-        std::cout << r << ' ' << g << ' ' << b << std::endl;
-
-        g_lock.lock();
-
-        player.rgb.r = r;
-        player.rgb.g = g;
-        player.rgb.b = b;
-        player.msg.text[1] = '0' + (char)((int32_t)r / 100);
-        player.msg.text[2] = '0' + (char)((int32_t)r / 10 % 10);
-        player.msg.text[3] = '0' + (char)((int32_t)r % 10);
-        player.msg.text[4] = '0' + (char)((int32_t)g / 100);
-        player.msg.text[5] = '0' + (char)((int32_t)g / 10 % 10);
-        player.msg.text[6] = '0' + (char)((int32_t)g % 10);
-        player.msg.text[7] = '0' + (char)((int32_t)b / 100);
-        player.msg.text[8] = '0' + (char)((int32_t)b / 10 % 10);
-        player.msg.text[9] = '0' + (char)((int32_t)b % 10);
-
-        g_lock.unlock();
-    }
-}
-
-//
-//void msg_sender(Player & player) {
-//    int32_t filed = serialport_init(player.serial_device.c_str(), BAUDRATE);
-//    serialport_flush(filed);
-//    while (serialport_write(filed, player.msg.text.c_str()) != -1) {
-//        usleep(player.delay);
-//    }
-//    serialport_flush(filed);
-//    serialport_close(filed);
-//}
 
 void Player::error_handler() {
     this->error_code = BASS_ErrorGetCode();
@@ -248,8 +162,4 @@ void Player::error_handler() {
             std::cout << "error code isn't even unknown, hmmmm...." << std::endl;
             break;
     }
-}
-
-void Player::tweak_rgb(RGBParameters rgb_params) {
-    rgb_parameters = rgb_params;
 }

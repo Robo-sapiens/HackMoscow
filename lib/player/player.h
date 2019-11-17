@@ -62,8 +62,4 @@ private:
     Player (Player const &);
 };
 
-void get_fft(Player &msg);
-void msg_sender(Player &player);
-void parse_fft(Player &player);
-
 #endif

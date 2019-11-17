@@ -71,6 +71,19 @@
     </rect>
    </property>
   </widget>
+  <widget class="QLabel" name="TIP">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>290</y>
+     <width>451</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TIP: if you don't see a particular device - reload whole program</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
