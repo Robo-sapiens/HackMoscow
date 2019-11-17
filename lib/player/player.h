@@ -45,7 +45,6 @@ public:
     ~Player();
 
     void error_handler();
-    void tweak_rgb(RGBParameters rgb_params);
 
     size_t delay;
     std::string device;
@@ -64,7 +63,8 @@ private:
 };
 
 void get_fft(Player &msg);
-void msg_sender(Player &player);
+void serial_interface(Player &player);
 void parse_fft(Player &player);
+void show_leds(Player &player);
 
 #endif
