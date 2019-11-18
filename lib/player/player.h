@@ -8,6 +8,7 @@
 #include <string>
 #include <cstdint>
 #include <cmath>
+#include "LED.h"
 
 
 typedef struct RGBParameters
@@ -32,13 +33,6 @@ class Player
         float * fft;
         std::string text;
     };
-
-    typedef struct RGB
-    {
-        int32_t r;
-        int32_t g;
-        int32_t b;
-    } RGB;
 
 public:
     explicit Player(size_t delay, const char * device, size_t sample_size, RGBParameters params);

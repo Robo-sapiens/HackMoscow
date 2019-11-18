@@ -112,7 +112,11 @@ void serial_interface(Player &player) {
 }
 
 void show_leds(Player &player) {
-
+    LED led;
+    while(true) {
+        led.show_led_on_pi(player.rgb);
+        usleep(player.delay);
+    }
 }
 
 void Player::error_handler() {

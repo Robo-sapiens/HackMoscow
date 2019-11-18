@@ -12,6 +12,8 @@ include_directories(${LIB}/player)
 include_directories(${LIB}/serial)
 include_directories(${LIB}/pulse_device)
 include_directories(${LIB}/pulse_capture)
+include_directories(${LIB}/LED)
+
 
 ## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT}/out)
@@ -33,6 +35,10 @@ target_link_libraries(pulse_device pulse)
 ## pulseaudio capture
 add_library(pulse_capture STATIC ${LIB}/pulse_capture/capture.cpp)
 target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
+
+## LED
+add_library(LED STATIC ${LIB}/LED/LED.cpp)
+target_link_libraries(LED ${LIB}/rpi_ws281x/libws2811.a)
 
 ## player
 add_library(player STATIC ${LIB}/player/player.cpp)

@@ -2,7 +2,7 @@
 #include "player.h"
 
 #define SAMPLE_SIZE 512  // connected to
-#define DELAY 10000
+#define DELAY 70000
 
 
 int main(int argc, char **argv) {
