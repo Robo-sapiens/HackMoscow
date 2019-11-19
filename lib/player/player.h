@@ -30,7 +30,7 @@ class Player
         Msg(std::string what, size_t size);
         ~Msg();
         int32_t sample_size;
-        float * fft;
+        uint16_t *fft;
         std::string text;
     };
 
@@ -48,7 +48,7 @@ public:
     HSAMPLE hsample;
     HSTREAM hstream;
     RGBParameters rgb_parameters;
-    pa::Capture capture_device;
+    alsa::Capture capture_device;
 private:
     // singleton
     Player &operator=(Player const &);

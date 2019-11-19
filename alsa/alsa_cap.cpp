@@ -3,7 +3,7 @@
 
 int main (int argc, char **argv) {
     int err = 0;
-    short buf[1024];
+    int16_t buf[1024];
     snd_pcm_t *capture_handle;
     snd_pcm_hw_params_t *hw_params;
     unsigned rate = 44100;
@@ -33,7 +33,7 @@ int main (int argc, char **argv) {
         exit (1);
     }
 
-    if ((err = snd_pcm_hw_params_set_format (capture_handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
+    if ((err = snd_pcm_hw_params_set_format (capture_handle, hw_params, SND_PCM_FORMAT_S16)) < 0) {
         fprintf (stderr, "cannot set sample format (%s)\n",
                  snd_strerror (err));
         exit (1);
@@ -71,9 +71,9 @@ int main (int argc, char **argv) {
                      snd_strerror (err));
             exit (1);
         }
-        short max = 0;
-        short min = 0;
-        for (short j : buf) {
+        int16_t max = 0;
+        int16_t min = 0;
+        for (int16_t j : buf) {
             max = std::max(j, max);
             min = std::min(j, min);
         }
