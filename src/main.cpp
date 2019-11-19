@@ -24,10 +24,10 @@ int main(int argc, char **argv) {
     std::thread t1(get_fft, std::ref(player));
     std::thread t2(parse_fft, std::ref(player));
 //    std::thread t3(serial_interface, std::ref(player));
-    std::thread t4(show_leds, std::ref(player));
+//    std::thread t4(show_leds, std::ref(player));
     t1.join();
     t2.join();
 //    t3.join();
-    t4.join();
+//    t4.join();
     return 0;
 }

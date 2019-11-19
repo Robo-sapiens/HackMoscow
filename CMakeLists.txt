@@ -13,7 +13,7 @@ include_directories(${LIB}/serial)
 include_directories(${LIB}/pulse_device)
 include_directories(${LIB}/pulse_capture)
 include_directories(${LIB}/LED)
-
+include_directories(${LIB}/bass)
 
 ## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT}/out)
@@ -42,12 +42,19 @@ target_link_libraries(LED ${LIB}/rpi_ws281x/libws2811.a)
 
 ## player
 add_library(player STATIC ${LIB}/player/player.cpp)
-target_link_libraries(player bass talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
+target_link_libraries(player talker ${CMAKE_THREAD_LIBS_INIT} pulse_capture LED)
+target_link_libraries(player ${LIB}/bass/hardfp/libbass.so)
 
 ## main
 add_executable(player_usage src/main.cpp)
 target_link_libraries(player_usage player)
 
 ## test_serial
-add_executable(test_serial src/test_serial.cpp)
-target_link_libraries(test_serial talker)
+#add_executable(test_serial src/test_serial.cpp)
+#target_link_libraries(test_serial talker)
+
+## alsa record
+find_path(ALSA_INCLUDE_DIR NAMES alsa/asoundlib.h)
+find_library(ALSA_LIBRARY NAMES asound)
+add_executable(alsa_rec alsa/alsa_cap.cpp)
+target_link_libraries(alsa_rec asound)

@@ -59,7 +59,8 @@ pa::Capture::Capture() {
 
     int32_t error = 0;
     simple = pa_simple_new(NULL, "player_usage", PA_STREAM_RECORD,
-                  device_name.c_str(),"record", &ss, NULL, NULL, &error);
+//                  device_name.c_str(),"record", &ss, NULL, NULL, &error);
+                  NULL,"record", &ss, NULL, NULL, &error);
     if (!simple) {
         std::cout << pa_strerror(error) << std::endl;
     }
