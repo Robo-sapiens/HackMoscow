@@ -5,6 +5,7 @@ project(player)
 set(CMAKE_CXX_STANDARD 17)
 
 ## include directories
+include_directories(lib)
 include_directories(lib/uart)
 include_directories(lib/player)
 include_directories(lib/serial)
@@ -22,9 +23,15 @@ target_link_libraries(uart ${CMAKE_THREAD_LIBS_INIT})
 ## thread support
 find_package(Threads)
 
+## my_rpi
+file(GLOB rpi_SRC
+        "lib/rpi_ws281x/*.c"
+        )
+add_library(rpi_led ${rpi_SRC})
+
 ## LED
 add_library(LED STATIC lib/LED/LED.cpp)
-target_link_libraries(LED lib/rpi_ws281x/libws2811.a)
+target_link_libraries(LED rpi_led)
 
 ## player
 add_library(player STATIC lib/player/player.cpp)

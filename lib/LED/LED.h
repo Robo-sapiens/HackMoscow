@@ -6,7 +6,7 @@
 #define PLAYER_LED_H
 
 
-#include "ws2811.h"
+#include <rpi_ws281x/ws2811.h>
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
 #define GPIO_PIN                                18
