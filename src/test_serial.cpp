@@ -1,18 +1,31 @@
 //
 // Created by antonrampage on 13.11.2019.
 //
-//#include <iostream>
-//#include "serial.h"
-//#include <cstdint>
-//
-//int main() {
-//    int32_t file = serialport_init("/dev/ttyUSB0", 9600);
-//    serialport_flush(file);
-//    serialport_write(file, "hello");
-//    serialport_flush(file);
-//    serialport_close(file);
-//    return 0;
-//}
+/*#include <iostream>
+#include "serial.h"
+#include <cstdint>
+#define SERIAL_PORT "/dev/ttyAMA0"
+
+int main() {
+    int32_t file = serialport_init(SERIAL_PORT, 115200);
+    serialport_flush(file);
+    serialport_write(file, "hello");
+    int rcount = 0;
+    char buffer[10];
+        char b[1];
+        int i = 0;
+	sleep(10);
+        while(rcount = read(file, b, 1) > 0) {
+            buffer[i] = b[0];
+            i++;
+        }
+        tcflush(file, TCIOFLUSH);
+        buffer[i] = '\0';
+        printf("Received: %s\n", buffer);
+    serialport_flush(file);
+    serialport_close(file);
+    return 0;
+} */
 #include <cstdio>
 #include <cstring>
 #include <unistd.h>
@@ -24,7 +37,7 @@
 //#include <sys/types.h>
 
 
-#define SERIAL_PORT "/dev/ttyUSB0"
+#define SERIAL_PORT "/dev/serial0"
 
 int main() {
 
@@ -35,7 +48,7 @@ int main() {
     printf("Opening %s\n", SERIAL_PORT);
 
     int fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
-
+    printf("serial %d\n", fd);
     if (fd == -1) {
         perror(SERIAL_PORT);
         return -1;

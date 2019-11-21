@@ -1,8 +1,8 @@
 #include <iostream>
 #include "player.h"
 
-#define DELAY 70000
-#define SERIAL_PORT "/dev/ttyAMA0"
+#define DELAY 20000
+#define SERIAL_PORT "/dev/serial0"
 
 
 int main(int argc, char **argv) {
