@@ -6,16 +6,16 @@
 #define PLAYER_LED_H
 
 
-#include <rpi_ws281x/ws2811.h>
+#include "ws2811.h"
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
 #define GPIO_PIN                                18
 #define DMA                                     5
 #define STRIP_TYPE                              WS2811_STRIP_RGB
-#define LED_COUNT                               32
+#define LED_COUNT                               256 // TODO: AS PARAM
 #define MAX_BRGHT                               40
 
-#define UPDATE_LEDS                             3
+#define UPDATE_LEDS                             8
 
 typedef struct RGB {
     uint32_t r;
