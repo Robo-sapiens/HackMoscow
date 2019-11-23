@@ -14,6 +14,7 @@ include_directories(${LIB}/player)
 include_directories(${LIB}/pulse_device)
 include_directories(${LIB}/pulse_capture)
 include_directories(cmake-build-debug/player_ui_autogen/include)
+include_directories(player_ui)
 ## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY out)
 
@@ -33,7 +34,7 @@ add_library(pulse_capture STATIC ${LIB}/pulse_capture/capture.cpp)
 target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
 
 ## player
-add_library(player STATIC ${LIB}/player/player.cpp)
+add_library(player STATIC ${LIB}/player/player.cpp lib/player/rgbparameters.cpp)
 target_link_libraries(player bass ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
 ## main console
@@ -64,9 +65,9 @@ set(UI_SRC
         player_ui/animation.cpp
         player_ui/animation.ui
         player_ui/animation.h
-        )
+        player_ui/polygon.cpp player_ui/polygon.h)
 
-find_package(Qt5 COMPONENTS Widgets Core Gui SerialPort REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Gui SerialPort OpenGL REQUIRED)
 
 add_executable(player_ui ${UI_SRC})
 
@@ -76,4 +77,5 @@ target_link_libraries(player_ui
         Qt5::Core
         Qt5::Gui
         Qt5::SerialPort
+        Qt5::OpenGL
         )

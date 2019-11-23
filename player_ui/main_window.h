@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include <player.h>
+#include "polygon.h"
+#include <queue>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,6 +18,9 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr, Player *player = nullptr);
     ~MainWindow() override;
+
+protected:
+    void paintEvent(QPaintEvent *) override;
 
 signals:
     void open_colors();
@@ -29,5 +35,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Player *player;
+//    std::queue<Polygon *> *polygons;
+    Polygon * polygon;
 };
+
+
 #endif // MAINWINDOW_H

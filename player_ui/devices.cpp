@@ -3,8 +3,6 @@
 #include <QSerialPortInfo>
 #include <pulse_device/list_devices.h>
 
-#include <QDebug>
-
 #define POSSIBLE_AMOUNT_OF_DEVICES 32
 
 Devices::Devices(QWidget *parent, Player *player) :
@@ -28,13 +26,11 @@ Devices::~Devices() {
 
 void Devices::on_select_card_clicked() {
     player->capture_device.isSet = false;
-    qDebug() << ui->soundCardList->currentIndex().data().toString();
     player->capture_device.set_device(ui->soundCardList->currentIndex().data().toString().toUtf8().data());
     emit start_capture();
 }
 
 void Devices::on_select_port_clicked() {
-    qDebug() << ui->portsList->currentIndex().data().toString();
     if (ui->portsList->currentIndex().data().toString() != "") {
         emit start_port(QSerialPortInfo::availablePorts()[ui->soundCardList->currentIndex().data().toInt()]);
     }

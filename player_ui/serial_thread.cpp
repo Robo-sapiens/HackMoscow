@@ -4,6 +4,8 @@
 
 #include "serial_thread.h"
 #include <QDebug>
+
+
 SerialThread::SerialThread(Player *player) : player(player), serial_port(), isConnected(false), serial_port_info(new QSerialPortInfo()) {}
 
 void SerialThread::run() {

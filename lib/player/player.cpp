@@ -38,11 +38,6 @@ Player::Msg::~Msg() {
 }
 
 
-void Player::tweak_rgb(RGBParameters rgb_params) {
-    rgb_parameters = rgb_params;
-}
-
-
 void Player::error_handler() {
     this->error_code = BASS_ErrorGetCode();
     std::cout << "error code is: " << (int32_t)this->error_code << std::endl;

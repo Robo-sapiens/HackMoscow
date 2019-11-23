@@ -1,6 +1,7 @@
 #ifndef __PLAYERH__
 #define __PLAYERH__
 
+#include "rgbparameters.h"
 #include "capture.h"
 #include "bass.h"
 #include <thread>
@@ -9,17 +10,6 @@
 #include <cstdint>
 #include <cmath>
 
-
-typedef struct RGBParameters
-{
-    int32_t  width;
-    int32_t  filter;
-    int32_t  red_peak;
-    int32_t  green_peak;
-    int32_t  blue_peak;
-    double_t sensitivity;
-    bool     tweak_by_min;
-} RGBParameters;
 
 class Player
 {
@@ -45,7 +35,6 @@ public:
     ~Player();
 
     void error_handler();
-    void tweak_rgb(RGBParameters rgb_params);
 
     size_t delay;
     Msg msg;

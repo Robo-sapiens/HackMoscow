@@ -10,36 +10,35 @@ FFTWThread::FFTWThread(Player *player) : player(player), qMutex(new QMutex()) {}
 
 
 void FFTWThread::run() {
-    auto p = player->rgb_parameters;
     while (!player->error_code) {
         int32_t r = 0, g = 0, b = 0;
-        for (int32_t i = std::max(0, p.red_peak - p.width);
-             i < std::min(player->msg.sample_size, p.red_peak + p.width); ++i) {
-            if (player->msg.fft[i] > p.filter) {
-                r += player->msg.fft[i] * std::abs(p.width - (p.red_peak - (float) i)) / (p.width) * i;
+        for (int32_t i = std::max(0, player->rgb_parameters.red_peak - player->rgb_parameters.width);
+             i < std::min(player->msg.sample_size, player->rgb_parameters.red_peak + player->rgb_parameters.width); ++i) {
+            if (player->msg.fft[i] > player->rgb_parameters.filter) {
+                r += player->msg.fft[i] * std::abs(player->rgb_parameters.width - (player->rgb_parameters.red_peak - (float) i)) / (player->rgb_parameters.width) * i;
             }
         }
-        for (int32_t i = std::max(0, p.green_peak - p.width);
-             i < std::min(player->msg.sample_size, p.green_peak + p.width); ++i) {
-            if (player->msg.fft[i] > p.filter) {
-                g += player->msg.fft[i] * std::abs(p.width - (p.green_peak - (float) i)) / (p.width) * i;
+        for (int32_t i = std::max(0, player->rgb_parameters.green_peak - player->rgb_parameters.width);
+             i < std::min(player->msg.sample_size, player->rgb_parameters.green_peak + player->rgb_parameters.width); ++i) {
+            if (player->msg.fft[i] > player->rgb_parameters.filter) {
+                g += player->msg.fft[i] * std::abs(player->rgb_parameters.width - (player->rgb_parameters.green_peak - (float) i)) / (player->rgb_parameters.width) * i;
             }
         }
-        for (int32_t i = std::max(0, p.blue_peak - p.width);
-             i < std::min(player->msg.sample_size, p.blue_peak + p.width); ++i) {
-            if (player->msg.fft[i] > p.filter) {
-                b += player->msg.fft[i] * std::abs(p.width - (p.blue_peak - (float) i)) / (p.width) * i;
+        for (int32_t i = std::max(0, player->rgb_parameters.blue_peak - player->rgb_parameters.width);
+             i < std::min(player->msg.sample_size, player->rgb_parameters.blue_peak + player->rgb_parameters.width); ++i) {
+            if (player->msg.fft[i] > player->rgb_parameters.filter) {
+                b += player->msg.fft[i] * std::abs(player->rgb_parameters.width - (player->rgb_parameters.blue_peak - (float) i)) / (player->rgb_parameters.width) * i;
             }
         }
-        if (p.tweak_by_min) {
+        if (player->rgb_parameters.tweak_by_min) {
             int32_t min_val = std::min(r, std::min(g, b));
             r -= min_val;
             g -= min_val;
             b -= min_val;
         }
-        r *= p.sensitivity;
-        g *= p.sensitivity;
-        b *= p.sensitivity;
+        r *= player->rgb_parameters.sensitivity;
+        g *= player->rgb_parameters.sensitivity;
+        b *= player->rgb_parameters.sensitivity;
         if (r > 255) {
             r = 255;
         }
@@ -49,8 +48,8 @@ void FFTWThread::run() {
         if (b > 255) {
             b = 255;
         }
-//        qDebug() << r << g << << b;
 
+//        qDebug() << r << g << b;
         qMutex->lock();
 
         player->rgb.r = r;
@@ -67,6 +66,7 @@ void FFTWThread::run() {
         player->msg.text[9] = '0' + (char) ((int32_t) b % 10);
 
         qMutex->unlock();
+        emit new_data();
     }
 }
 
