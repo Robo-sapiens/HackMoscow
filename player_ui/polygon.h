@@ -21,10 +21,9 @@ public:
     ~Polygon();
 
     void set_items(const double *matrix, size_t size);
-    double * operator()(size_t row, size_t col);
-    void rotate(double rad);
+    double *operator()(size_t row, size_t col);
     void operator*=(double coef);
-    void operator+=(double coef);
+    void operator*=(const double *tr_matrix);
 
     size_t rows;
     size_t cols;

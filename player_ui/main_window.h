@@ -36,6 +36,7 @@ private:
     Ui::MainWindow *ui;
     Player *player;
     std::deque<Polygon *> polygons;
+    double *transformation_matrix;
 };
 
 
