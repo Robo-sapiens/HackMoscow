@@ -6,7 +6,7 @@
 
 Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b) :
         rows(2), cols(verteces), m(new double[rows * cols]),
-        vectors(new QPoint[cols]), max_item(0), color(r, g, b /* TODO: a?*/) {}
+        vectors(new QPoint[cols]), max_item(0), color(r, g, b) {}
 
 Polygon::~Polygon() {
     delete[] m;
@@ -40,8 +40,8 @@ void Polygon::operator*=(double coef) {
     }
 
     for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int)(coef * *this->operator()(0, j)));
-        vectors[j].setY((int)(coef * *this->operator()(1, j)));
+        vectors[j].setX((int)(*this->operator()(0, j)));
+        vectors[j].setY((int)(*this->operator()(1, j)));
     }
 
     max_item *= coef;
@@ -57,4 +57,17 @@ Polygon::Polygon(const Polygon &other) :
     for (size_t j = 0; j < cols; ++j) {
         vectors[j] = other.vectors[j];
     }
+}
+
+void Polygon::operator+=(double coef) {
+    for (size_t i = 0; i < rows * cols; ++i) {
+        m[i] += coef;
+    }
+
+    for (size_t j = 0; j < cols; ++j) {
+        vectors[j].setX((int)(*this->operator()(0, j)));
+        vectors[j].setY((int)(*this->operator()(1, j)));
+    }
+
+    max_item *= coef;
 }

@@ -24,6 +24,7 @@ public:
     double * operator()(size_t row, size_t col);
     void rotate(double rad);
     void operator*=(double coef);
+    void operator+=(double coef);
 
     size_t rows;
     size_t cols;

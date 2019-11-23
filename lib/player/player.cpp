@@ -9,7 +9,7 @@
 
 Player::Player(size_t delay, size_t sample_size, RGBParameters params)
         : delay(delay),
-        msg("<000000000>", sample_size),
+        msg("{000}<000000000>", sample_size),
         rgb({0, 0, 0}),
         error_code(0),
         hsample(),

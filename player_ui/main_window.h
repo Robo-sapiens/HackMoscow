@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <player.h>
 #include "polygon.h"
-#include <queue>
+#include <deque>
 
 
 QT_BEGIN_NAMESPACE
@@ -35,8 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Player *player;
-//    std::queue<Polygon *> *polygons;
-    Polygon * polygon;
+    std::deque<Polygon *> polygons;
 };
 
 

@@ -10,15 +10,15 @@ Color::Color(QWidget *parent, Player *player) :
     ui(new Ui::color),
     player(player),
     qpoints(new QPoint[player->msg.sample_size]) {
-
+    //TODO: advanced settings
     ui->setupUi(this);
-    ui->sliderBlue->setRange(0, player->msg.sample_size / 2);
+    ui->sliderBlue->setRange(0, player->msg.sample_size / 2 - 1);
     ui->sliderBlue->setSliderPosition(player->rgb_parameters.blue_peak);
-    ui->sliderGreen->setRange(0, player->msg.sample_size / 2);
+    ui->sliderGreen->setRange(0, player->msg.sample_size / 2 - 1);
     ui->sliderGreen->setSliderPosition(player->rgb_parameters.green_peak);
-    ui->sliderRed->setRange(0, player->msg.sample_size / 2);
+    ui->sliderRed->setRange(0, player->msg.sample_size / 2 - 1);
     ui->sliderRed->setSliderPosition(player->rgb_parameters.red_peak);
-    ui->sliderWidth->setRange(0, player->msg.sample_size / 2);
+    ui->sliderWidth->setRange(0, player->msg.sample_size / 2 - 1);
     ui->sliderWidth->setSliderPosition(player->rgb_parameters.width);
     ui->checkMinFilter->setCheckState(Qt::Checked);
     ui->nobSensitivity->setRange(-200, 200);
