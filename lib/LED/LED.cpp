@@ -36,6 +36,7 @@ LED::~LED() {
 
 void LED::show_led_on_pi(RGB &led_rgb) {
     // left
+//	std::cout << led_rgb.r << ' ' << led_rgb.g << ' ' << led_rgb.b << std::endl;
     for (int i = LED_COUNT - 1; i >= UPDATE_LEDS + LED_COUNT / 2; --i) {
         this->ledstring.channel[0].leds[i] = this->ledstring.channel[0].leds[i - UPDATE_LEDS];
     }
@@ -45,7 +46,7 @@ void LED::show_led_on_pi(RGB &led_rgb) {
     }
     // Set the left most updateLEDs with the new color
     for (int i = LED_COUNT / 2 - UPDATE_LEDS; i < LED_COUNT / 2 + UPDATE_LEDS; ++i) {
-        this->ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb.r, led_rgb.g, led_rgb.b);
+        this->ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
     }
 
     ws2811_render(&this->ledstring);

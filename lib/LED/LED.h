@@ -9,7 +9,7 @@
 #include <rpi_ws281x/ws2811.h>
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
-#define GPIO_PIN                                18
+#define GPIO_PIN                                21
 #define DMA                                     5
 #define STRIP_TYPE                              WS2811_STRIP_RGB
 #define LED_COUNT                               256 // TODO: AS PARAM
@@ -18,9 +18,9 @@
 #define UPDATE_LEDS                             8
 
 typedef struct RGB {
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
+    int32_t r;
+    int32_t g;
+    int32_t b;
 } RGB;
 
 class LED {
