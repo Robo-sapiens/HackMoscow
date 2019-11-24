@@ -28,6 +28,7 @@ Color::Color(QWidget *parent, Player *player) :
     ui->sliderWidth->setSliderPosition(player->rgb_parameters.width);
     ui->checkMinFilter->setCheckState(Qt::CheckState(((int)player->rgb_parameters.tweak_by_min) * 2));
     ui->nobBPM->setSliderPosition(player->rgb_parameters.bpm);
+    ui->editBPM->setPlainText("100");
     ui->nobImpactR->setSliderPosition(400);
     ui->nobImpactG->setSliderPosition(400);
     ui->nobImpactB->setSliderPosition(400);
@@ -116,10 +117,12 @@ void Color::on_buttonReset_clicked() {
     ui->sliderGreen->setSliderPosition(player->rgb_parameters.green_peak);
     ui->sliderRed->setSliderPosition(player->rgb_parameters.red_peak);
     ui->sliderWidth->setSliderPosition(player->rgb_parameters.width);
-    ui->checkMinFilter->setCheckState(Qt::Checked);
-    ui->nobSensitivity->setSliderPosition(0);
-    ui->nobFilter->setSliderPosition(0);
+    ui->checkMinFilter->setCheckState(Qt::CheckState(((int)player->rgb_parameters.tweak_by_min) * 2));
     ui->nobBPM->setSliderPosition(player->rgb_parameters.bpm);
+    ui->editBPM->setPlainText("100");
+    ui->nobImpactR->setSliderPosition(400);
+    ui->nobImpactG->setSliderPosition(400);
+    ui->nobImpactB->setSliderPosition(400);
 }
 
 void Color::on_nobBPM_valueChanged(int value) {
