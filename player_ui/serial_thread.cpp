@@ -5,8 +5,8 @@
 #include "serial_thread.h"
 #include <QDebug>
 
-
-SerialThread::SerialThread(Player *player) : player(player), serial_port(), isConnected(false), serial_port_info(new QSerialPortInfo()) {}
+SerialThread::SerialThread(Player *player)
+    : player(player), serial_port(), isConnected(false), serial_port_info(new QSerialPortInfo()) {}
 
 void SerialThread::run() {
     serial_port = new QSerialPort();
@@ -36,7 +36,7 @@ SerialThread::~SerialThread() {
     delete serial_port_info;
 }
 
-void SerialThread::start_port(const QSerialPortInfo& q_serial_port) {
+void SerialThread::start_port(const QSerialPortInfo &q_serial_port) {
     isConnected = false;
     *serial_port_info = q_serial_port;
     this->start();

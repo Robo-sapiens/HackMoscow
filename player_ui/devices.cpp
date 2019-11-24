@@ -6,17 +6,16 @@
 #define POSSIBLE_AMOUNT_OF_DEVICES 32
 
 Devices::Devices(QWidget *parent, Player *player) :
-        QWidget(parent),
-        ui(new Ui::devices),
-        player(player),
-        sound_card_list(new QStringListModel(this)),
-        ports_list(new QStringListModel(this)) {
+    QWidget(parent),
+    ui(new Ui::devices),
+    player(player),
+    sound_card_list(new QStringListModel(this)),
+    ports_list(new QStringListModel(this)) {
 
     ui->setupUi(this);
     load_cards();
     load_ports();
 }
-
 
 Devices::~Devices() {
     delete ui;
@@ -48,8 +47,8 @@ void Devices::load_ports() {
 void Devices::load_cards() {
     QStringList deviceStringList;
 
-    auto pa_input_devicelist =  (pa_devicelist_t *)calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
-    auto pa_output_devicelist = (pa_devicelist_t *)calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
+    auto pa_input_devicelist = (pa_devicelist_t *) calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
+    auto pa_output_devicelist = (pa_devicelist_t *) calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
     if (pa_get_devicelist(pa_input_devicelist, pa_output_devicelist) < 0) {
         return;
     }

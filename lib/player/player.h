@@ -10,28 +10,24 @@
 #include <cstdint>
 #include <cmath>
 
-
-class Player
-{
-    class Msg
-    {
+class Player {
+    class Msg {
     public:
         Msg(std::string what, size_t size);
         ~Msg();
         int32_t sample_size;
-        float * fft;
+        float *fft;
         std::string text;
     };
 
-    typedef struct RGB
-    {
+    typedef struct RGB {
         int32_t r;
         int32_t g;
         int32_t b;
     } RGB;
 
 public:
-    explicit Player(size_t delay, size_t sample_size, RGBParameters params);
+    explicit Player(size_t delay);
     ~Player();
 
     void error_handler();
@@ -48,7 +44,7 @@ private:
     // singleton
     Player &operator=(Player const &);
 
-    Player (Player const &);
+    Player(Player const &);
 };
 
 #endif

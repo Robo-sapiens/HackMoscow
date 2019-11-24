@@ -5,12 +5,11 @@
 #include "audio_thread.h"
 #include <QDebug>
 
-
 AudioThread::AudioThread(Player *player)
-        : player(player) {}
+    : player(player) {}
 
 void AudioThread::run() {
-    auto in = (float *)calloc(player->msg.sample_size, sizeof(float));
+    auto in = (float *) calloc(player->msg.sample_size, sizeof(float));
     while (player->capture_device.isSet) {
         player->capture_device.get_sample(in, player->msg.sample_size);
         BASS_StreamPutData(player->hstream, in, player->msg.sample_size);

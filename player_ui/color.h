@@ -8,9 +8,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class color; }
 QT_END_NAMESPACE
 
-class Color : public QWidget
-{
-    Q_OBJECT
+class Color : public QWidget {
+Q_OBJECT
 
 public:
     explicit Color(QWidget *parent = nullptr, Player *player = nullptr);
@@ -28,6 +27,12 @@ private slots:
     void on_buttonReset_clicked();
     void on_nobBPM_valueChanged(int value);
     void on_editBPM_textChanged();
+
+    void on_nobImpactR_valueChanged(int value);
+
+    void on_nobImpactG_valueChanged(int value);
+
+    void on_nobImpactB_valueChanged(int value);
 
 protected:
     void paintEvent(QPaintEvent *) override;

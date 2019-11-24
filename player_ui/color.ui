@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>347</height>
+    <height>443</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -193,21 +193,8 @@
            <property name="sizeConstraint">
             <enum>QLayout::SetMinimumSize</enum>
            </property>
-           <item row="3" column="0">
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="0">
-            <widget class="QDial" name="nobSensitivity">
+           <item row="1" column="1">
+            <widget class="QDial" name="nobFilter">
              <property name="minimumSize">
               <size>
                <width>90</width>
@@ -218,6 +205,22 @@
               <size>
                <width>90</width>
                <height>90</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QDial" name="nobImpactG"/>
+           </item>
+           <item row="6" column="2">
+            <widget class="QDial" name="nobImpactB"/>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPlainTextEdit" name="editBPM">
+             <property name="maximumSize">
+              <size>
+               <width>90</width>
+               <height>30</height>
               </size>
              </property>
             </widget>
@@ -242,6 +245,26 @@
              </property>
             </widget>
            </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>R</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>impact level</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="2">
             <widget class="QDial" name="nobBPM">
              <property name="minimumSize">
@@ -258,8 +281,18 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QDial" name="nobFilter">
+           <item row="5" column="2">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QDial" name="nobSensitivity">
              <property name="minimumSize">
               <size>
                <width>90</width>
@@ -274,6 +307,16 @@
              </property>
             </widget>
            </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>G</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="1">
             <widget class="QLabel" name="labelFilter">
              <property name="text">
@@ -284,15 +327,21 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QPlainTextEdit" name="editBPM">
-             <property name="maximumSize">
+           <item row="6" column="0">
+            <widget class="QDial" name="nobImpactR"/>
+           </item>
+           <item row="3" column="2">
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
               <size>
-               <width>90</width>
-               <height>30</height>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
-            </widget>
+            </spacer>
            </item>
           </layout>
          </item>

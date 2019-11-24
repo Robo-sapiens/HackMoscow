@@ -6,14 +6,12 @@
 #include <QSerialPort>
 #include "player.h"
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class devices; }
 QT_END_NAMESPACE
 
-class Devices : public QWidget
-{
-    Q_OBJECT
+class Devices : public QWidget {
+Q_OBJECT
 
 public:
     explicit Devices(QWidget *parent = nullptr, Player *player = nullptr);
@@ -29,7 +27,7 @@ private slots:
 
 signals:
     void start_capture();
-    void start_port(const QSerialPortInfo & q_serial_port_info);
+    void start_port(const QSerialPortInfo &q_serial_port_info);
 
 private:
     Ui::devices *ui;

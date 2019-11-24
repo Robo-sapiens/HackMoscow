@@ -4,12 +4,10 @@
 Animation::Animation(QWidget *parent, Player *player) :
     QWidget(parent),
     ui(new Ui::animation),
-    player(player)
-{
+    player(player) {
     ui->setupUi(this);
 }
 
-Animation::~Animation()
-{
+Animation::~Animation() {
     delete ui;
 }

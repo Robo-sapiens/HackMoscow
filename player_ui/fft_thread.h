@@ -9,10 +9,8 @@
 #include <QMutex>
 #include "player.h"
 
-
-class FFTWThread : public QThread
-{
-    Q_OBJECT
+class FFTWThread : public QThread {
+Q_OBJECT
 public:
     explicit FFTWThread(Player *player);
     ~FFTWThread() override;

@@ -5,12 +5,12 @@
 #include "polygon.h"
 
 Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b) :
-        rows(2), cols(verteces), m(new double[rows * cols]),
-        vectors(new QPoint[cols]), max_item(0), color(r, g, b) {}
+    rows(2), cols(verteces), m(new double[rows * cols]),
+    vectors(new QPoint[cols]), max_item(0), color(r, g, b) {}
 
 Polygon::Polygon(const Polygon &other) :
-        rows(other.rows), cols(other.cols), m(new double[rows * cols]),
-        vectors(new QPoint[cols]), max_item(other.max_item), color(other.color) {
+    rows(other.rows), cols(other.cols), m(new double[rows * cols]),
+    vectors(new QPoint[cols]), max_item(other.max_item), color(other.color) {
     for (size_t i = 0; i < rows * cols; ++i) {
         this->m[i] = other.m[i];
     }
@@ -32,12 +32,12 @@ void Polygon::set_items(const double *matrix, size_t size) {
     }
 
     for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int)*this->operator()(0, j));
-        vectors[j].setY((int)*this->operator()(1, j));
+        vectors[j].setX((int) *this->operator()(0, j));
+        vectors[j].setY((int) *this->operator()(1, j));
     }
 }
 
-double * Polygon::operator()(size_t row, size_t col) {
+double *Polygon::operator()(size_t row, size_t col) {
     return &m[row * cols + col];
 }
 
@@ -47,8 +47,8 @@ void Polygon::operator*=(double coef) {
     }
 
     for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int)(*this->operator()(0, j)));
-        vectors[j].setY((int)(*this->operator()(1, j)));
+        vectors[j].setX((int) (*this->operator()(0, j)));
+        vectors[j].setY((int) (*this->operator()(1, j)));
     }
 
     max_item *= coef;
@@ -60,7 +60,7 @@ void Polygon::operator*=(const double *tr_matrix) {
     for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
             new_matr[i * cols + j] = tr_matrix[i * rows + 0] * m[/*0 * cols + */ j] +
-            tr_matrix[i * rows + 1] * m[/*1 * */cols + j];
+                tr_matrix[i * rows + 1] * m[/*1 * */cols + j];
         }
     }
 
@@ -68,8 +68,8 @@ void Polygon::operator*=(const double *tr_matrix) {
     m = new_matr;
 
     for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int)(*this->operator()(0, j)));
-        vectors[j].setY((int)(*this->operator()(1, j)));
+        vectors[j].setX((int) (*this->operator()(0, j)));
+        vectors[j].setY((int) (*this->operator()(1, j)));
     }
 
     max_item *= tr_matrix[0];

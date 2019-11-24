@@ -4,10 +4,11 @@
 
 #include "rgbparameters.h"
 
-RGBParameters::RGBParameters(int32_t width, int32_t filter, int32_t red_peak, int32_t green_peak, int32_t blue_peak,
-                             double_t sensitivity, int32_t bpm, bool tweak_by_min)
-                             : width(width), filter(filter), red_peak(red_peak), green_peak(green_peak),
-                             blue_peak(blue_peak), sensitivity(sensitivity), bpm(bpm), tweak_by_min(tweak_by_min) {}
+
+RGBParameters::RGBParameters()
+    : width(SAMPLE_SIZE / 4), filter(0), red_peak(0), green_peak(255),
+      blue_peak(127), sensitivity(255. / 5000), bpm(100), tweak_by_min(true),
+      red_imp(1), green_imp(1), blue_imp(1) {}
 
 void RGBParameters::tweak(RGBParameters rgb_params) {
     *this = rgb_params;

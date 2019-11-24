@@ -9,15 +9,15 @@
 
 #include "capture.h"
 
-pa::Capture::Capture(): isSet(false),
-        ss({.format = PA_SAMPLE_FLOAT32,
-        .rate = 44100,
-        .channels = 2 }) {}
+pa::Capture::Capture() : isSet(false),
+                         ss({.format = PA_SAMPLE_FLOAT32,
+                                .rate = 44100,
+                                .channels = 2}) {}
 
 int32_t pa::Capture::set_device(std::string device) {
     int32_t error = 0;
     simple = pa_simple_new(NULL, "player_usage", PA_STREAM_RECORD,
-                           device.c_str(),"record", &ss, NULL, NULL, &error);
+                           device.c_str(), "record", &ss, NULL, NULL, &error);
     if (!error) {
         isSet = true;
     }
