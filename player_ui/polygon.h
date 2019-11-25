@@ -10,6 +10,7 @@
 #include <QTime>
 #include <QPoint>
 #include <QtGui/QColor>
+#include <cmath>
 
 class Polygon {
 public:
@@ -17,17 +18,17 @@ public:
     Polygon(const Polygon &other);
     ~Polygon();
 
-    void set_items(const double *matrix, size_t size);
-    double *operator()(size_t row, size_t col);
-    void operator*=(double coef);
-    void operator*=(const double *tr_matrix);
+    void set_items(const float_t *matrix, size_t size);
+    float_t *operator()(size_t row, size_t col);
+    void operator*=(float_t coef);
+    void operator*=(const float_t *tr_matrix);
 
-    size_t rows;
-    size_t cols;
-    double *m;
-    QPoint *vectors;
-    double max_item;
-    QColor color;
+    size_t  rows;
+    size_t  cols;
+    float_t *m;
+    QPoint  *vectors;
+    float_t max_item;
+    QColor  color;
 };
 
 #endif //PLAYER_UI_POLYGON_H

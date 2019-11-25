@@ -8,6 +8,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 #include <cstdint>
+#include <string>
 
 namespace pa {
 class Capture {

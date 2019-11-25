@@ -15,6 +15,7 @@ class Player {
     public:
         Msg(std::string what, size_t size);
         ~Msg();
+        int32_t actual_size();
         int32_t sample_size;
         float *fft;
         std::string text;

@@ -4,15 +4,16 @@
 #include <QDebug>
 #include <zconf.h>
 #include <cmath>
+#include <QKeyEvent>
 
-MainWindow::MainWindow(QWidget *parent, Player *player)
-    : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      player(player),
-      polygons(),
-      transformation_matrix(new double[2 * 2]) {
+MainWindow::MainWindow(QWidget *parent, Player *player) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    player(player),
+    polygons(),
+    transformation_matrix(new float_t[2 * 2]) {
     ui->setupUi(this);
-    double phi = -0.06;
+    float_t phi = -0.06;
     transformation_matrix[0] = 1.2 * std::cos(phi);
     transformation_matrix[1] = -std::sin(phi);
     transformation_matrix[2] = std::sin(phi);
@@ -56,13 +57,24 @@ void MainWindow::paintEvent(QPaintEvent *) {
     usleep(1000000 / player->rgb_parameters.bpm);
 
     auto *tmp = new Polygon(5, player->rgb.r, player->rgb.g, player->rgb.b);
-    double matrix[10] = {0, 9, 5.5, -5.5, -9, 10, 2, -6.5, -6.5, 2};
+    float_t matrix[10] = {0, 9, 5.5, -5.5, -9, 10, 2, -6.5, -6.5, 2};
     tmp->set_items(matrix, 10);
     polygons.push_back(tmp);
 
     painter->restore();
     delete painter;
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_F11) {
+        if (this->isFullScreen()) {
+            this->showMaximized();
+        } else {
+            this->showFullScreen();
+        }
+    }
+}
+
 //
 //void MainWindow::on_MainWindow_destroyed() {
 //

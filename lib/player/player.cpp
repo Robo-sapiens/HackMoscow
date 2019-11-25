@@ -32,6 +32,9 @@ Player::Msg::Msg(std::string what, size_t sample_size) :
 Player::Msg::~Msg() {
     free(fft);
 }
+int32_t Player::Msg::actual_size() {
+    return sample_size / 2;
+}
 
 void Player::error_handler() {
     this->error_code = BASS_ErrorGetCode();

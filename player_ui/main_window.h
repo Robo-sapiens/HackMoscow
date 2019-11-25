@@ -19,6 +19,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void open_colors();
@@ -36,7 +37,7 @@ private:
     Ui::MainWindow *ui;
     Player *player;
     std::deque<Polygon *> polygons;
-    double *transformation_matrix;
+    float_t *transformation_matrix;
 };
 
 #endif // MAINWINDOW_H
