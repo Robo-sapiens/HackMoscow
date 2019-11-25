@@ -7,6 +7,8 @@
 
 
 #include <rpi_ws281x/ws2811.h>
+#include <cmath>
+#include <vector>
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
 #define GPIO_PIN                                21
@@ -23,11 +25,19 @@ typedef struct RGB {
     int32_t b;
 } RGB;
 
+typedef struct Point {
+    float_t x;
+    float_t y;
+} Point;
+
+
 class LED {
 public:
     LED();
     ~LED();
     void show_led_on_pi(RGB &led_rgb);
+    void show_figure_on_led(std::vector<std::pair<std::vector<Point>, RGB>> &figures);
+    void draw_line(Point &a, Point &b, RGB &led_rgb);
 private:
     ws2811_t ledstring;
 };

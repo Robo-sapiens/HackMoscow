@@ -20,8 +20,12 @@ void serial_interface(Player &player) {
 
 void show_leds(Player &player) {
     LED led;
-    while(true) {
-        led.show_led_on_pi(player.rgb);
-        usleep(player.delay);
-    }
+    Point a = {-10, -2};
+    Point b = {13, 4};
+    RGB led_rgb= {30, 0, 0};
+    //while(true) {
+        //led.show_led_on_pi(player.rgb);
+	led.draw_line(a, b, led_rgb);
+      //  usleep(player.delay);
+    //}
 }
