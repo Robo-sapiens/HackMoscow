@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QPainter>
 
+
 Animation::Animation(QWidget *parent, Player *player) :
     QWidget(parent),
     ui(new Ui::animation),
@@ -11,8 +12,7 @@ Animation::Animation(QWidget *parent, Player *player) :
     amount(0),
     x(new std::vector<float>),
     y(new std::vector<float>),
-    radius(-1.f)
-    {
+    radius(-1.f) {
     ui->setupUi(this);
 }
 
@@ -40,8 +40,8 @@ void Animation::on_spinBox_valueChanged(int arg1) {
         QObject::connect(t1, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         QObject::connect(t2, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         vertices->push_back({t1, t2});
-        ui->mainLayout->addWidget(t1, amount + 3, 0);
-        ui->mainLayout->addWidget(t2, amount + 3, 1);
+        ui->mainLayout->addWidget(t1, amount + 4, 0);
+        ui->mainLayout->addWidget(t2, amount + 4, 1);
         x->push_back(1);
         y->push_back(1);
         ++amount;
@@ -58,7 +58,6 @@ void Animation::on_spinBox_valueChanged(int arg1) {
     }
 }
 
-
 void Animation::on_value_changed() {
     for (int32_t kI = 0; kI < amount; ++kI) {
         x->at(kI) = vertices->at(kI).first->toPlainText().toFloat();
@@ -70,20 +69,19 @@ void Animation::on_checkCircle_stateChanged(int arg1) {
     if (arg1) {
         auto text_tmp = ui->editRadius->toPlainText();
         if (text_tmp != "" && text_tmp.toFloat() > 0) {
-            radius = ui->editRadius->toPlainText().toFloat();
+            radius = text_tmp.toFloat();
         } else {
             radius = 1.f;
         }
     } else {
         radius = -1;
     }
-    // TODO: emit
 }
 
 void Animation::on_editRadius_textChanged() {
     auto text_tmp = ui->editRadius->toPlainText();
     if (text_tmp != "" && text_tmp.toFloat() > 0) {
-        radius = ui->editRadius->toPlainText().toFloat();
+        radius = text_tmp.toFloat();
     }
 }
 
@@ -98,12 +96,12 @@ void Animation::paintEvent(QPaintEvent *) {
     painter->setPen(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
 
     if (radius >= 0) {
-        auto center = new QPoint(0, 0);
+        auto center = QPoint(0, 0);
         if (!x->empty() && !y->empty()) {
-            center->setX(x->front());
-            center->setY(-y->front());
+            center.setX(x->front());
+            center.setY(-y->front());
         }
-        painter->drawEllipse(*center, (int32_t)(radius * 20), (int32_t)(radius * 20));
+        painter->drawEllipse(center, (int32_t)(radius * 20), (int32_t)(radius * 20));
     } else {
         auto points = new QPoint[amount];
         for (int32_t kI = 0; kI < amount; ++kI) {
@@ -121,4 +119,18 @@ void Animation::paintEvent(QPaintEvent *) {
 
     painter->restore();
     delete painter;
+}
+
+void Animation::on_buttonSubmit_clicked() {
+    emit change_verteces(x->data(), y->data(), amount, radius);
+}
+
+void Animation::on_editRotation_textChanged() {
+    auto text_tmp = ui->editRotation->toPlainText();
+    if (text_tmp != "") {
+        if (std::abs(text_tmp.toFloat()) > 20) {
+            ui->editRotation->setText("20");
+        }
+        emit change_rotation(ui->editRotation->toPlainText().toFloat() * M_PI / 180);
+    }
 }

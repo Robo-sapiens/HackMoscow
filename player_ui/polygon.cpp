@@ -4,9 +4,9 @@
 
 #include "polygon.h"
 
-Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b) :
+Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b, float_t radius) :
     rows(2), cols(verteces), m(new float_t[rows * cols]),
-    vectors(new QPoint[cols]), max_item(0), color(r, g, b) {}
+    vectors(new QPoint[cols]), max_item(0), color(r, g, b), radius(radius) {}
 
 Polygon::Polygon(const Polygon &other) :
     rows(other.rows), cols(other.cols), m(new float_t[rows * cols]),

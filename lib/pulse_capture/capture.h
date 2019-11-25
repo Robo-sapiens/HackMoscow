@@ -21,7 +21,7 @@ public:
     bool isSet;
 private:
     pa_sample_spec ss;
-    pa_simple *simple{};
+    pa_simple *simple;
 };
 }
 #endif //PLAYER_CAPTURE_H

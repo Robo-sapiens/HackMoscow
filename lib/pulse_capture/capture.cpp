@@ -12,7 +12,8 @@
 pa::Capture::Capture() : isSet(false),
                          ss({.format = PA_SAMPLE_FLOAT32,
                                 .rate = 44100,
-                                .channels = 2}) {}
+                                .channels = 2}),
+                         simple(NULL) {}
 
 int32_t pa::Capture::set_device(std::string device) {
     int32_t error = 0;
@@ -26,7 +27,7 @@ int32_t pa::Capture::set_device(std::string device) {
 }
 
 pa::Capture::~Capture() {
-    if (!simple) {
+    if (simple) {
         pa_simple_free(simple);
     }
 }

@@ -32,7 +32,6 @@ void SerialThread::run() {
 }
 
 SerialThread::~SerialThread() {
-    serial_port->close();
     delete serial_port_info;
 }
 

@@ -14,7 +14,7 @@
 
 class Polygon {
 public:
-    Polygon(size_t verteces, int32_t r, int32_t g, int32_t b);
+    Polygon(size_t verteces, int32_t r, int32_t g, int32_t b, float_t radius);
     Polygon(const Polygon &other);
     ~Polygon();
 
@@ -29,6 +29,7 @@ public:
     QPoint  *vectors;
     float_t max_item;
     QColor  color;
+    float_t radius;
 };
 
 #endif //PLAYER_UI_POLYGON_H

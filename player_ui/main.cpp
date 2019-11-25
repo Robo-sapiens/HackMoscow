@@ -8,9 +8,9 @@
 #include "animation.h"
 #include "color.h"
 #include "devices.h"
-#include "polygon.h"
 
 #define DELAY 5000
+
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -29,15 +29,16 @@ int main(int argc, char *argv[]) {
     QObject::connect(&main_window, SIGNAL(open_devices()), &devices, SLOT(showMaximized()));
     QObject::connect(&devices, SIGNAL(start_capture()), &audio_thread, SLOT(start()));
     QObject::connect(&devices, SIGNAL(start_capture()), &fftw_thread, SLOT(start()));
-    QObject::connect(&devices, SIGNAL(start_port(
-                                          const QSerialPortInfo &)),
-                     &serial_thread, SLOT(start_port(
-                                              const QSerialPortInfo &)));
+    QObject::connect(&devices, SIGNAL(start_port(const QSerialPortInfo &)),
+                     &serial_thread, SLOT(start_port(const QSerialPortInfo &)));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &color, SLOT(update()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &main_window, SLOT(update()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &animation, SLOT(update()));
+    QObject::connect(&animation, SIGNAL(change_verteces(const float *, const float *, int, float)),
+        &main_window, SLOT(animation_changed(const float *, const float *, int, float)));
+    QObject::connect(&animation, SIGNAL(change_rotation(float)),
+        &main_window, SLOT(rotation_changed(float)));
 
     main_window.showMaximized();
-//    main_window.showFullScreen(); //TODO
     return QApplication::exec();
 }
