@@ -38,7 +38,6 @@ extern "C" {
 #include "rpihw.h"
 #include "pwm.h"
 
-
 #define WS2811_TARGET_FREQ                       800000   // Can go as low as 400000
 
 // 4 color R, G, B and W ordering
@@ -66,8 +65,7 @@ extern "C" {
 struct ws2811_device;
 
 typedef uint32_t ws2811_led_t;                   //< 0xWWRRGGBB
-typedef struct ws2811_channel_t
-{
+typedef struct ws2811_channel_t {
     int gpionum;                                 //< GPIO Pin with PWM alternate function, 0 if unused
     int invert;                                  //< Invert output signal
     int count;                                   //< Number of LEDs, 0 if channel is unused
@@ -81,8 +79,7 @@ typedef struct ws2811_channel_t
     uint8_t *gamma;                              //< Gamma correction table
 } ws2811_channel_t;
 
-typedef struct ws2811_t
-{
+typedef struct ws2811_t {
     uint64_t render_wait_time;                   //< time in µs before the next render can run
     struct ws2811_device *device;                //< Private data for driver use
     const rpi_hw_t *rpi_hw;                      //< RPI Hardware Information
@@ -121,7 +118,7 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811);                         //< Initi
 void ws2811_fini(ws2811_t *ws2811);                                    //< Tear it all down
 ws2811_return_t ws2811_render(ws2811_t *ws2811);                       //< Send LEDs off to hardware
 ws2811_return_t ws2811_wait(ws2811_t *ws2811);                         //< Wait for DMA completion
-const char * ws2811_get_return_t_str(const ws2811_return_t state);     //< Get string representation of the given return state
+const char *ws2811_get_return_t_str(const ws2811_return_t state);     //< Get string representation of the given return state
 
 #ifdef __cplusplus
 }

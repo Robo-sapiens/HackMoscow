@@ -7,11 +7,9 @@
 #include <cmath>
 #include "LED.h"
 
-
-class Player
-{
+class Player {
 public:
-    explicit Player(size_t delay, const char * device);
+    explicit Player(size_t delay, const char *device);
 
     size_t delay;
     std::string device;
@@ -20,7 +18,7 @@ public:
 private:
     // singleton
     Player &operator=(Player const &);
-    Player (Player const &);
+    Player(Player const &);
 };
 
 void serial_interface(Player &player);

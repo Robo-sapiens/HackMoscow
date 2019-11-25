@@ -28,9 +28,11 @@
 
 import SCons, os
 
+
 def version_flags(env):
     if not env['V']:
         env['VERSIONCOMSTR'] = 'Version ${TARGET}'
+
 
 def version_builders(env):
     def generate_version_header(target, source, env):
@@ -40,7 +42,7 @@ def version_builders(env):
         try:
             version = open(source[0].abspath, 'r').readline().strip().split('.')
         except:
-            version = [ '0', '0', '0' ]
+            version = ['0', '0', '0']
 
         f = open(headername, 'w')
         f.write('/* Auto Generated Header built by version.py - DO NOT MODIFY */\n')
@@ -55,17 +57,17 @@ def version_builders(env):
         f.write('#endif /* __%s__ */\n' % (headerdef))
         f.close()
 
-    env.Append(BUILDERS = {
-        'Version' : SCons.Builder.Builder(
-            action = SCons.Action.Action(generate_version_header, '${VERSIONCOMSTR}'),
-            suffix = '.h',
+    env.Append(BUILDERS={
+        'Version': SCons.Builder.Builder(
+            action=SCons.Action.Action(generate_version_header, '${VERSIONCOMSTR}'),
+            suffix='.h',
         ),
     })
+
 
 def exists(env):
     return 1
 
+
 def generate(env, **kwargs):
     [f(env) for f in (version_flags, version_builders)]
-
-

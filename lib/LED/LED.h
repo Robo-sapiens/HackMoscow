@@ -5,7 +5,6 @@
 #ifndef PLAYER_LED_H
 #define PLAYER_LED_H
 
-
 #include <rpi_ws281x/ws2811.h>
 #include <cmath>
 #include <vector>
@@ -30,7 +29,6 @@ typedef struct Point {
     float_t y;
 } Point;
 
-
 class LED {
 public:
     LED();
@@ -41,7 +39,5 @@ public:
 private:
     ws2811_t ledstring;
 };
-
-
 
 #endif //PLAYER_LED_H

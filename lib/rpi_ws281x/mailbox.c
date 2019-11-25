@@ -42,20 +42,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "mailbox.h"
 
-
 void *mapmem(uint32_t base, uint32_t size, const char *mem_dev) {
-    uint32_t pagemask = ~0UL ^ (getpagesize() - 1);
+    uint32_t pagemask = ~0UL ^(getpagesize() - 1);
     uint32_t offsetmask = getpagesize() - 1;
     int mem_fd;
     void *mem;
 
     mem_fd = open(mem_dev, O_RDWR | O_SYNC);
     if (mem_fd < 0) {
-       perror("Can't open /dev/mem");
-       return NULL;
+        perror("Can't open /dev/mem");
+        return NULL;
     }
 
-    mem = mmap(0, size, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd, base & pagemask);
+    mem = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, mem_fd, base & pagemask);
     if (mem == MAP_FAILED) {
         perror("mmap error\n");
         return NULL;
@@ -63,15 +62,15 @@ void *mapmem(uint32_t base, uint32_t size, const char *mem_dev) {
 
     close(mem_fd);
 
-    return (char *)mem + (base & offsetmask);
+    return (char *) mem + (base & offsetmask);
 }
 
 void *unmapmem(void *addr, uint32_t size) {
-    uint32_t pagemask = ~0UL ^ (getpagesize() - 1);
-    uintptr_t baseaddr = (uintptr_t)addr & pagemask;
+    uint32_t pagemask = ~0UL ^(getpagesize() - 1);
+    uintptr_t baseaddr = (uintptr_t) addr & pagemask;
     int s;
-    
-    s = munmap((void *)baseaddr, size);
+
+    s = munmap((void *) baseaddr, size);
     if (s != 0) {
         perror("munmap error\n");
     }
@@ -107,7 +106,7 @@ static int mbox_property(int file_desc, void *buf) {
 }
 
 uint32_t mem_alloc(int file_desc, uint32_t size, uint32_t align, uint32_t flags) {
-    int i=0;
+    int i = 0;
     uint32_t p[32];
 
     p[i++] = 0; // size
@@ -121,7 +120,7 @@ uint32_t mem_alloc(int file_desc, uint32_t size, uint32_t align, uint32_t flags)
     p[i++] = flags; // (MEM_FLAG_L1_NONALLOCATING)
 
     p[i++] = 0x00000000; // end tag
-    p[0] = i*sizeof *p; // actual size
+    p[0] = i * sizeof *p; // actual size
 
     if (mbox_property(file_desc, p) < 0)
         return 0;
@@ -130,7 +129,7 @@ uint32_t mem_alloc(int file_desc, uint32_t size, uint32_t align, uint32_t flags)
 }
 
 uint32_t mem_free(int file_desc, uint32_t handle) {
-    int i=0;
+    int i = 0;
     uint32_t p[32];
 
     p[i++] = 0; // size
@@ -142,7 +141,7 @@ uint32_t mem_free(int file_desc, uint32_t handle) {
     p[i++] = handle;
 
     p[i++] = 0x00000000; // end tag
-    p[0] = i*sizeof *p; // actual size
+    p[0] = i * sizeof *p; // actual size
 
     mbox_property(file_desc, p);
 
@@ -150,7 +149,7 @@ uint32_t mem_free(int file_desc, uint32_t handle) {
 }
 
 uint32_t mem_lock(int file_desc, uint32_t handle) {
-    int i=0;
+    int i = 0;
     uint32_t p[32];
 
     p[i++] = 0; // size
@@ -162,7 +161,7 @@ uint32_t mem_lock(int file_desc, uint32_t handle) {
     p[i++] = handle;
 
     p[i++] = 0x00000000; // end tag
-    p[0] = i*sizeof *p; // actual size
+    p[0] = i * sizeof *p; // actual size
 
     if (mbox_property(file_desc, p) < 0)
         return ~0;
@@ -171,28 +170,28 @@ uint32_t mem_lock(int file_desc, uint32_t handle) {
 }
 
 uint32_t mem_unlock(int file_desc, uint32_t handle) {
-   int i=0;
-   uint32_t p[32];
+    int i = 0;
+    uint32_t p[32];
 
-   p[i++] = 0; // size
-   p[i++] = 0x00000000; // process request
+    p[i++] = 0; // size
+    p[i++] = 0x00000000; // process request
 
-   p[i++] = 0x3000e; // (the tag id)
-   p[i++] = 4; // (size of the buffer)
-   p[i++] = 4; // (size of the data)
-   p[i++] = handle;
+    p[i++] = 0x3000e; // (the tag id)
+    p[i++] = 4; // (size of the buffer)
+    p[i++] = 4; // (size of the data)
+    p[i++] = handle;
 
-   p[i++] = 0x00000000; // end tag
-   p[0] = i * sizeof(*p); // actual size
+    p[i++] = 0x00000000; // end tag
+    p[0] = i * sizeof(*p); // actual size
 
-   mbox_property(file_desc, p);
+    mbox_property(file_desc, p);
 
-   return p[5];
+    return p[5];
 }
 
-uint32_t execute_code(int file_desc, uint32_t code, uint32_t r0, uint32_t r1, 
+uint32_t execute_code(int file_desc, uint32_t code, uint32_t r0, uint32_t r1,
                       uint32_t r2, uint32_t r3, uint32_t r4, uint32_t r5) {
-    int i=0;
+    int i = 0;
     uint32_t p[32];
 
     p[i++] = 0; // size
@@ -218,7 +217,7 @@ uint32_t execute_code(int file_desc, uint32_t code, uint32_t r0, uint32_t r1,
 }
 
 uint32_t qpu_enable(int file_desc, uint32_t enable) {
-    int i=0;
+    int i = 0;
     uint32_t p[32];
 
     p[i++] = 0; // size
@@ -272,7 +271,7 @@ int mbox_open(void) {
     // open a char device file used for communicating with kernel mbox driver
     sprintf(filename, "/tmp/mailbox-%d", getpid());
     unlink(filename);
-    if (mknod(filename, S_IFCHR|0600, makedev(100, 0)) < 0) {
+    if (mknod(filename, S_IFCHR | 0600, makedev(100, 0)) < 0) {
         perror("Failed to create mailbox device\n");
         return -1;
     }

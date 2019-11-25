@@ -4,7 +4,6 @@
 #define DELAY 20000
 #define SERIAL_PORT "/dev/serial0"
 
-
 int main(int argc, char **argv) {
     Player player(DELAY, SERIAL_PORT);
     std::thread t1(serial_interface, std::ref(player));

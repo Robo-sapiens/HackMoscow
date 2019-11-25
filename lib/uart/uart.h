@@ -5,7 +5,6 @@
 #include <cstdint>
 #include "LED.h"
 
-
-void read_serial_port(int32_t file, char s, char f, RGB &led_rgb);
+void read_serial_port(int32_t file, RGB &led_rgb);
 
 #endif // __LIB_UART__

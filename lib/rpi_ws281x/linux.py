@@ -32,7 +32,6 @@ import string
 import array
 import os
 
-
 tools = ['gcc', 'g++', 'gnulink', 'ar', 'gas']
 
 
@@ -41,16 +40,17 @@ def linux_tools(env):
         env.Tool(tool)
 
     if not env['V']:
-        env['ARCOMSTR']      = 'AR      ${TARGET}'
-        env['ASCOMSTR']      = 'AS      ${TARGET}'
-        env['CCCOMSTR']      = 'CC      ${TARGET}'
-        env['CXXCOMSTR']     = 'C++     ${TARGET}'
-        env['LINKCOMSTR']    = 'LINK    ${TARGET}'
-        env['RANLIBCOMSTR']  = 'RANLIB  ${TARGET}'
+        env['ARCOMSTR'] = 'AR      ${TARGET}'
+        env['ASCOMSTR'] = 'AS      ${TARGET}'
+        env['CCCOMSTR'] = 'CC      ${TARGET}'
+        env['CXXCOMSTR'] = 'C++     ${TARGET}'
+        env['LINKCOMSTR'] = 'LINK    ${TARGET}'
+        env['RANLIBCOMSTR'] = 'RANLIB  ${TARGET}'
+
 
 def linux_flags(env):
     env.MergeFlags({
-        'CPPFLAGS' : '''
+        'CPPFLAGS': '''
             -fPIC
             -g
             -O2
@@ -60,16 +60,16 @@ def linux_flags(env):
         '''.split(),
     }),
     env.MergeFlags({
-        'LINKFLAGS' : '''
+        'LINKFLAGS': '''
         '''.split()
     })
 
 
 def linux_builders(env):
-    env.Append(BUILDERS = {
-        'Program' : SCons.Builder.Builder(
-            action = SCons.Action.Action('${LINK} -o ${TARGET} ${SOURCES} ${LINKFLAGS}',
-                                         '${LINKCOMSTR}'),
+    env.Append(BUILDERS={
+        'Program': SCons.Builder.Builder(
+            action=SCons.Action.Action('${LINK} -o ${TARGET} ${SOURCES} ${LINKFLAGS}',
+                                       '${LINKCOMSTR}'),
         ),
     })
     return 1
@@ -79,6 +79,6 @@ def linux_builders(env):
 def exists(env):
     return 1
 
+
 def generate(env, **kwargs):
     [f(env) for f in (linux_tools, linux_flags, linux_builders)]
-

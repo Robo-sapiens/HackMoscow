@@ -30,9 +30,7 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
-
-typedef struct
-{
+typedef struct {
     uint32_t fsel[6];                            // GPIO Function Select
     uint32_t resvd_0x18;
     uint32_t set[2];                             // GPIO Pin Output Set
@@ -61,18 +59,14 @@ typedef struct
     uint32_t test;
 } __attribute__((packed, aligned(4))) gpio_t;
 
-
 #define GPIO_OFFSET                              (0x00200000)
 
-
-static inline void gpio_function_set(volatile gpio_t *gpio, uint8_t pin, uint8_t function)
-{
+static inline void gpio_function_set(volatile gpio_t *gpio, uint8_t pin, uint8_t function) {
     int regnum = pin / 10;
     int offset = (pin % 10) * 3;
-    uint8_t funcmap[] = { 4, 5, 6, 7, 3, 2 };  // See datasheet for mapping
+    uint8_t funcmap[] = {4, 5, 6, 7, 3, 2};  // See datasheet for mapping
 
-    if (function > 5)
-    {
+    if (function > 5) {
         return;
     }
 
@@ -80,23 +74,18 @@ static inline void gpio_function_set(volatile gpio_t *gpio, uint8_t pin, uint8_t
     gpio->fsel[regnum] |= ((funcmap[function]) << offset);
 }
 
-static inline void gpio_level_set(volatile gpio_t *gpio, uint8_t pin, uint8_t level)
-{
+static inline void gpio_level_set(volatile gpio_t *gpio, uint8_t pin, uint8_t level) {
     int regnum = pin >> 5;
     int offset = (pin & 0x1f);
 
-    if (level)
-    {
+    if (level) {
         gpio->set[regnum] = (1 << offset);
-    }
-    else
-    {
+    } else {
         gpio->clr[regnum] = (1 << offset);
     }
 }
 
-static inline void gpio_output_set(volatile gpio_t *gpio, uint8_t pin, uint8_t output)
-{
+static inline void gpio_output_set(volatile gpio_t *gpio, uint8_t pin, uint8_t output) {
     int regnum = pin / 10;
     int offset = (pin % 10) * 3;
     uint8_t function = output ? 1 : 0;  // See datasheet for mapping

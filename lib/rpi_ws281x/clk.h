@@ -30,7 +30,6 @@
 #ifndef __CLK_H__
 #define __CLK_H__
 
-
 typedef struct {
     uint32_t ctl;
 #define CM_CLK_CTL_PASSWD                        (0x5a << 24)
@@ -60,6 +59,5 @@ typedef struct {
  */
 #define CM_PCM_OFFSET                            (0x00101098)
 #define CM_PWM_OFFSET                            (0x001010a0)
-
 
 #endif /* __CLK_H__ */

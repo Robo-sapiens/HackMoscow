@@ -13,10 +13,10 @@ import math
 from neopixel import *
 
 # LED strip configuration:
-LED_COUNT = 12      # Number of LED pixels.
-LED_PIN = 18      # GPIO pin connected to the pixels (must support PWM!).
+LED_COUNT = 12  # Number of LED pixels.
+LED_PIN = 18  # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA = 10       # DMA channel to use for generating signal (try 10)
+LED_DMA = 10  # DMA channel to use for generating signal (try 10)
 LED_BRIGHTNESS = 255  # Set to 0 for darkest and 255 for brightest
 # True to invert the signal (when using NPN transistor level shift)
 LED_INVERT = False
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         now = datetime.datetime.now()
 
         # Low light during 19-8 o'clock
-        if(8 < now.hour < 19):
+        if (8 < now.hour < 19):
             strip.setBrightness(200)
         else:
             strip.setBrightness(25)
@@ -46,8 +46,8 @@ if __name__ == '__main__':
         secondmodulo = now.second % 5
         timeslot_in_microseconds = secondmodulo * 1000000 + now.microsecond
         for i in range(0, strip.numPixels(), 1):
-            secondplusone = second + 1 if(second < 11) else 0
-            secondminusone = second - 1 if(second > 0) else 11
+            secondplusone = second + 1 if (second < 11) else 0
+            secondminusone = second - 1 if (second > 0) else 11
             colorarray = [0, 0, 0]
 
             if i == second:
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                         0.0000508 * timeslot_in_microseconds) + 126
                 else:
                     colorarray[0] = 382 - \
-                        int(0.0000508 * timeslot_in_microseconds)
+                                    int(0.0000508 * timeslot_in_microseconds)
             if i == secondplusone:
                 colorarray[0] = int(0.0000256 * timeslot_in_microseconds)
             if i == secondminusone:

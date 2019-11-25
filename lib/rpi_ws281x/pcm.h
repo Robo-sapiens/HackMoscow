@@ -31,7 +31,6 @@
 #ifndef __PCM_H__
 #define __PCM_H__
 
-
 /*
  *
  * Pin mapping of alternate pin configuration for PCM
@@ -50,8 +49,7 @@
  */
 
 
-typedef struct
-{
+typedef struct {
     uint32_t cs;
 #define RPI_PCM_CS_STBY                         (1 << 25)
 #define RPI_PCM_CS_SYNC                         (1 << 24)
@@ -129,7 +127,6 @@ typedef struct
 #define RPI_PCM_GRAY_EN                         (1 << 0)
 } __attribute__((packed, aligned(4))) pcm_t;
 
-
 #define PCM_OFFSET                               (0x00203000)
 #define PCM_PERIPH_PHYS                          (0x7e203000)
 
@@ -139,20 +136,16 @@ typedef struct
 #define PCMFUN_DIN         2
 #define PCMFUN_DOUT        3
 
-typedef struct
-{
+typedef struct {
     int pinnum;
     int altnum;
 } pcm_pin_table_t;
 
-typedef struct
-{
+typedef struct {
     const int count;
     const pcm_pin_table_t *pins;
 } pcm_pin_tables_t;
 
-
 int pcm_pin_alt(int pcmfun, int pinnum);
-
 
 #endif /* __PCM_H__ */

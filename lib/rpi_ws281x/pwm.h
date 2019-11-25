@@ -52,9 +52,7 @@
 
 #define RPI_PWM_CHANNELS                         2
 
-
-typedef struct
-{
+typedef struct {
     uint32_t ctl;
 #define RPI_PWM_CTL_MSEN2                        (1 << 15)
 #define RPI_PWM_CTL_USEF2                        (1 << 13)
@@ -98,25 +96,19 @@ typedef struct
     uint32_t dat2;
 } __attribute__((packed, aligned(4))) pwm_t;
 
-
 #define PWM_OFFSET                               (0x0020c000)
 #define PWM_PERIPH_PHYS                          (0x7e20c000)
 
-
-typedef struct
-{
+typedef struct {
     int pinnum;
     int altnum;
 } pwm_pin_table_t;
 
-typedef struct
-{
+typedef struct {
     const int count;
     const pwm_pin_table_t *pins;
 } pwm_pin_tables_t;
 
-
 int pwm_pin_alt(int chan, int pinnum);
-
 
 #endif /* __PWM_H__ */

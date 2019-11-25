@@ -30,15 +30,13 @@
 #ifndef __DMA_H__
 #define __DMA_H__
 
-
 /*
  * DMA Control Block in Main Memory
  *
  * Note: Must start at a 256 byte aligned address.
  *       Use corresponding register field definitions.
  */
-typedef struct
-{
+typedef struct {
     uint32_t ti;
     uint32_t source_ad;
     uint32_t dest_ad;
@@ -51,14 +49,13 @@ typedef struct
 /*
  * DMA register set
  */
-typedef struct
-{
+typedef struct {
     uint32_t cs;
 #define RPI_DMA_CS_RESET                         (1 << 31)
 #define RPI_DMA_CS_ABORT                         (1 << 30)
 #define RPI_DMA_CS_DISDEBUG                      (1 << 29)
 #define RPI_DMA_CS_WAIT_OUTSTANDING_WRITES       (1 << 28)
-#define RPI_DMA_CS_PANIC_PRIORITY(val)           ((val & 0xf) << 20)                
+#define RPI_DMA_CS_PANIC_PRIORITY(val)           ((val & 0xf) << 20)
 #define RPI_DMA_CS_PRIORITY(val)                 ((val & 0xf) << 16)
 #define RPI_DMA_CS_ERROR                         (1 << 8)
 #define RPI_DMA_CS_WAITING_OUTSTANDING_WRITES    (1 << 6)
@@ -97,7 +94,6 @@ typedef struct
     uint32_t debug;
 } __attribute__((packed, aligned(4))) dma_t;
 
-
 #define DMA0_OFFSET                              (0x00007000)
 #define DMA1_OFFSET                              (0x00007100)
 #define DMA2_OFFSET                              (0x00007200)
@@ -115,11 +111,9 @@ typedef struct
 #define DMA14_OFFSET                             (0x00007e00)
 #define DMA15_OFFSET                             (0x00e05000)
 
-
 #define PAGE_SIZE                                (1 << 12)
 #define PAGE_MASK                                (~(PAGE_SIZE - 1))
 #define PAGE_OFFSET(page)                        (page & (PAGE_SIZE - 1))
-
 
 uint32_t dmanum_to_offset(int dmanum);
 

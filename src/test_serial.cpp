@@ -42,7 +42,7 @@ int main() {
 int main() {
 
     struct termios serial;
-    char* str = "Hello";
+    char *str = "Hello";
     char buffer[10];
 
     printf("Opening %s\n", SERIAL_PORT);
@@ -74,7 +74,7 @@ int main() {
 
     // for sender
     printf("Sending: %s\n", str);
-    while(1) {
+    while (1) {
         int wcount = write(fd, str, strlen(str));
         if (wcount < 0) {
             perror("Write");

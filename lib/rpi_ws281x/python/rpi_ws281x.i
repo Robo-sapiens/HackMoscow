@@ -3,7 +3,8 @@
 
 // Define module name rpi_ws281x.  This will actually be imported under
 // the name _rpi_ws281x following the SWIG & Python conventions.
-%module rpi_ws281x
+%
+module rpi_ws281x
 
 // Include standard SWIG types & array support for support of uint32_t
 // parameters and arrays.
@@ -19,30 +20,25 @@
 %include "../ws2811.h"
 
 %inline %{
-    uint32_t ws2811_led_get(ws2811_channel_t *channel, int lednum)
-    {
-        if (lednum >= channel->count)
-        {
-            return -1;
-        }
-
-        return channel->leds[lednum];
+uint32_t ws2811_led_get(ws2811_channel_t *channel, int lednum) {
+    if (lednum >= channel->count) {
+        return -1;
     }
 
-    int ws2811_led_set(ws2811_channel_t *channel, int lednum, uint32_t color)
-    {
-        if (lednum >= channel->count)
-        {
-            return -1;
-        }
+    return channel->leds[lednum];
+}
 
-        channel->leds[lednum] = color;
-
-        return 0;
+int ws2811_led_set(ws2811_channel_t *channel, int lednum, uint32_t color) {
+    if (lednum >= channel->count) {
+        return -1;
     }
 
-    ws2811_channel_t *ws2811_channel_get(ws2811_t *ws, int channelnum)
-    {
-        return &ws->channel[channelnum];
-    }
+    channel->leds[lednum] = color;
+
+    return 0;
+}
+
+ws2811_channel_t *ws2811_channel_get(ws2811_t *ws, int channelnum) {
+    return &ws->channel[channelnum];
+}
 %}

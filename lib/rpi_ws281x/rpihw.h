@@ -31,7 +31,6 @@
 #ifndef __RPIHW_H__
 #define __RPIHW_H__
 
-
 typedef struct {
     uint32_t type;
 #define RPI_HWVER_TYPE_UNKNOWN                   0
@@ -44,8 +43,6 @@ typedef struct {
     char *desc;
 } rpi_hw_t;
 
-
 const rpi_hw_t *rpi_hw_detect(void);
-
 
 #endif /* __RPIHW_H__ */

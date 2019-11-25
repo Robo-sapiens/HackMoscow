@@ -37,7 +37,6 @@
 
 #include "rpihw.h"
 
-
 #define LINE_WIDTH_MAX                           80
 #define HW_VER_STRING                            "Revision"
 
@@ -335,7 +334,7 @@ static const rpi_hw_t rpi_hw_info[] = {
         .desc = "Pi 3",
     },
     {
-	.hwver  = 0xa02083,
+        .hwver  = 0xa02083,
         .type = RPI_HWVER_TYPE_PI2,
         .periph_base = PERIPH_BASE_RPI2,
         .videocore_base = VIDEOCORE_BASE_RPI2,
@@ -384,12 +383,9 @@ static const rpi_hw_t rpi_hw_info[] = {
         .desc = "Compute Module 3+",
     },
 
-
 };
 
-
-const rpi_hw_t *rpi_hw_detect(void)
-{
+const rpi_hw_t *rpi_hw_detect(void) {
     const rpi_hw_t *result = NULL;
     uint32_t rev;
     unsigned i;
@@ -405,9 +401,9 @@ const rpi_hw_t *rpi_hw_detect(void)
     size_t read = fread(&rev, sizeof(uint32_t), 1, f);
     if (read != sizeof(uint32_t))
         goto done;
-    #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
         rev = bswap_32(rev);  // linux,revision appears to be in big endian
-    #endif
+#endif
 
     for (i = 0; i < (sizeof(rpi_hw_info) / sizeof(rpi_hw_info[0])); i++)
     {
@@ -423,40 +419,33 @@ const rpi_hw_t *rpi_hw_detect(void)
     FILE *f = fopen("/proc/cpuinfo", "r");
     char line[LINE_WIDTH_MAX];
 
-    if (!f)
-    {
+    if (!f) {
         return NULL;
     }
 
-    while (fgets(line, LINE_WIDTH_MAX - 1, f))
-    {
-        if (strstr(line, HW_VER_STRING))
-        {
+    while (fgets(line, LINE_WIDTH_MAX - 1, f)) {
+        if (strstr(line, HW_VER_STRING)) {
             char *substr;
 
             substr = strstr(line, ": ");
-            if (!substr)
-            {
+            if (!substr) {
                 continue;
             }
 
             errno = 0;
             rev = strtoul(&substr[1], NULL, 16);  // Base 16
-            if (errno)
-            {
+            if (errno) {
                 continue;
             }
 
-            for (i = 0; i < (sizeof(rpi_hw_info) / sizeof(rpi_hw_info[0])); i++)
-            {
+            for (i = 0; i < (sizeof(rpi_hw_info) / sizeof(rpi_hw_info[0])); i++) {
                 uint32_t hwver = rpi_hw_info[i].hwver;
 
                 // Take out warranty and manufacturer bits
                 hwver &= ~(RPI_WARRANTY_MASK | RPI_MANUFACTURER_MASK);
                 rev &= ~(RPI_WARRANTY_MASK | RPI_MANUFACTURER_MASK);
 
-                if (rev == hwver)
-                {
+                if (rev == hwver) {
                     result = &rpi_hw_info[i];
 
                     goto done;
@@ -465,7 +454,7 @@ const rpi_hw_t *rpi_hw_detect(void)
         }
     }
 #endif
-done:
+    done:
     fclose(f);
 
     return result;
