@@ -8,7 +8,7 @@
 
 Player::Player(size_t delay)
     : delay(delay),
-      msg("{000}<000000000>", SAMPLE_SIZE),
+      msg(SAMPLE_SIZE),
       rgb({0, 0, 0}),
       error_code(0),
       hsample(),
@@ -24,16 +24,6 @@ Player::Player(size_t delay)
 
 Player::~Player() {
     BASS_Free();
-}
-
-Player::Msg::Msg(std::string what, size_t sample_size) :
-    sample_size(sample_size), fft((float *) calloc(sample_size, sizeof(float))), text(std::move(what)) {}
-
-Player::Msg::~Msg() {
-    free(fft);
-}
-int32_t Player::Msg::actual_size() {
-    return sample_size / 2;
 }
 
 void Player::error_handler() {

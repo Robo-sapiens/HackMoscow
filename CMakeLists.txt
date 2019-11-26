@@ -31,7 +31,10 @@ add_library(pulse_capture STATIC lib/pulse_capture/capture.cpp)
 target_link_libraries(pulse_capture pulse_device pulse-simple pulse)
 
 ## player
-add_library(player STATIC lib/player/player.cpp lib/player/rgbparameters.cpp)
+add_library(player STATIC
+        lib/player/player.cpp
+        lib/player/rgbparameters.cpp
+        lib/player/msg.cpp)
 target_link_libraries(player bass ${CMAKE_THREAD_LIBS_INIT} pulse_capture)
 
 ## ui requirements

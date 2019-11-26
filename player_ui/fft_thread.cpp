@@ -69,18 +69,19 @@ void FFTWThread::run() {
         player->rgb.r = r;
         player->rgb.g = g;
         player->rgb.b = b;
-        player->msg.text[1] = '0' + (char) ((int32_t) (r + g + b) / 100);
-        player->msg.text[2] = '0' + (char) ((int32_t) (r + g + b) / 10 % 10);
-        player->msg.text[3] = '0' + (char) ((int32_t) (r + g + b) % 10);
-        player->msg.text[6] = '0' + (char) ((int32_t) r / 100);
-        player->msg.text[7] = '0' + (char) ((int32_t) r / 10 % 10);
-        player->msg.text[8] = '0' + (char) ((int32_t) r % 10);
-        player->msg.text[9] = '0' + (char) ((int32_t) g / 100);
-        player->msg.text[10] = '0' + (char) ((int32_t) g / 10 % 10);
-        player->msg.text[11] = '0' + (char) ((int32_t) g % 10);
-        player->msg.text[12] = '0' + (char) ((int32_t) b / 100);
-        player->msg.text[13] = '0' + (char) ((int32_t) b / 10 % 10);
-        player->msg.text[14] = '0' + (char) ((int32_t) b % 10);
+        //TODO: remake somehow
+        player->msg.text[2] = '0' + (char) ((int32_t) (r + g + b) / 100);
+        player->msg.text[3] = '0' + (char) ((int32_t) (r + g + b) / 10 % 10);
+        player->msg.text[4] = '0' + (char) ((int32_t) (r + g + b) % 10);
+        player->msg.text[7] = '0' + (char) ((int32_t) r / 100);
+        player->msg.text[8] = '0' + (char) ((int32_t) r / 10 % 10);
+        player->msg.text[9] = '0' + (char) ((int32_t) r % 10);
+        player->msg.text[10] = '0' + (char) ((int32_t) g / 100);
+        player->msg.text[11] = '0' + (char) ((int32_t) g / 10 % 10);
+        player->msg.text[12] = '0' + (char) ((int32_t) g % 10);
+        player->msg.text[13] = '0' + (char) ((int32_t) b / 100);
+        player->msg.text[14] = '0' + (char) ((int32_t) b / 10 % 10);
+        player->msg.text[15] = '0' + (char) ((int32_t) b % 10);
 
         qMutex->unlock();
         emit new_data();

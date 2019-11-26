@@ -3,6 +3,7 @@
 
 #include "rgbparameters.h"
 #include "capture.h"
+#include "msg.h"
 #include "bass.h"
 #include <thread>
 #include <mutex>
@@ -11,16 +12,6 @@
 #include <cmath>
 
 class Player {
-    class Msg {
-    public:
-        Msg(std::string what, size_t size);
-        ~Msg();
-        int32_t actual_size();
-        int32_t sample_size;
-        float *fft;
-        std::string text;
-    };
-
     typedef struct RGB {
         int32_t r;
         int32_t g;
