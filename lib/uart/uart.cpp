@@ -5,7 +5,7 @@
 #include <mutex>
 #include <termios.h>
 
-#define LENGTH 11 // example - <rrrgggbbb>
+#define CFG_LENGTH 11
 
 std::mutex g_mutex;
 
@@ -56,7 +56,6 @@ static void parse_data(const char *buf, RGB &led_rgb, int32_t sum) {
         led_rgb.r = r;
         led_rgb.g = g;
         led_rgb.b = b;
-        std::cout << "Received: SUM : " << sum << " r: "  << r << " g: " << g << " b: "  << b << std::endl;
         g_mutex.unlock();
     }
 }
@@ -66,15 +65,22 @@ void read_serial_port(int32_t file, RGB &led_rgb) {
     FD_ZERO(&rfds);
     FD_SET(file, &rfds);
 
-    char buf[LENGTH];
+    char buf[CFG_LENGTH];
 
     while (select(file + 1, &rfds, NULL, NULL, NULL) > 0) {
         int32_t sum = 0;
-        read_with_markers(file, '{', '}', buf, 3);
+        read_with_markers(file, '{', '}', buf, 4);
+
+        // if there is 0 and checksum, then there is an rgb data
+        // if there is 1 and checksum, then there is a config data
+
         sum = std::strtol(buf, nullptr, 10);
-        read_with_markers(file, '<', '>', buf, 9);
-	std::cout << buf << std::endl;
-        parse_data(buf, led_rgb, sum);
+        if (sum < 1000) {
+            read_with_markers(file, '<', '>', buf, 9);
+            parse_data(buf, led_rgb, sum);
+        } else {
+            read_with_markers(file, '[', ']', buf, CFG_LENGTH);
+        }
         tcflush(file, TCIOFLUSH);
     }
 }
