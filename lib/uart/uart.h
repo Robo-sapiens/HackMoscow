@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <cstdint>
-#include "LED.h"
+#include "player.h"
 
-void read_serial_port(int32_t file, RGB &led_rgb);
+void read_serial_port(int32_t file, Player &player);
 
 #endif // __LIB_UART__

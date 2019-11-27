@@ -5,7 +5,7 @@
 #include <mutex>
 #include <termios.h>
 
-#define CFG_LENGTH 11
+#define CFG_LENGTH 64
 
 std::mutex g_mutex;
 
@@ -60,26 +60,85 @@ static void parse_data(const char *buf, RGB &led_rgb, int32_t sum) {
     }
 }
 
-void read_serial_port(int32_t file, RGB &led_rgb) {
+static void parse_config(char *buf, Player &player, int32_t sum) {
+    int32_t verteces = buf[0] - '0';
+    sum -= verteces;
+    auto tmp_pts = new Point[verteces];
+    for (int32_t kI = 0; kI < verteces; ++kI) {
+        tmp_pts[kI].x =  (float_t)(buf[6 * kI + 1] - '0') * 100;
+        tmp_pts[kI].x += (float_t)(buf[6 * kI + 2] - '0') * 10;
+        tmp_pts[kI].x += (float_t)(buf[6 * kI + 3] - '0');
+        tmp_pts[kI].y =  (float_t)(buf[6 * kI + 4] - '0') * 100;
+        tmp_pts[kI].y += (float_t)(buf[6 * kI + 5] - '0') * 10;
+        tmp_pts[kI].y += (float_t)(buf[6 * kI + 6] - '0');
+        sum -= tmp_pts[kI].x;
+        sum -= tmp_pts[kI].y;
+    }
+    int32_t bpm = 0;
+    bpm += (buf[6 * verteces + 1] - '0') * 100;
+    bpm += (buf[6 * verteces + 2] - '0') * 10;
+    bpm += (buf[6 * verteces + 3] - '0');
+    sum -= bpm;
+    int32_t rotation = 0;
+    rotation += (buf[6 * verteces + 4] - '0') * 100;
+    rotation += (buf[6 * verteces + 5] - '0') * 10;
+    rotation += (buf[6 * verteces + 6] - '0');
+    sum -= rotation;
+    std::cout << verteces << ' ' << bpm << ' ' << rotation << std::endl;
+    if (sum == 0) {
+        g_mutex.lock();
+        delete[] player.base_polygon;
+        player.base_polygon = tmp_pts;
+        player.delay = 1000000 / bpm; // TODO check
+        player.verteces = verteces;
+        auto true_rot = (rotation - 20) * M_PI / 180;
+        auto tr_matrix = new Point[2];
+        tr_matrix[0].x = 1.2 * std::cos(true_rot);
+        tr_matrix[0].y = std::sin(true_rot);
+        tr_matrix[1].x = -std::sin(true_rot);
+        tr_matrix[1].y = 1.2 * std::cos(true_rot);
+        delete[] player.tr_matrix;
+        player.tr_matrix = tr_matrix;
+//        player.basic_mode = false; // TODO
+        g_mutex.unlock();
+    }
+}
+
+static void parse_new_led(char *buf, Player &player, int32_t sum) {
+
+}
+
+void read_serial_port(int32_t file, Player &player) {
     fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(file, &rfds);
 
     char buf[CFG_LENGTH];
+    bool settings = false;
 
     while (select(file + 1, &rfds, NULL, NULL, NULL) > 0) {
         int32_t sum = 0;
         read_with_markers(file, '{', '}', buf, 4);
-
         // if there is 0 and checksum, then there is an rgb data
         // if there is 1 and checksum, then there is a config data
 
         sum = std::strtol(buf, nullptr, 10);
         if (sum < 1000) {
             read_with_markers(file, '<', '>', buf, 9);
-            parse_data(buf, led_rgb, sum);
-        } else {
-            read_with_markers(file, '[', ']', buf, CFG_LENGTH);
+            parse_data(buf, player.rgb, sum);
+            settings = false;
+        } else if (!settings) {
+            if (sum < 2000) {
+                sum -= 1000;
+                read_with_markers(file, '[', ']', buf, CFG_LENGTH);
+                parse_config(buf, player, sum);
+                settings = true;
+            } else {
+                sum -= 2000;
+                read_with_markers(file, '[', ']', buf, 4);
+                parse_new_led(buf, player, sum);
+                settings = true;
+            }
         }
         tcflush(file, TCIOFLUSH);
     }

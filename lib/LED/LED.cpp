@@ -14,8 +14,10 @@ static inline int32_t rgb_to_hex(int r, int g, int b) {
     return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
 }
 
-LED::LED() {
-    ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, LED_COUNT, STRIP_TYPE, 0, MAX_BRGHT}};
+LED::LED(int32_t width, int32_t length) :
+    width(width),
+    length(length) {
+    ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
     try {
         ws2811_return_t ret;
         if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS) {
@@ -26,7 +28,7 @@ LED::LED() {
         std::cout << "ws2811_init failed: " << ws2811_get_return_t_str(ret) << std::endl;
     }
 
-    for (int i = 0; i < LED_COUNT; ++i) {
+    for (int i = 0; i < width * length; ++i) {
         ledstring.channel[0].leds[i] = 0x000000;
     }
 }
@@ -38,34 +40,33 @@ LED::~LED() {
 void LED::show_led_on_pi(RGB &led_rgb) {
     // left
 //	std::cout << led_rgb.r << ' ' << led_rgb.g << ' ' << led_rgb.b << std::endl;
-    for (int i = LED_COUNT - 1; i >= UPDATE_LEDS + LED_COUNT / 2; --i) {
-        this->ledstring.channel[0].leds[i] = this->ledstring.channel[0].leds[i - UPDATE_LEDS];
+    for (int i = width * length - 1; i >= width + width * length / 2; --i) {
+        ledstring.channel[0].leds[i] = ledstring.channel[0].leds[i - width];
     }
     // right
-    for (int i = 0; i < LED_COUNT / 2 - UPDATE_LEDS; ++i) {
-        this->ledstring.channel[0].leds[i] = this->ledstring.channel[0].leds[i + UPDATE_LEDS];
+    for (int i = 0; i < width * length / 2 - width; ++i) {
+        ledstring.channel[0].leds[i] = ledstring.channel[0].leds[i + width];
     }
     // Set the left most updateLEDs with the new color
-    for (int i = LED_COUNT / 2 - UPDATE_LEDS; i < LED_COUNT / 2 + UPDATE_LEDS; ++i) {
-        this->ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+    for (int i = width * length / 2 - width; i < width * length / 2 + width; ++i) {
+        ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
     }
-
-    ws2811_render(&this->ledstring);
 }
 
-static int transform_coord(int x, int y) {
-    int centre = LED_COUNT / 2 - UPDATE_LEDS / 2 - 1;
+int32_t LED::transform_coord(int32_t x, int32_t y) {
+    int centre = width * length / 2 - width / 2 - 1;
     int res = 0;
     if (x % 2 != 0) {
-        res = (x == 0) ? centre : (centre + ((x * UPDATE_LEDS) - y + 1));
+        res = (x == 0) ? centre : (centre + ((x * width) - y + 1));
     } else {
-        res = centre + ((x * UPDATE_LEDS) + y);
+        res = centre + ((x * width) + y);
     }
     std::cout << res << std::endl;
     return res;
 }
 
 void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
+    //TODO(Antonrampage): fix
     bool steep = (fabs(a.y - b.y) > fabs(a.x - b.x));
     if (steep) {
         std::swap(a.x, a.y);
@@ -87,9 +88,9 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
 
     for (int x = (int) a.x; x <= max_x; x++) {
         if (steep) {
-            this->ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+            ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
         } else {
-            this->ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+            ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
         }
         std::cout << x << ' ' << y << std::endl;
         error -= dy;
@@ -98,10 +99,44 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
             error += dx;
         }
     }
-    ws2811_render(&this->ledstring);
-
 }
 
-void LED::show_figure_on_led(std::vector<std::pair<std::vector<Point>, RGB>> &figures) {}	
+void LED::show_figure_on_led(const Polygon *polygon) {
+//    draw_line(a, b, led_rgb);
+//    polygon->vectors.
+}
 
+void LED::show_circle_on_led(const Polygon *polygon) {
+//    polygon->vectors[0].x
+//    polygon->vectors[0].y
+//    polygon->radius
+//    TODO(AntonRampage): translate coordinates to true center;
+}
 
+void LED::change_settings(int32_t width, int32_t length) {
+    this->width = width;
+    this->length = length;
+    ws2811_fini(&ledstring);
+    ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
+    try {
+        ws2811_return_t ret;
+        if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS) {
+            throw ret;
+        }
+    }
+    catch (ws2811_return_t ret) {
+        std::cout << "ws2811_init failed: " << ws2811_get_return_t_str(ret) << std::endl;
+    }
+
+    for (int i = 0; i < width * length; ++i) {
+        ledstring.channel[0].leds[i] = 0x000000;
+    }
+}
+
+void LED::render() {
+    ws2811_render(&ledstring);
+}
+
+int32_t LED::get_width() const {
+    return width;
+}

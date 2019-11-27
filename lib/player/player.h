@@ -5,16 +5,27 @@
 #include <string>
 #include <cstdint>
 #include <cmath>
+#include <deque>
 #include "LED.h"
+#include "polygon.h"
+
 
 class Player {
 public:
     explicit Player(size_t delay, const char *device);
+    ~Player();
+    void render();
 
     size_t delay;
     std::string device;
     RGB rgb;
-    int8_t error_code;
+    std::deque<Polygon *> polygons;
+    int32_t verteces;
+    Point *base_polygon;
+    Point *tr_matrix;
+    bool basic_mode;
+    LED led_;
+
 private:
     // singleton
     Player &operator=(Player const &);

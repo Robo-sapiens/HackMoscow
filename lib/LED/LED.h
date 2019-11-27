@@ -8,15 +8,14 @@
 #include <rpi_ws281x/ws2811.h>
 #include <cmath>
 #include <vector>
+#include <player/polygon.h>
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
 #define GPIO_PIN                                21
 #define DMA                                     5
 #define STRIP_TYPE                              WS2811_STRIP_RGB
-#define LED_COUNT                               256 // TODO: AS PARAM
-#define MAX_BRGHT                               40
+#define MAX_BRGHT                               255
 
-#define UPDATE_LEDS                             8
 
 typedef struct RGB {
     int32_t r;
@@ -31,13 +30,20 @@ typedef struct Point {
 
 class LED {
 public:
-    LED();
+    LED(int32_t width, int32_t length);
     ~LED();
     void show_led_on_pi(RGB &led_rgb);
-    void show_figure_on_led(std::vector<std::pair<std::vector<Point>, RGB>> &figures);
+    void show_figure_on_led(const Polygon *polygon);
+    void show_circle_on_led(const Polygon *polygon);
     void draw_line(Point &a, Point &b, RGB &led_rgb);
+    int32_t get_width() const;
+    void change_settings(int32_t width, int32_t length);
+    void render();
 private:
+    int32_t transform_coord(int32_t x, int32_t y);
     ws2811_t ledstring;
+    int32_t width;
+    int32_t length;
 };
 
 #endif //PLAYER_LED_H

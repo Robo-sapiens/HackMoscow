@@ -34,7 +34,7 @@ add_library(LED STATIC lib/LED/LED.cpp)
 target_link_libraries(LED rpi_led)
 
 ## player
-add_library(player STATIC lib/player/player.cpp)
+add_library(player STATIC lib/player/player.cpp lib/player/polygon.cpp lib/player/polygon.h)
 target_link_libraries(player serial ${CMAKE_THREAD_LIBS_INIT} LED uart)
 
 ## main
