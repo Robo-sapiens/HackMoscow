@@ -12,7 +12,7 @@ Player::Player(size_t delay, const char *device) :
     verteces(3),
     base_polygon(new Point[verteces]),
     tr_matrix(new Point[2]),
-    basic_mode(),
+    basic_mode(true),
     led_(8, 32) {
     tr_matrix[0].x = 1.2;
     tr_matrix[0].y = 0;

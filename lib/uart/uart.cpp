@@ -60,7 +60,7 @@ static void parse_data(const char *buf, RGB &led_rgb, int32_t sum) {
     }
 }
 
-static void parse_config(char *buf, Player &player, int32_t sum) {
+static bool parse_config(const char *buf, Player &player, int32_t sum) {
     int32_t verteces = buf[0] - '0';
     sum -= verteces;
     auto tmp_pts = new Point[verteces];
@@ -73,6 +73,8 @@ static void parse_config(char *buf, Player &player, int32_t sum) {
         tmp_pts[kI].y += (float_t)(buf[6 * kI + 6] - '0');
         sum -= tmp_pts[kI].x;
         sum -= tmp_pts[kI].y;
+        tmp_pts[kI].x /= 10;
+        tmp_pts[kI].y /= 10;
     }
     int32_t bpm = 0;
     bpm += (buf[6 * verteces + 1] - '0') * 100;
@@ -93,19 +95,22 @@ static void parse_config(char *buf, Player &player, int32_t sum) {
         player.verteces = verteces;
         auto true_rot = (rotation - 20) * M_PI / 180;
         auto tr_matrix = new Point[2];
-        tr_matrix[0].x = 1.2 * std::cos(true_rot);
+        tr_matrix[0].x = std::cos(true_rot);
         tr_matrix[0].y = std::sin(true_rot);
         tr_matrix[1].x = -std::sin(true_rot);
-        tr_matrix[1].y = 1.2 * std::cos(true_rot);
+        tr_matrix[1].y = std::cos(true_rot);
         delete[] player.tr_matrix;
         player.tr_matrix = tr_matrix;
 //        player.basic_mode = false; // TODO
         g_mutex.unlock();
+        return true;
     }
+    return false;
 }
 
-static void parse_new_led(char *buf, Player &player, int32_t sum) {
+static bool parse_new_led(char *buf, Player &player, int32_t sum) {
 
+    return false;
 }
 
 void read_serial_port(int32_t file, Player &player) {
@@ -130,14 +135,12 @@ void read_serial_port(int32_t file, Player &player) {
         } else if (!settings) {
             if (sum < 2000) {
                 sum -= 1000;
-                read_with_markers(file, '[', ']', buf, CFG_LENGTH);
-                parse_config(buf, player, sum);
-                settings = true;
+                read_with_markers(file, '[', ']', buf, 4);
+                settings = parse_new_led(buf, player, sum);
             } else {
                 sum -= 2000;
-                read_with_markers(file, '[', ']', buf, 4);
-                parse_new_led(buf, player, sum);
-                settings = true;
+                read_with_markers(file, '[', ']', buf, CFG_LENGTH);
+                settings = parse_config(buf, player, sum);
             }
         }
         tcflush(file, TCIOFLUSH);

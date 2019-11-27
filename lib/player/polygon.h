@@ -5,11 +5,20 @@
 #ifndef PLAYER_LIB_PLAYER_POLYGON_H_
 #define PLAYER_LIB_PLAYER_POLYGON_H_
 
-#include "LED.h"
 #include <stdint-gcc.h>
 #include <cstdlib>
 #include <cmath>
 
+typedef struct RGB {
+    int32_t r;
+    int32_t g;
+    int32_t b;
+} RGB;
+
+typedef struct Point {
+    float_t x;
+    float_t y;
+} Point;
 
 class Polygon {
 public:

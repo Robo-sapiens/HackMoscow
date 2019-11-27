@@ -6,11 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 ## include directories
 include_directories(lib)
-include_directories(lib/uart)
-include_directories(lib/player)
-include_directories(lib/serial)
 include_directories(lib/LED)
+include_directories(lib/player)
 include_directories(lib/rpi_ws281x)
+include_directories(lib/serial)
+include_directories(lib/uart)
 
 ## out directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY out)
@@ -34,7 +34,7 @@ add_library(LED STATIC lib/LED/LED.cpp)
 target_link_libraries(LED rpi_led)
 
 ## player
-add_library(player STATIC lib/player/player.cpp lib/player/polygon.cpp lib/player/polygon.h)
+add_library(player STATIC lib/player/player.cpp lib/player/polygon.cpp)
 target_link_libraries(player serial ${CMAKE_THREAD_LIBS_INIT} LED uart)
 
 ## main

@@ -2,13 +2,13 @@
 // Created by antonrampage on 18.11.2019.
 //
 
-#ifndef PLAYER_LED_H
-#define PLAYER_LED_H
+#ifndef LIB_LED_H_
+#define LIB_LED_H_
 
-#include <rpi_ws281x/ws2811.h>
 #include <cmath>
 #include <vector>
-#include <player/polygon.h>
+#include "ws2811.h"
+#include "polygon.h"
 
 #define TARGET_FREQ                             WS2811_TARGET_FREQ
 #define GPIO_PIN                                21
@@ -16,17 +16,6 @@
 #define STRIP_TYPE                              WS2811_STRIP_RGB
 #define MAX_BRGHT                               255
 
-
-typedef struct RGB {
-    int32_t r;
-    int32_t g;
-    int32_t b;
-} RGB;
-
-typedef struct Point {
-    float_t x;
-    float_t y;
-} Point;
 
 class LED {
 public:
@@ -46,4 +35,4 @@ private:
     int32_t length;
 };
 
-#endif //PLAYER_LED_H
+#endif //LIB_LED_H_
