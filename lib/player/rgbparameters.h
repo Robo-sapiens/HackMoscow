@@ -23,6 +23,7 @@ public:
     float_t blue_imp;
     float_t filter;
     float_t sensitivity;
+    float_t rotation;
     bool tweak_by_min;
 };
 

@@ -74,12 +74,11 @@ void MainWindow::paintEvent(QPaintEvent *) {
             painter->drawEllipse(center, (int32_t)(polygon->radius), (int32_t)(polygon->radius));
             polygon->radius *= 1.2;
         }
-
-        auto last_item = polygons.front();
-        if (last_item->max_item > 2 * width()) {
-            polygons.pop_front();
-            delete last_item;
-        }
+    }
+    auto last_item = polygons.front();
+    if (last_item->max_item > 2 * width()) {
+        polygons.pop_front();
+        delete last_item;
     }
 
     usleep(1000000 / player->rgb_parameters.bpm);
@@ -111,6 +110,7 @@ void MainWindow::animation_changed(const float *x, const float *y, int amount, f
 }
 
 void MainWindow::rotation_changed(float rot) {
+    player->rgb_parameters.rotation = rot;
     transformation_matrix[0] = 1.2 * std::cos(rot);
     transformation_matrix[1] = -std::sin(rot);
     transformation_matrix[2] = std::sin(rot);

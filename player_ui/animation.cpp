@@ -2,7 +2,7 @@
 #include "ui_animation.h"
 #include <QDebug>
 #include <QPainter>
-
+#include <zconf.h>
 
 Animation::Animation(QWidget *parent, Player *player) :
     QWidget(parent),
@@ -14,6 +14,7 @@ Animation::Animation(QWidget *parent, Player *player) :
     y(new std::vector<float>),
     radius(-1.f) {
     ui->setupUi(this);
+    ui->spinBox->setRange(0, 9);
 }
 
 Animation::~Animation() {
@@ -60,6 +61,12 @@ void Animation::on_spinBox_valueChanged(int arg1) {
 
 void Animation::on_value_changed() {
     for (int32_t kI = 0; kI < amount; ++kI) {
+        if (std::abs(vertices->at(kI).first->toPlainText().toFloat()) > 20) {
+            vertices->at(kI).first->setText("20");
+        }
+        if (std::abs(vertices->at(kI).second->toPlainText().toFloat()) > 20) {
+            vertices->at(kI).second->setText("20");
+        }
         x->at(kI) = vertices->at(kI).first->toPlainText().toFloat();
         y->at(kI) = vertices->at(kI).second->toPlainText().toFloat();
     }
@@ -122,7 +129,15 @@ void Animation::paintEvent(QPaintEvent *) {
 }
 
 void Animation::on_buttonSubmit_clicked() {
+    int32_t verteces = 0;
+    if (radius < 0) {
+        verteces = amount;
+    }
+    player->msg.set_settings(verteces, x->data(), y->data(), player->rgb_parameters.bpm, player->rgb_parameters.rotation);
+    usleep(500000);
+    player->msg.set_default();
     emit change_verteces(x->data(), y->data(), amount, radius);
+
 }
 
 void Animation::on_editRotation_textChanged() {

@@ -7,7 +7,6 @@
 
 #include <stdint-gcc.h>
 #include <cstdlib>
-#include <QTime>
 #include <QPoint>
 #include <QtGui/QColor>
 #include <cmath>
