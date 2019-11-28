@@ -23,7 +23,7 @@ public:
     int32_t verteces;
     Point *base_polygon;
     Point *tr_matrix;
-    bool basic_mode;
+    int8_t mode;
     LED led_;
 
 private:

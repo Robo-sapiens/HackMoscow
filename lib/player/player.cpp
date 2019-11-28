@@ -12,7 +12,7 @@ Player::Player(size_t delay, const char *device) :
     verteces(3),
     base_polygon(new Point[verteces]),
     tr_matrix(new Point[2]),
-    basic_mode(true),
+    mode(2),
     led_(8, 32) {
     tr_matrix[0].x = 1.2;
     tr_matrix[0].y = 0;
@@ -31,7 +31,10 @@ void Player::render() {
     polygons.push_back(tmp);
 
     for (auto &polygon : polygons) {
-        if (verteces == 0) {
+        // mode == 0 => polygon
+        // mode == 1 => circle
+        // mode == 2 => basic
+        if (mode == 1) {
             led_.show_circle_on_led(polygon);
             polygon->radius *= 1.2;
         } else {
@@ -56,7 +59,7 @@ void serial_interface(Player &player) {
 
 void show_leds(Player &player) {
     while (true) {
-        if (player.basic_mode) {
+        if (player.mode == 2) {
             player.led_.show_led_on_pi(player.rgb);
         } else {
             player.render();

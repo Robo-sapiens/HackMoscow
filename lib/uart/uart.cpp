@@ -15,7 +15,7 @@ static inline bool is_num(char b) {
 }
 
 static int read_with_markers(int32_t file, char s, char e, char *buf, int32_t length) {
-    memset(buf, 0, length + 1);
+    memset(buf, 0, length);
     char b;
     int32_t i = 0;
     bool in_progress = false;
@@ -63,30 +63,36 @@ static void parse_data(const char *buf, RGB &led_rgb, int32_t sum) {
 static bool parse_config(const char *buf, Player &player, int32_t sum) {
     int32_t verteces = buf[0] - '0';
     sum -= verteces;
+    int8_t mode = buf[1] - '0';
+    sum -= mode;
     auto tmp_pts = new Point[verteces];
     for (int32_t kI = 0; kI < verteces; ++kI) {
-        tmp_pts[kI].x =  (float_t)(buf[6 * kI + 1] - '0') * 100;
-        tmp_pts[kI].x += (float_t)(buf[6 * kI + 2] - '0') * 10;
-        tmp_pts[kI].x += (float_t)(buf[6 * kI + 3] - '0');
-        tmp_pts[kI].y =  (float_t)(buf[6 * kI + 4] - '0') * 100;
-        tmp_pts[kI].y += (float_t)(buf[6 * kI + 5] - '0') * 10;
-        tmp_pts[kI].y += (float_t)(buf[6 * kI + 6] - '0');
+        tmp_pts[kI].x =  (float_t)(buf[6 * kI + 2] - '0') * 100;
+        tmp_pts[kI].x += (float_t)(buf[6 * kI + 3] - '0') * 10;
+        tmp_pts[kI].x += (float_t)(buf[6 * kI + 4] - '0');
+        tmp_pts[kI].y =  (float_t)(buf[6 * kI + 5] - '0') * 100;
+        tmp_pts[kI].y += (float_t)(buf[6 * kI + 6] - '0') * 10;
+        tmp_pts[kI].y += (float_t)(buf[6 * kI + 7] - '0');
         sum -= tmp_pts[kI].x;
         sum -= tmp_pts[kI].y;
         tmp_pts[kI].x /= 10;
         tmp_pts[kI].y /= 10;
     }
     int32_t bpm = 0;
-    bpm += (buf[6 * verteces + 1] - '0') * 100;
-    bpm += (buf[6 * verteces + 2] - '0') * 10;
-    bpm += (buf[6 * verteces + 3] - '0');
+    bpm += (buf[6 * verteces + 2] - '0') * 100;
+    bpm += (buf[6 * verteces + 3] - '0') * 10;
+    bpm += (buf[6 * verteces + 4] - '0');
     sum -= bpm;
     int32_t rotation = 0;
-    rotation += (buf[6 * verteces + 4] - '0') * 100;
-    rotation += (buf[6 * verteces + 5] - '0') * 10;
-    rotation += (buf[6 * verteces + 6] - '0');
+    rotation += (buf[6 * verteces + 5] - '0') * 100;
+    rotation += (buf[6 * verteces + 6] - '0') * 10;
+    rotation += (buf[6 * verteces + 7] - '0');
     sum -= rotation;
-    std::cout << verteces << ' ' << bpm << ' ' << rotation << std::endl;
+    std::cout << sum << std::endl;
+    std::cout << verteces << std::endl;
+    std::cout << mode << std::endl;
+    std::cout << bpm << std::endl;
+    std::cout << rotation << std::endl;
     if (sum == 0) {
         g_mutex.lock();
         delete[] player.base_polygon;
@@ -101,7 +107,7 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         tr_matrix[1].y = std::cos(true_rot);
         delete[] player.tr_matrix;
         player.tr_matrix = tr_matrix;
-//        player.basic_mode = false; // TODO
+        player.mode = mode;
         g_mutex.unlock();
         return true;
     }
@@ -118,15 +124,12 @@ void read_serial_port(int32_t file, Player &player) {
     FD_ZERO(&rfds);
     FD_SET(file, &rfds);
 
-    char buf[CFG_LENGTH];
+    char buf[CFG_LENGTH + 1];
     bool settings = false;
 
     while (select(file + 1, &rfds, NULL, NULL, NULL) > 0) {
         int32_t sum = 0;
         read_with_markers(file, '{', '}', buf, 4);
-        // if there is 0 and checksum, then there is an rgb data
-        // if there is 1 and checksum, then there is a config data
-
         sum = std::strtol(buf, nullptr, 10);
         if (sum < 1000) {
             read_with_markers(file, '<', '>', buf, 9);
