@@ -63,7 +63,7 @@ static void parse_data(const char *buf, RGB &led_rgb, int32_t sum) {
 static bool parse_config(const char *buf, Player &player, int32_t sum) {
     int32_t verteces = buf[0] - '0';
     sum -= verteces;
-    int8_t mode = buf[1] - '0';
+    int32_t mode = buf[1] - '0';
     sum -= mode;
     auto tmp_pts = new Point[verteces];
     for (int32_t kI = 0; kI < verteces; ++kI) {

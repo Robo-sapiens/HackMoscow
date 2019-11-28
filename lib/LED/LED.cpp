@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <rpi_ws281x/ws2811.h>
-#include <unistd.h>
 #include <vector>
 #include <cmath>
 
