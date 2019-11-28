@@ -15,7 +15,7 @@ static inline bool is_num(char b) {
 }
 
 static int read_with_markers(int32_t file, char s, char e, char *buf, int32_t length) {
-    memset(buf, 0, length);
+    memset(buf, 0, length + 1);
     char b;
     int32_t i = 0;
     bool in_progress = false;
