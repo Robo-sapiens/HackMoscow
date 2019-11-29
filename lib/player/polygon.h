@@ -33,6 +33,8 @@ public:
     float_t max_item;
     RGB color;
     float_t radius;
+    float_t cos;
+    int32_t ind_cos;
 };
 
 #endif //PLAYER_LIB_PLAYER_POLYGON_H_
