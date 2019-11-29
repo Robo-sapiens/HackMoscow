@@ -39,7 +39,7 @@ void Player::render() {
             polygon->radius *= 1.2;
         } else {
             led_.show_figure_on_led(polygon);
-            polygon->operator*=(tr_matrix);
+            //polygon->operator*=(tr_matrix);
         }
     }
     auto last_item = polygons.front();

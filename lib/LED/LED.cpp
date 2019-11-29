@@ -60,16 +60,12 @@ int32_t LED::transform_coord(int32_t x, int32_t y) {
     } else {
         res = centre + ((x * width) + y);
     }
-    std::cout << res << std::endl;
     return res;
 }
 
-void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
-    a.x += 0.5;
-    a.y += 0.5;
-    b.x += 0.5;
-    b.y += 0.5;
-
+void LED::draw_line(Point &a_real, Point &b_real, RGB &led_rgb) {
+    Point a = {a_real.x + 0.4f, a_real.y + 0.4f};
+    Point b = {b_real.x + 0.4f, b_real.y + 0.4f};
     bool steep = (std::fabs(a.y - b.y) > std::fabs(a.x - b.x));
     if (steep) {
         std::swap(a.x, a.y);
@@ -91,17 +87,16 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
 
     for (int x = (int) a.x; x <= max_x; x++) {
         if (steep) {
-            if (((x < width / 2) && (x > -width / 2 + 1)) &&
-                ((y < length / 2) && (y > -length / 2 + 1))) {
+            if (((x <= width / 2) && (x >= -width / 2 + 1)) &&
+                ((y <= length / 2) && (y >= -length / 2 + 1))) {
                 ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb);
             }
         } else {
-            if (((y < width / 2) && (y > -width / 2 + 1)) &&
-               ((x < length / 2) && (x > -length / 2 + 1))) {
+            if (((y <= width / 2) && (y >= -width / 2 + 1)) &&
+               ((x <= length / 2) && (x >= -length / 2 + 1))) {
                 ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb);
             }
         }
-        std::cout << x << ' ' << y << std::endl;
         error -= dy;
         if (error < 0) {
             y += y_step;
@@ -114,8 +109,9 @@ void LED::show_figure_on_led(Polygon *polygon) {
     for (int i = 0; i < polygon->verteces; ++i) {
         if (i == polygon->verteces - 1) {
             draw_line(polygon->vectors[i], polygon->vectors[0], polygon->color);
-        }
-        draw_line(polygon->vectors[i], polygon->vectors[i + 1], polygon->color);
+        } else {
+            draw_line(polygon->vectors[i], polygon->vectors[i + 1], polygon->color);
+	}
     }
 }
 
