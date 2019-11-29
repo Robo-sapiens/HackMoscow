@@ -3,12 +3,14 @@
 #include <QtMath>
 #include <QDebug>
 #include <QPainter>
+#include "presets.h"
 
 Color::Color(QWidget *parent, Player *player) :
     QWidget(parent),
     ui(new Ui::color),
     player(player),
-    qpoints(new QPoint[player->msg.actual_size()]) {
+    qpoints(new QPoint[player->msg.actual_size()]),
+    presets(new ColorsPresets) {
     ui->setupUi(this);
     ui->sliderBlue->setRange(0, player->msg.actual_size() - 1);
     ui->sliderGreen->setRange(0, player->msg.actual_size() - 1);
@@ -16,7 +18,7 @@ Color::Color(QWidget *parent, Player *player) :
     ui->sliderWidth->setRange(0, player->msg.actual_size() - 1);
     ui->nobSensitivity->setRange(-50, 50);
     ui->nobFilter->setRange(0, 400);
-    ui->nobBPM->setRange(30, 240);
+    ui->nobBPM->setRange(1, 240);
     ui->nobImpactR->setRange(0, 400);
     ui->nobImpactG->setRange(0, 400);
     ui->nobImpactB->setRange(0, 400);
@@ -31,11 +33,16 @@ Color::Color(QWidget *parent, Player *player) :
     ui->nobImpactR->setSliderPosition(400);
     ui->nobImpactG->setSliderPosition(400);
     ui->nobImpactB->setSliderPosition(400);
+
+    // presets window
+    QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
+    presets->set_params(&player->rgb_parameters);
 }
 
 Color::~Color() {
     delete ui;
     delete[] qpoints;
+    delete presets;
 }
 
 void Color::on_sliderWidth_valueChanged(int value) {
@@ -72,10 +79,8 @@ void Color::on_nobBPM_valueChanged(int value) {
 }
 
 void Color::on_editBPM_textChanged() {
-    int tmp = (int) strtol(ui->editBPM->toPlainText().toUtf8().data(),
-                           (char **) (ui->editBPM->toPlainText().toUtf8().data()
-                               + ui->editBPM->toPlainText().toUtf8().length()), 10);
-    if (tmp >= 30) {
+    int tmp = (int) strtol(ui->editBPM->toPlainText().toUtf8().data(), nullptr, 10);
+    if (tmp >= 1) {
         player->rgb_parameters.bpm = tmp;
     }
     ui->nobBPM->setSliderPosition(tmp);

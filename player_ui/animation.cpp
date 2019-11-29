@@ -9,12 +9,14 @@ Animation::Animation(QWidget *parent, Player *player) :
     ui(new Ui::animation),
     player(player),
     vertices(new std::vector<std::pair<QTextEdit *, QTextEdit *>>),
-    amount(0),
-    x(new std::vector<float>),
-    y(new std::vector<float>),
-    radius(-1.f) {
+    base_polygon(new Polygon(0, 0, 0, 0)),
+    presets(new AnimationPresets) {
     ui->setupUi(this);
     ui->spinBox->setRange(0, 9);
+
+    // presets window
+    QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
+    presets->set_params(base_polygon);
 }
 
 Animation::~Animation() {
@@ -26,12 +28,12 @@ Animation::~Animation() {
         delete tmp.second;
     }
     delete vertices;
-    delete x;
-    delete y;
+    delete base_polygon;
+    delete presets;
 }
 
 void Animation::on_spinBox_valueChanged(int arg1) {
-    while (arg1 > amount) {
+    while (arg1 > base_polygon->verteces) {
         auto t1 = new QTextEdit();
         auto t2 = new QTextEdit();
         t1->setFixedSize(71, 27);
@@ -41,54 +43,53 @@ void Animation::on_spinBox_valueChanged(int arg1) {
         QObject::connect(t1, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         QObject::connect(t2, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         vertices->push_back({t1, t2});
-        ui->mainLayout->addWidget(t1, amount + 4, 0);
-        ui->mainLayout->addWidget(t2, amount + 4, 1);
-        x->push_back(1);
-        y->push_back(1);
-        ++amount;
+        ui->mainLayout->addWidget(t1, (int32_t)base_polygon->verteces + 4, 0);
+        ui->mainLayout->addWidget(t2, (int32_t)base_polygon->verteces + 4, 1);
+        base_polygon->push_back({1, 1});
     }
-
-    while (arg1 < amount) {
+    while (arg1 < base_polygon->verteces) {
         auto tmp = vertices->back();
         vertices->pop_back();
         delete tmp.first;
         delete tmp.second;
-        x->pop_back();
-        y->pop_back();
-        --amount;
+        base_polygon->pop_back();
     }
 }
 
 void Animation::on_value_changed() {
-    for (int32_t kI = 0; kI < amount; ++kI) {
+    fPoint new_matrix[base_polygon->verteces];
+    for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
         if (std::abs(vertices->at(kI).first->toPlainText().toFloat()) > 20) {
             vertices->at(kI).first->setText("20");
         }
         if (std::abs(vertices->at(kI).second->toPlainText().toFloat()) > 20) {
             vertices->at(kI).second->setText("20");
         }
-        x->at(kI) = vertices->at(kI).first->toPlainText().toFloat();
-        y->at(kI) = vertices->at(kI).second->toPlainText().toFloat();
+        new_matrix[kI].x = vertices->at(kI).first->toPlainText().toFloat();
+        new_matrix[kI].y = vertices->at(kI).second->toPlainText().toFloat();
     }
+    base_polygon->set_items(new_matrix);
 }
 
 void Animation::on_checkCircle_stateChanged(int arg1) {
     if (arg1) {
+        base_polygon->mode = 1;
         auto text_tmp = ui->editRadius->toPlainText();
         if (text_tmp != "" && text_tmp.toFloat() > 0) {
-            radius = text_tmp.toFloat();
+            base_polygon->radius = text_tmp.toFloat();
         } else {
-            radius = 1.f;
+            base_polygon->radius = 1.f;
         }
     } else {
-        radius = -1;
+        base_polygon->mode = 0;
+        base_polygon->radius = 0;
     }
 }
 
 void Animation::on_editRadius_textChanged() {
     auto text_tmp = ui->editRadius->toPlainText();
     if (text_tmp != "" && text_tmp.toFloat() > 0) {
-        radius = text_tmp.toFloat();
+        base_polygon->radius = text_tmp.toFloat();
     }
 }
 
@@ -102,22 +103,21 @@ void Animation::paintEvent(QPaintEvent *) {
     painter->setBrush(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
     painter->setPen(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
 
-    if (radius >= 0) {
-        auto center = QPoint(0, 0);
-        if (!x->empty() && !y->empty()) {
-            center.setX(x->front());
-            center.setY(-y->front());
+    if (base_polygon->mode == 0) {
+        auto points = new QPoint[base_polygon->verteces];
+        for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
+            points[kI].setX((int32_t) (base_polygon->vectors->at(kI).x() * 16));
+            points[kI].setY((int32_t) (base_polygon->vectors->at(kI).y() * -16));
         }
-        painter->drawEllipse(center, (int32_t)(radius * 20), (int32_t)(radius * 20));
-    } else {
-        auto points = new QPoint[amount];
-        for (int32_t kI = 0; kI < amount; ++kI) {
-            points[kI].setX((int32_t) (x->at(kI) * 20));
-            points[kI].setY((int32_t) (y->at(kI) * -20));
-        }
-        painter->drawPolygon(points, amount);
-
+        painter->drawPolygon(points, base_polygon->verteces);
         delete[] points;
+    } else {
+        auto center = QPoint(0, 0);
+        if (base_polygon->verteces != 0) {
+            center.setX(base_polygon->vectors->data()->x());
+            center.setY(base_polygon->vectors->data()->y());
+        }
+        painter->drawEllipse(center, (int32_t) (base_polygon->radius * 16), (int32_t) (base_polygon->radius * 16));
     }
 
     painter->setBrush(Qt::white);
@@ -129,15 +129,34 @@ void Animation::paintEvent(QPaintEvent *) {
 }
 
 void Animation::on_buttonSubmit_clicked() {
+    // mode == 0 => polygon
+    // mode == 1 => circle
+    // mode == 2 => basic
+    float_t x[std::max(1ul, base_polygon->verteces)];
+    float_t y[std::max(1ul, base_polygon->verteces)];
     int32_t verteces = 0;
-    if (radius < 0) {
-        verteces = amount;
+    if (base_polygon->mode == 0) {
+        verteces = base_polygon->verteces;
+        for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
+            x[kI] = base_polygon->real_vectors->at(kI).x;
+            y[kI] = base_polygon->real_vectors->at(kI).y;
+        }
+    } else if (base_polygon->mode == 1) {
+        verteces = 1;
+        if (base_polygon->verteces == 0) {
+            x[0] = 0;
+            y[0] = 0;
+        } else {
+            x[0] = base_polygon->real_vectors->data()->x;
+            y[0] = base_polygon->real_vectors->data()->y;
+        }
     }
-    player->msg.set_settings(verteces, x->data(), y->data(), player->rgb_parameters.bpm, player->rgb_parameters.rotation);
+    player->msg.set_settings(base_polygon->mode, verteces, x, y,
+        player->rgb_parameters.bpm, base_polygon->rotation);
     usleep(500000);
     player->msg.set_default();
-    emit change_verteces(x->data(), y->data(), amount, radius);
-
+    emit change_verteces(base_polygon->verteces, base_polygon->real_vectors->data(),
+        base_polygon->radius, base_polygon->mode);
 }
 
 void Animation::on_editRotation_textChanged() {
@@ -146,6 +165,6 @@ void Animation::on_editRotation_textChanged() {
         if (std::abs(text_tmp.toFloat()) > 20) {
             ui->editRotation->setText("20");
         }
-        emit change_rotation(ui->editRotation->toPlainText().toFloat() * M_PI / 180);
+        emit change_rotation((float_t)(ui->editRotation->toPlainText().toDouble() * M_PI / 180));
     }
 }

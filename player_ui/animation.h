@@ -2,9 +2,12 @@
 #define ANIMATION_H
 
 #include "player.h"
+#include "polygon.h"
+#include "presets.h"
 #include <QWidget>
 #include <utility>
 #include <QTextEdit>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class animation; }
@@ -18,7 +21,7 @@ public:
     ~Animation() override;
 
 signals:
-    void change_verteces(const float *x, const float *y, int amount, float radius);
+    void change_verteces(int verteces, const fPoint *vectors, float radius, int mode);
     void change_rotation(float rot);
 
 private slots:
@@ -36,11 +39,8 @@ private:
     Ui::animation *ui;
     Player *player;
     std::vector<std::pair<QTextEdit *, QTextEdit *>> *vertices;
-    int32_t amount;
-    std::vector<float> *x;
-    std::vector<float> *y;
-    float_t radius;
-    float_t rotation;
+    Polygon *base_polygon;
+    AnimationPresets *presets;
 };
 
 #endif // ANIMATION_H

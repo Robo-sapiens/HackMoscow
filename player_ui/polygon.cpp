@@ -3,74 +3,76 @@
 //
 
 #include "polygon.h"
+#include <QDebug>
 
-Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b, float_t radius) :
-    rows(2), cols(verteces), m(new float_t[rows * cols]),
-    vectors(new QPoint[cols]), max_item(0), color(r, g, b), radius(radius) {}
+Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b, float_t radius, int32_t mode) :
+    verteces(verteces),
+    real_vectors(new std::vector<fPoint>(verteces)),
+    vectors(new std::vector<QPoint>(verteces)),
+    max_item(0),
+    color(r, g, b),
+    radius(radius),
+    mode(mode),
+    rotation(0) {}
 
 Polygon::Polygon(const Polygon &other) :
-    rows(other.rows), cols(other.cols), m(new float_t[rows * cols]),
-    vectors(new QPoint[cols]), max_item(other.max_item), color(other.color) {
-    for (size_t i = 0; i < rows * cols; ++i) {
-        this->m[i] = other.m[i];
-    }
-
-    for (size_t j = 0; j < cols; ++j) {
-        vectors[j] = other.vectors[j];
+    verteces(other.verteces),
+    real_vectors(new std::vector<fPoint>(verteces)),
+    vectors(new std::vector<QPoint>(verteces)),
+    max_item(other.max_item),
+    color(other.color),
+    radius(other.radius),
+    mode(other.mode),
+    rotation(other.rotation) {
+    for (size_t kI = 0; kI < verteces; ++kI) {
+        this->real_vectors->at(kI) = other.real_vectors->at(kI);
+        this->vectors->at(kI) = other.vectors->at(kI);
     }
 }
 
 Polygon::~Polygon() {
-    delete[] m;
-    delete[] vectors;
+    delete real_vectors;
+    delete vectors;
 }
 
-void Polygon::set_items(const float_t *matrix, size_t size) {
-    for (size_t i = 0; i < size; ++i) {
-        m[i] = matrix[i];
-        max_item = std::max(max_item, std::abs(m[i]));
-    }
-
-    for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int) *this->operator()(0, j));
-        vectors[j].setY((int) *this->operator()(1, j));
+void Polygon::set_items(const fPoint *matrix) {
+    for (size_t kI = 0; kI < verteces; ++kI) {
+        real_vectors->at(kI) = matrix[kI];
+        vectors->at(kI).setX((int32_t)real_vectors->at(kI).x);
+        vectors->at(kI).setY((int32_t)real_vectors->at(kI).y);
+        max_item = std::max(max_item, std::max(std::abs(real_vectors->at(kI).x), std::abs(real_vectors->at(kI).y)));
     }
 }
 
-float_t *Polygon::operator()(size_t row, size_t col) {
-    return &m[row * cols + col];
+void Polygon::operator*=(const fPoint *tr_matrix) {
+    auto new_matrix = new std::vector<fPoint>(verteces);
+
+    for (size_t j = 0; j < verteces; ++j) {
+        new_matrix->at(j).x = tr_matrix[0].x * real_vectors->at(j).x + tr_matrix[1].x * real_vectors->at(j).y;
+        new_matrix->at(j).y = tr_matrix[0].y * real_vectors->at(j).x + tr_matrix[1].y * real_vectors->at(j).y;
+    }
+
+    delete real_vectors;
+    real_vectors = new_matrix;
+    for (size_t j = 0; j < verteces; ++j) {
+        vectors->at(j).setX((int32_t)real_vectors->at(j).x);
+        vectors->at(j).setY((int32_t)real_vectors->at(j).y);
+    }
+    max_item *= tr_matrix[0].x;
 }
 
-void Polygon::operator*=(float_t coef) {
-    for (size_t i = 0; i < rows * cols; ++i) {
-        m[i] *= coef;
-    }
-
-    for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int) (*this->operator()(0, j)));
-        vectors[j].setY((int) (*this->operator()(1, j)));
-    }
-
-    max_item *= coef;
+void Polygon::push_back(fPoint item) {
+    ++verteces;
+    real_vectors->push_back(item);
+    vectors->push_back(QPoint((int32_t)item.x, (int32_t)item.y));
+    max_item = std::max(max_item, std::max(std::abs(item.x), std::abs(item.y)));
 }
 
-void Polygon::operator*=(const float_t *tr_matrix) {
-    auto *new_matr = new float_t[rows * cols];
-
-    for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-            new_matr[i * cols + j] = tr_matrix[i * rows + 0] * m[/*0 * cols + */ j] +
-                tr_matrix[i * rows + 1] * m[/*1 * */cols + j];
-        }
+void Polygon::pop_back() {
+    --verteces;
+    real_vectors->pop_back();
+    vectors->pop_back();
+    for (size_t kI = 0; kI < verteces; ++kI) {
+        max_item = std::max(max_item, std::max(std::abs(real_vectors->at(kI).x), std::abs(real_vectors->at(kI).y)));
     }
-
-    delete[] m;
-    m = new_matr;
-
-    for (size_t j = 0; j < cols; ++j) {
-        vectors[j].setX((int) (*this->operator()(0, j)));
-        vectors[j].setY((int) (*this->operator()(1, j)));
-    }
-
-    max_item *= tr_matrix[0];
 }

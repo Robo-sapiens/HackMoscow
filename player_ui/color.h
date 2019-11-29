@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "player.h"
+#include "presets.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class color; }
@@ -16,7 +18,6 @@ public:
     ~Color() override;
 
 private slots:
-
     void on_sliderWidth_valueChanged(int value);
     void on_sliderRed_valueChanged(int value);
     void on_sliderGreen_valueChanged(int value);
@@ -27,11 +28,8 @@ private slots:
     void on_buttonReset_clicked();
     void on_nobBPM_valueChanged(int value);
     void on_editBPM_textChanged();
-
     void on_nobImpactR_valueChanged(int value);
-
     void on_nobImpactG_valueChanged(int value);
-
     void on_nobImpactB_valueChanged(int value);
 
 protected:
@@ -41,7 +39,7 @@ private:
     Ui::color *ui;
     Player *player;
     QPoint *qpoints;
-
+    ColorsPresets *presets;
 };
 
 #endif // COLOR_H

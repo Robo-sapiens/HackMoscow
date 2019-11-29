@@ -16,7 +16,6 @@ RGBParameters::RGBParameters() :
     blue_imp(1),
     filter(0),
     sensitivity(255. / 5000),
-    rotation(0),
     tweak_by_min(true)
     {}
 

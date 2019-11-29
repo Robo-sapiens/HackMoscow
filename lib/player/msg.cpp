@@ -27,12 +27,15 @@ void Msg::set_default() {
     text = "{0000}<000000000>";
 }
 
-void Msg::set_settings(int32_t verteces, const float *x, const float *y, int32_t bpm, float_t rotation) {
+void Msg::set_settings(int32_t mode, int32_t verteces, const float *x, const float *y, int32_t bpm, float_t rotation) {
     is_settings = true;
     int32_t sum = 0;
-    text = "{1000}[";
+    text =  "{2";
+    text += "000}[";
     text += std::to_string(verteces);
+    text += std::to_string(mode);
     sum += verteces;
+    sum += mode;
     for (int32_t kI = 0; kI < verteces; ++kI) {
         std::string tmp("000000");
         int32_t x_tmp = (int32_t)((x[kI] + 20) * 10) % 1000;
@@ -44,8 +47,8 @@ void Msg::set_settings(int32_t verteces, const float *x, const float *y, int32_t
         tmp[4]  = '0' + (y_tmp / 10 % 10);
         tmp[5]  = '0' + (y_tmp % 10);
         text += tmp;
-        sum += x[kI] + 20;
-        sum += y[kI] + 20;
+        sum += x_tmp;
+        sum += y_tmp;
     }
     std::string tmp("000000");
     tmp[0]  = '0' + (bpm / 100);
@@ -65,5 +68,14 @@ void Msg::set_settings(int32_t verteces, const float *x, const float *y, int32_t
 }
 
 void Msg::set_new_led(int32_t width, int32_t length) {
+    text = "{1000}[0000]";
+    text[2] = '0' + ((width + length) / 100);
+    text[3] = '0' + ((width + length) / 10 % 10);
+    text[4] = '0' + ((width + length) % 10);
 
+    text[7] = width / 10;
+    text[8] = width % 10;
+    text[9] = length / 10;
+    text[10] = length % 10;
+    std::cout << text << std::endl;
 }

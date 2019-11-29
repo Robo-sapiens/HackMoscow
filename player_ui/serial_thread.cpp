@@ -25,7 +25,7 @@ void SerialThread::run() {
         usleep(player->delay);
         if (serial_port->write(player->msg.text.c_str()) > 0) {
             serial_port->waitForBytesWritten(10);
-//            qDebug() << player->msg.text.size() << serial_port->bytesToWrite();
+//            qDebug() << player->msg.text.c_str() << serial_port->bytesToWrite();
         }
     }
     delete serial_port;

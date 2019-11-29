@@ -11,27 +11,25 @@ MainWindow::MainWindow(QWidget *parent, Player *player) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     player(player),
-    base_polygon(),
-    polygons(),
-    transformation_matrix(new float_t[2 * 2]),
-    radius(0) {
+    base_polygon(new Polygon(5, 0, 0, 0)),
+    polygons(new std::deque<Polygon *>),
+    transformation_matrix(new fPoint[2]) {
     ui->setupUi(this);
 
     float_t phi = -0.06;
-    transformation_matrix[0] = 1.2 * std::cos(phi);
-    transformation_matrix[1] = -std::sin(phi);
-    transformation_matrix[2] = std::sin(phi);
-    transformation_matrix[3] = 1.2 * std::cos(phi);
+    transformation_matrix[0].x = 1.2f * std::cos(phi);
+    transformation_matrix[0].y = std::sin(phi);
+    transformation_matrix[1].x = -std::sin(phi);
+    transformation_matrix[1].y = 1.2f * std::cos(phi);
 
-    float_t matr[10] = {0, 9, 5.5, -5.5, -9, 10, 2, -6.5, -6.5, 2};
-    base_polygon.resize(10);
-    for (unsigned long kI = 0; kI < base_polygon.size(); ++kI) {
-        base_polygon[kI] = matr[kI];
-    }
+    fPoint base_matrix[5] = {10, 0,3.09, -9.51,-8.09, -5.88,-8.09, 5.88,3.09, 9.51};
+    base_polygon->set_items(base_matrix);
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete base_polygon;
+    delete polygons;
     delete[] transformation_matrix;
 }
 
@@ -53,38 +51,43 @@ void MainWindow::paintEvent(QPaintEvent *) {
     painter->save();
     painter->translate((float) width() / 2, (float) height() / 2);
 
-    auto *tmp = new Polygon(base_polygon.size() / 2,
-        player->rgb.r, player->rgb.g, player->rgb.b, radius);
-    tmp->set_items(base_polygon.data(), base_polygon.size());
-    polygons.push_back(tmp);
+    auto tmp = new Polygon(*base_polygon);
+    tmp->color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
+    polygons->push_back(tmp);
 
-    for (auto &polygon : polygons) {
+    for (auto &polygon: *polygons) {
         painter->setBrush(polygon->color);
         painter->setPen(polygon->color);
 
-        if (polygon->radius <= 0) {
-            painter->drawPolygon(polygon->vectors, polygon->cols);
+        if (polygon->mode == 0) {
+            painter->drawPolygon(polygon->vectors->data(), polygon->verteces);
             *polygon *= transformation_matrix;
-        } else {
+        } else if (polygon->mode == 1) {
             auto center = QPoint(0, 0);
-            if (!base_polygon.empty()) {
-                center.setX(polygon->vectors->x());
-                center.setY(polygon->vectors->y());
+            if (base_polygon->verteces > 0) {
+                center.setX(polygon->vectors->data()->x());
+                center.setY(polygon->vectors->data()->y());
             }
             painter->drawEllipse(center, (int32_t)(polygon->radius), (int32_t)(polygon->radius));
             polygon->radius *= 1.2;
         }
+
     }
-    auto last_item = polygons.front();
-    if (last_item->max_item > 2 * width()) {
-        polygons.pop_front();
+    auto last_item = polygons->front();
+    if (last_item->max_item > 2.f * (float_t)width()) {
+        polygons->pop_front();
         delete last_item;
     }
-
-    usleep(1000000 / player->rgb_parameters.bpm);
+    usleep(5000000 / player->rgb_parameters.bpm);
 
     painter->restore();
     delete painter;
+}
+
+void MainWindow::animation_changed(int verteces, const fPoint *vectors, float radius, int mode) {
+    delete base_polygon;
+    base_polygon = new Polygon(verteces, 0, 0, 0, radius, mode);
+    base_polygon->set_items(vectors);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -97,22 +100,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void MainWindow::animation_changed(const float *x, const float *y, int amount, float rad) {
-    this->radius = rad;
-    base_polygon.resize(amount * 2);
-    for (unsigned long kI = 0; kI < amount; ++kI) {
-        base_polygon[kI] = x[kI];
-    }
-
-    for (unsigned long kJ = 0; kJ < amount; ++kJ) {
-        base_polygon[kJ + amount] = y[kJ];
-    }
-}
-
 void MainWindow::rotation_changed(float rot) {
-    player->rgb_parameters.rotation = rot;
-    transformation_matrix[0] = 1.2 * std::cos(rot);
-    transformation_matrix[1] = -std::sin(rot);
-    transformation_matrix[2] = std::sin(rot);
-    transformation_matrix[3] = 1.2 * std::cos(rot);
+    base_polygon->rotation = rot;
+    transformation_matrix[0].x = 1.2f * std::cos(rot);
+    transformation_matrix[0].y = std::sin(rot);
+    transformation_matrix[1].x = -std::sin(rot);
+    transformation_matrix[1].y = 1.2f * std::cos(rot);
 }

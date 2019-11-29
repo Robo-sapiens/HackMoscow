@@ -24,6 +24,8 @@ int main(int argc, char *argv[]) {
     FFTWThread fftw_thread(&player);
     MainWindow main_window(nullptr, &player);
 
+    color.setWindowModality(Qt::NonModal);
+
     QObject::connect(&main_window, SIGNAL(open_colors()), &color, SLOT(showMaximized()));
     QObject::connect(&main_window, SIGNAL(open_animation()), &animation, SLOT(showMaximized()));
     QObject::connect(&main_window, SIGNAL(open_devices()), &devices, SLOT(showMaximized()));
@@ -34,11 +36,12 @@ int main(int argc, char *argv[]) {
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &color, SLOT(update()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &main_window, SLOT(update()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), &animation, SLOT(update()));
-    QObject::connect(&animation, SIGNAL(change_verteces(const float *, const float *, int, float)),
-        &main_window, SLOT(animation_changed(const float *, const float *, int, float)));
+    QObject::connect(&animation, SIGNAL(change_verteces(int, const fPoint *, float, int)),
+        &main_window, SLOT(animation_changed(int, const fPoint *, float, int)));
     QObject::connect(&animation, SIGNAL(change_rotation(float)),
         &main_window, SLOT(rotation_changed(float)));
 
     main_window.showMaximized();
+
     return QApplication::exec();
 }

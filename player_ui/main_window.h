@@ -27,7 +27,7 @@ signals:
     void open_devices();
 
 public slots:
-    void animation_changed(const float *x, const float *y, int amount, float rad);
+    void animation_changed(int verteces, const fPoint *vectors, float radius, int mode);
     void rotation_changed(float rot);
 
 private slots:
@@ -40,10 +40,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Player *player;
-    std::vector<float_t> base_polygon;
-    std::deque<Polygon *> polygons;
-    float_t *transformation_matrix;
-    float_t radius;
+    Polygon *base_polygon;
+    std::deque<Polygon *> *polygons;
+    fPoint *transformation_matrix;
 };
 
 #endif // MAINWINDOW_H
