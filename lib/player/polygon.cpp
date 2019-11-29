@@ -51,7 +51,7 @@ void Polygon::operator*=(const Point *tr_matrix) {
         vectors[kI].y *= coef;
     }
     max_item *= coef;
-    std::cout << coef << std::endl;
+//    std::cout << coef << std::endl;
 //    for (size_t j = 0; j < verteces; ++j) {
 //        new_matr[j].x = tr_matrix[0].x * vectors[j].x + tr_matrix[1].x * vectors[j].y;
 //        new_matr[j].y = tr_matrix[0].y * vectors[j].x + tr_matrix[1].y * vectors[j].y;

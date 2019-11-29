@@ -46,6 +46,7 @@ void Player::render() {
     if (last_item->max_item > 2 * led_.get_width()) {
         polygons.pop_front();
         delete last_item;
+        std::cout << last_item->max_item << std::endl;
     }
 }
 
