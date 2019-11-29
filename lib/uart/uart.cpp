@@ -77,6 +77,8 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         sum -= tmp_pts[kI].y;
         tmp_pts[kI].x /= 10;
         tmp_pts[kI].y /= 10;
+        tmp_pts[kI].x -= 20;
+        tmp_pts[kI].y -= 20;
     }
     int32_t bpm = 0;
     bpm += (buf[6 * verteces + 2] - '0') * 100;
