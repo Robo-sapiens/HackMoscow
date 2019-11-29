@@ -9,8 +9,8 @@
 
 #include "LED.h"
 
-static inline int32_t rgb_to_hex(int r, int g, int b) {
-    return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
+static inline int32_t rgb_to_hex(RGB &led_rgb) {
+    return ((led_rgb.g & 0xff) << 16) + ((led_rgb.r & 0xff) << 8) + (led_rgb.b & 0xff);
 }
 
 LED::LED(int32_t width, int32_t length) :
@@ -48,7 +48,7 @@ void LED::show_led_on_pi(RGB &led_rgb) {
     }
     // Set the left most updateLEDs with the new color
     for (int i = width * length / 2 - width; i < width * length / 2 + width; ++i) {
-        ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+        ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb);
     }
 }
 
@@ -65,8 +65,12 @@ int32_t LED::transform_coord(int32_t x, int32_t y) {
 }
 
 void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
-    //TODO(Antonrampage): fix
-    bool steep = (fabs(a.y - b.y) > fabs(a.x - b.x));
+    a.x += 0.5;
+    a.y += 0.5;
+    b.x += 0.5;
+    b.y += 0.5;
+
+    bool steep = (std::fabs(a.y - b.y) > std::fabs(a.x - b.x));
     if (steep) {
         std::swap(a.x, a.y);
         std::swap(b.x, b.y);
@@ -77,7 +81,7 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
     }
 
     float dx = b.x - a.x;
-    float dy = fabs(b.y - a.y);
+    float dy = std::fabs(b.y - a.y);
 
     float error = dx / 2.0f;
     int y_step = (a.y < b.y) ? 1 : -1;
@@ -87,9 +91,15 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
 
     for (int x = (int) a.x; x <= max_x; x++) {
         if (steep) {
-            ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+            if (((x < width / 2) && (x > -width / 2 + 1)) &&
+                ((y < length / 2) && (y > -length / 2 + 1))) {
+                ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb);
+            }
         } else {
-            ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb.g, led_rgb.r, led_rgb.b);
+            if (((y < width / 2) && (y > -width / 2 + 1)) &&
+               ((x < length / 2) && (x > -length / 2 + 1))) {
+                ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb);
+            }
         }
         std::cout << x << ' ' << y << std::endl;
         error -= dy;
@@ -100,9 +110,13 @@ void LED::draw_line(Point &a, Point &b, RGB &led_rgb) {
     }
 }
 
-void LED::show_figure_on_led(const Polygon *polygon) {
-//    draw_line(a, b, led_rgb);
-//    polygon->vectors.
+void LED::show_figure_on_led(Polygon *polygon) {
+    for (int i = 0; i < polygon->verteces; ++i) {
+        if (i == polygon->verteces - 1) {
+            draw_line(polygon->vectors[i], polygon->vectors[0], polygon->color);
+        }
+        draw_line(polygon->vectors[i], polygon->vectors[i + 1], polygon->color);
+    }
 }
 
 void LED::show_circle_on_led(const Polygon *polygon) {
