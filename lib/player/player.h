@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <cmath>
-#include <deque>
+#include "fixed_queue.h"
 #include "LED.h"
 #include "polygon.h"
 
@@ -19,9 +19,9 @@ public:
     size_t delay;
     std::string device;
     RGB rgb;
-    std::deque<Polygon *> polygons;
+    fixed_queue<Polygon *> *polygons;
     int32_t verteces;
-    Point *base_polygon;
+    Polygon *base_polygon;
     Point *tr_matrix;
     int32_t mode;
     LED led_;

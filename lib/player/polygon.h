@@ -26,11 +26,10 @@ public:
     ~Polygon();
 
     void set_items(const Point *matrix, size_t size);
-    void operator*=(const Point *tr_matrix);
+    void expand(const Point *tr_matrix = nullptr);
 
     size_t verteces;
     Point *vectors;
-    float_t max_item;
     RGB color;
     float_t radius;
     float_t cos;

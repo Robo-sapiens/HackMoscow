@@ -223,9 +223,12 @@ void LED::show_circle_on_led(Polygon *polygon) {
     }
 }
 
-void LED::change_settings(int32_t width, int32_t length) {
-    this->width = width;
-    this->length = length;
+void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
+    if (tmp_width <= 0 || tmp_length <= 0) {
+        return;
+    }
+    this->width = tmp_width;
+    this->length = tmp_length;
     ws2811_fini(&ledstring);
     ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
     try {
@@ -249,4 +252,8 @@ void LED::render() {
 
 int32_t LED::get_width() const {
     return width;
+}
+
+int32_t LED::get_length() const {
+    return length;
 }

@@ -25,7 +25,8 @@ public:
     void show_figure_on_led(Polygon *polygon);
     void show_circle_on_led(Polygon *polygon);
     void draw_line(Point &a, Point &b, RGB &led_rgb);
-    int32_t get_width() const;
+    [[nodiscard]] int32_t get_width() const;
+    [[nodiscard]] int32_t get_length() const;
     void change_settings(int32_t width, int32_t length);
     void render();
 private:

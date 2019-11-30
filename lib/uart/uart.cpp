@@ -90,16 +90,12 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
     rotation += (buf[6 * verteces + 6] - '0') * 10;
     rotation += (buf[6 * verteces + 7] - '0');
     sum -= rotation;
-    std::cout << sum << std::endl;
-    std::cout << verteces << std::endl;
-    std::cout << mode << std::endl;
-    std::cout << bpm << std::endl;
-    std::cout << rotation << std::endl;
     if (sum == 0) {
         g_mutex.lock();
         delete[] player.base_polygon;
-        player.base_polygon = tmp_pts;
-        player.delay = 1000000 / bpm; // TODO check
+        player.base_polygon = new Polygon(verteces, 0, 0, 0);
+        player.base_polygon->set_items(tmp_pts, verteces);
+        player.delay = 1000000 / bpm;
         player.verteces = verteces;
         auto true_rot = (rotation - 20) * M_PI / 180;
         auto tr_matrix = new Point[2];
@@ -110,14 +106,24 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         delete[] player.tr_matrix;
         player.tr_matrix = tr_matrix;
         player.mode = mode;
+        std::cout << "true rotation in radians: "<< true_rot << std::endl;
         g_mutex.unlock();
         return true;
     }
     return false;
 }
 
-static bool parse_new_led(char *buf, Player &player, int32_t sum) {
-
+static bool parse_new_led(const char *buf, Player &player, int32_t sum) {
+    int32_t tmp_width = 0;
+    int32_t tmp_length = 0;
+    tmp_width += buf[0] * 10;
+    tmp_width += buf[1];
+    tmp_length += buf[2] * 10;
+    tmp_length += buf[3];
+    if (tmp_length + tmp_width == sum) {
+        player.led_.change_settings(tmp_width, tmp_length);
+        return true;
+    }
     return false;
 }
 
