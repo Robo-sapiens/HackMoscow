@@ -92,9 +92,10 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
     sum -= rotation;
     if (sum == 0) {
         g_mutex.lock();
-        delete[] player.base_polygon;
+        delete player.base_polygon;
         player.base_polygon = new Polygon(verteces, 0, 0, 0);
         player.base_polygon->set_items(tmp_pts, verteces);
+	std::cout << verteces <<std::endl;
         player.delay = 1000000 / bpm;
         player.verteces = verteces;
         auto true_rot = (rotation - 20) * M_PI / 180;
@@ -110,6 +111,7 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         g_mutex.unlock();
         return true;
     }
+    delete[] tmp_pts;
     return false;
 }
 

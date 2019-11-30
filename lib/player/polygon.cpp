@@ -9,9 +9,10 @@ Polygon::Polygon(size_t verteces, int32_t r, int32_t g, int32_t b) :
     verteces(verteces),
     vectors(new Point[verteces]),
     color({r, g, b}),
-    radius(1),
+    radius(0),
     cos(0),
-    ind_cos(0) {}
+    ind_cos(0) {
+    }
 
 Polygon::~Polygon() {
     delete[] vectors;

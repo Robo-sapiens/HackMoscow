@@ -8,7 +8,7 @@ Player::Player(size_t delay, const char *device) :
     delay(delay),
     device(device),
     rgb({0, 0, 0}),
-    polygons(new fixed_queue<Polygon *>(32)),
+    polygons(new fixed_queue<Polygon *>(64)),
     verteces(3),
     base_polygon(new Polygon(0, 0, 0, 0)),
     tr_matrix(new Point[2]),

@@ -120,16 +120,14 @@ void LED::show_figure_on_led(Polygon *polygon) {
 
 void LED::show_circle_on_led(Polygon *polygon) {
     float_t x0 = polygon->vectors[0].x + 0.5f;
-    float_t y0 = polygon->vectors[0].x + 0.5f;
-    double_t ir_x = 0.f;
-    double_t ir_y = 0.f;
-    modf(std::fabs(x0), &ir_x);
-    modf(std::fabs(y0), &ir_y);
+    float_t y0 = polygon->vectors[0].y + 0.5f;
+    double_t ir_x = std::fabs(x0) - std::floor(std::fabs(x0));
+    double_t ir_y = std::fabs(y0) - std::floor(std::fabs(y0));;
     int mode = 0;
     if (((ir_x - 0.5 < 0.25) && (ir_x - 0.5 >= 0)) &&
         ((ir_y - 0.5 < 0.25) && (ir_y - 0.5 >= 0))) {
-        x0 = std::ceil(x0) + 0.5f;
-        y0 = std::ceil(y0) + 0.5f;
+        x0 = std::floor(x0) + 0.5f;
+        y0 = std::floor(y0) + 0.5f;
         mode = 1;
     }
 
@@ -175,32 +173,53 @@ void LED::show_circle_on_led(Polygon *polygon) {
         }
     } else {
         float_t x = 0.5f;
-        float_t y = std::ceil(polygon->radius) + 0.5f;
+        float_t y = std::floor(polygon->radius) + 0.5f;
         float_t rad = y;
         float_t d = 0;
         float_t v = 0;
         float_t g = 0;
-        while (y >= 0.5) {
+        while (y >= (rad + 0.5) / 2) {
+	    //std::cout << "rad : " << rad << ' ' << x + x0 << ' ' << y + y0 << std::endl;
             if (check_coord(std::floor(x0 + x), std::floor(y0 + y))) {
-                ledstring.channel[0].leds[transform_coord(std::floor(x0 + x), std::floor(y0 + y))] =
+                ledstring.channel[0].leds[transform_coord(x0 + x, y0 + y)] =
                         rgb_to_hex(polygon->color);
             }
-            if (check_coord(std::floor(x0 + x), std::floor(y0 - y))) {
-                ledstring.channel[0].leds[transform_coord(std::floor(x0 + x), std::floor(y0 - y))] =
+	    if (check_coord(std::floor(x0 + y), std::floor(y0 + x))) {
+                ledstring.channel[0].leds[transform_coord(x0 + y, y0 + x)] =
                         rgb_to_hex(polygon->color);
             }
-            if (check_coord(std::floor(x0 - x), std::floor(y0 + y))) {
-                ledstring.channel[0].leds[transform_coord(std::floor(x0 - x), std::floor(y0 + y))] =
+            if (check_coord(std::round(x0 + x), std::round(y0 - y))) {
+                ledstring.channel[0].leds[transform_coord(x0 + x, y0 - y)] =
                         rgb_to_hex(polygon->color);
             }
-            if (check_coord(std::floor(x0 - x), std::floor(y0 - y))) {
-                ledstring.channel[0].leds[transform_coord(std::floor(x0 - x), std::floor(y0 - y))] =
+ 	    if (check_coord(std::round(x0 + y), std::round(y0 - x))) {
+                ledstring.channel[0].leds[transform_coord(x0 + y, y0 - x)] =
+                        rgb_to_hex(polygon->color);
+            }
+            if (check_coord(std::round(x0 - x), std::round(y0 + y))) {
+                ledstring.channel[0].leds[transform_coord(x0 - x, y0 + y)] =
+                        rgb_to_hex(polygon->color);
+            }
+	    if (check_coord(std::round(x0 - y), std::round(y0 + x))) {
+                ledstring.channel[0].leds[transform_coord(x0 - y, y0 + x)] =
                         rgb_to_hex(polygon->color);
             }
 
-            v = (x + 0.5f) * (x + 0.5f) + y * y - rad * rad;
-            g = x * x + (y - 0.5f) * (y - 0.5f) - rad;
+            if (check_coord(std::round(x0 - x), std::round(y0 - y))) {
+                ledstring.channel[0].leds[transform_coord(x0 - x, y0 - y)] =
+                        rgb_to_hex(polygon->color);
+            }
+	    if (check_coord(std::round(x0 - y), std::round(y0 - x))) {
+                ledstring.channel[0].leds[transform_coord(x0 - y, y0 - x)] =
+                        rgb_to_hex(polygon->color);
+            }
+
+
+            g = (x + 0.5f) * (x + 0.5f) + y * y - rad * rad;
+            v = x * x + (y - 0.5f) * (y - 0.5f) - rad * rad;
             d = (x + 0.5f) * (x + 0.5f) + (y - 0.5f) * (y - 0.5f) - rad * rad;
+	    //std::cout << v << ' ' << g << ' ' << d  << std::endl;
+
             if (d < 0) {
                 if (std::fabs(g) - std::fabs(d) <= 0) {
                     x++;
