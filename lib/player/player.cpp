@@ -36,17 +36,15 @@ void Player::render() {
         // mode == 2 => basic
         if (mode == 1) {
             led_.show_circle_on_led(polygon);
-            polygon->radius *= 1.2;
+            polygon->radius += 1;
         } else {
             led_.show_figure_on_led(polygon);
-            polygon->operator*=(tr_matrix);
         }
     }
     auto last_item = polygons.front();
     if (last_item->max_item > 4.f * led_.get_width()) {
         polygons.pop_front();
         delete last_item;
-        std::cout << last_item->max_item << std::endl;
     }
 }
 
