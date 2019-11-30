@@ -43,7 +43,7 @@ void Player::render() {
         }
     }
     auto last_item = polygons.front();
-    if (last_item->max_item > 2 * led_.get_width()) {
+    if (last_item->max_item > 4.f * led_.get_width()) {
         polygons.pop_front();
         delete last_item;
         std::cout << last_item->max_item << std::endl;
