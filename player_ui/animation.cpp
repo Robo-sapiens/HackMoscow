@@ -17,6 +17,7 @@ Animation::Animation(QWidget *parent, Player *player) :
     QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
     presets->set_params(base_polygon);
     on_spinBox_valueChanged(1);
+    ui->editRadius->setPlainText("1");
 }
 
 Animation::~Animation() {
@@ -33,21 +34,21 @@ Animation::~Animation() {
 }
 
 void Animation::on_spinBox_valueChanged(int arg1) {
-    while (arg1 > base_polygon->verteces) {
+    while (arg1 > base_polygon->vectors->size()) {
         auto t1 = new QTextEdit();
         auto t2 = new QTextEdit();
         t1->setFixedSize(71, 27);
         t2->setFixedSize(71, 27);
-        t1->setPlainText("1");
-        t2->setPlainText("1");
+        t1->setPlainText("0");
+        t2->setPlainText("0");
         QObject::connect(t1, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         QObject::connect(t2, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
         vertices->push_back({t1, t2});
-        ui->mainLayout->addWidget(t1, (int32_t) base_polygon->verteces + 4, 0);
-        ui->mainLayout->addWidget(t2, (int32_t) base_polygon->verteces + 4, 1);
-        base_polygon->push_back({1, 1});
+        ui->mainLayout->addWidget(t1, (int32_t) base_polygon->vectors->size() + 4, 0);
+        ui->mainLayout->addWidget(t2, (int32_t) base_polygon->vectors->size() + 4, 1);
+        base_polygon->push_back({0, 0});
     }
-    while (arg1 < base_polygon->verteces) {
+    while (arg1 < base_polygon->vectors->size()) {
         auto tmp = vertices->back();
         vertices->pop_back();
         delete tmp.first;
@@ -57,8 +58,8 @@ void Animation::on_spinBox_valueChanged(int arg1) {
 }
 
 void Animation::on_value_changed() {
-    fPoint new_matrix[base_polygon->verteces];
-    for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
+    fPoint new_matrix[base_polygon->vectors->size()];
+    for (size_t kI = 0; kI < base_polygon->vectors->size(); ++kI) {
         if (std::abs(vertices->at(kI).first->toPlainText().toFloat()) > 20) {
             vertices->at(kI).first->setText("20");
         }
@@ -89,16 +90,16 @@ void Animation::paintEvent(QPaintEvent *) {
     painter->setPen(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
 
     if (base_polygon->mode == 0) {
-        auto points = new QPoint[base_polygon->verteces];
-        for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
+        auto points = new QPoint[base_polygon->vectors->size()];
+        for (size_t kI = 0; kI < base_polygon->vectors->size(); ++kI) {
             points[kI].setX((int32_t) (base_polygon->real_vectors->at(kI).x * 64));
             points[kI].setY((int32_t) (base_polygon->real_vectors->at(kI).y * -64));
         }
-        painter->drawPolygon(points, base_polygon->verteces);
+        painter->drawPolygon(points, base_polygon->vectors->size());
         delete[] points;
     } else if (base_polygon->mode == 1) {
         auto center = QPoint(0, 0);
-        if (base_polygon->verteces != 0) {
+        if (!base_polygon->vectors->empty()) {
             center.setX(base_polygon->vectors->data()->x());
             center.setY(base_polygon->vectors->data()->y());
         }
@@ -117,18 +118,18 @@ void Animation::on_buttonSubmit_clicked() {
     // mode == 0 => polygon
     // mode == 1 => circle
     // mode == 2 => basic
-    float_t x[std::max(1, base_polygon->verteces)];
-    float_t y[std::max(1, base_polygon->verteces)];
+    float_t x[std::max(1ul, base_polygon->vectors->size())];
+    float_t y[std::max(1ul, base_polygon->vectors->size())];
     int32_t verteces = 0;
     if (base_polygon->mode == 0) {
-        verteces = base_polygon->verteces;
-        for (size_t kI = 0; kI < base_polygon->verteces; ++kI) {
+        verteces = base_polygon->vectors->size();
+        for (size_t kI = 0; kI < verteces; ++kI) {
             x[kI] = base_polygon->real_vectors->at(kI).x;
             y[kI] = base_polygon->real_vectors->at(kI).y;
         }
     } else if (base_polygon->mode == 1) {
         verteces = 1;
-        if (base_polygon->verteces == 0) {
+        if (base_polygon->vectors->empty()) {
             x[0] = 0;
             y[0] = 0;
         } else {
@@ -140,7 +141,7 @@ void Animation::on_buttonSubmit_clicked() {
                              player->rgb_parameters.bpm, base_polygon->rotation);
     usleep(500000);
     player->msg.set_default();
-    emit change_verteces(base_polygon->verteces, base_polygon->real_vectors->data(),
+    emit change_verteces(base_polygon->vectors->size(), base_polygon->real_vectors->data(),
                          base_polygon->radius, base_polygon->mode);
 }
 

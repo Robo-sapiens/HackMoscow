@@ -9,6 +9,7 @@
 #include "color.h"
 #include "devices.h"
 #include "animationpresettings.h"
+#include <iostream>
 
 #define DELAY 5000
 
@@ -23,8 +24,6 @@ int main(int argc, char *argv[]) {
     AudioThread audio_thread(&player);
     FFTWThread fftw_thread(&player);
     MainWindow main_window(nullptr, &player);
-
-    color.setWindowModality(Qt::NonModal);
 
     QObject::connect(&main_window, SIGNAL(open_colors()), &color, SLOT(showMaximized()));
     QObject::connect(&main_window, SIGNAL(open_animation()), &animation_pre_settings, SLOT(show()));

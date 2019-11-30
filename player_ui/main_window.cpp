@@ -2,9 +2,9 @@
 #include "ui_main_window.h"
 #include <QPainter>
 #include <QDebug>
-#include <zconf.h>
 #include <cmath>
 #include <QKeyEvent>
+#include <unistd.h>
 
 
 MainWindow::MainWindow(QWidget *parent, Player *player) :
@@ -12,17 +12,17 @@ MainWindow::MainWindow(QWidget *parent, Player *player) :
     ui(new Ui::MainWindow),
     player(player),
     base_polygon(new Polygon(5, 0, 0, 0)),
-    polygons(new std::deque<Polygon>),
+    polygons(new fixed_queue<Polygon *, POLYGON_AMOUNT>),
     transformation_matrix(new fPoint[2]) {
     ui->setupUi(this);
 
-    float_t phi = -0.06;
-    transformation_matrix[0].x = 1.2f * std::cos(phi);
+    float_t phi = -0.1;
+    transformation_matrix[0].x = 1.3f * std::cos(phi);
     transformation_matrix[0].y = std::sin(phi);
     transformation_matrix[1].x = -std::sin(phi);
-    transformation_matrix[1].y = 1.2f * std::cos(phi);
+    transformation_matrix[1].y = 1.3f * std::cos(phi);
 
-    fPoint base_matrix[5] = {10, 0, 3.09, -9.51, -8.09, -5.88, -8.09, 5.88, 3.09, 9.51};
+    fPoint base_matrix[5] = {1, 0, 0.3, -0.9, -0.8, -0.6, -0.8, 0.6, 0.3, 0.9};
     base_polygon->set_items(base_matrix);
 }
 
@@ -51,42 +51,46 @@ void MainWindow::paintEvent(QPaintEvent *) {
     painter->save();
     painter->translate((float) width() / 2, (float) height() / 2);
 
-    auto tmp = Polygon(*base_polygon);
-    tmp.color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
+    auto tmp = new Polygon(*base_polygon);
+    tmp->color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
     polygons->push_back(tmp);
 
-    for (auto &polygon: *polygons) {
-        painter->setBrush(polygon.color);
-        painter->setPen(polygon.color);
+    for (unsigned kI = 0; kI < polygons->size(); ++kI) {
+        auto polygon = polygons->at(kI);
+        painter->setBrush(polygon->color);
+        painter->setPen(polygon->color);
 
-        if (polygon.mode == 0) {
-            painter->drawPolygon(polygon.vectors->data(), polygon.verteces);
-            polygon *= transformation_matrix;
-        } else if (polygon.mode == 1) {
+        if (polygon->mode == 0) {
+            painter->drawPolygon(polygon->vectors->data(), polygon->vectors->size());
+            *polygon *= transformation_matrix;
+        } else if (polygon->mode == 1) {
             auto center = QPoint(0, 0);
-            if (base_polygon->verteces > 0) {
-                center.setX(polygon.vectors->data()->x());
-                center.setY(polygon.vectors->data()->y());
+            if (!base_polygon->vectors->empty()) {
+                center.setX(polygon->vectors->data()->x());
+                center.setY(polygon->vectors->data()->y());
             }
-            painter->drawEllipse(center, (int32_t) (polygon.radius), (int32_t) (polygon.radius));
-            polygon.radius *= 1.2;
+            painter->drawEllipse(center, (int32_t) (polygon->radius), (int32_t) (polygon->radius));
+            polygon->radius *= 1.2;
         }
 
     }
-    while (polygons->size() > 49) {
-        auto last_item = polygons->front();
-        polygons->pop_front();
-//        delete last_item;
-    }
-
+    usleep(800000 / player->rgb_parameters.bpm);
     painter->restore();
     delete painter;
 }
 
 void MainWindow::animation_changed(int verteces, const fPoint *vectors, float radius, int mode) {
+    if (mode == 2) {
+        return;
+    }
     delete base_polygon;
-    base_polygon = new Polygon(verteces, 0, 0, 0, radius, mode);
-    base_polygon->set_items(vectors);
+    base_polygon = new Polygon(verteces, 0, 0, 0, 10 * radius, mode);
+    fPoint tmp_vectors[verteces];
+    for (int kI = 0; kI < verteces; ++kI) {
+        tmp_vectors[kI].x = 16 * vectors[kI].x;
+        tmp_vectors[kI].y = 16 * vectors[kI].y;
+    }
+    base_polygon->set_items(tmp_vectors);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -101,8 +105,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
 void MainWindow::rotation_changed(float rot) {
     base_polygon->rotation = rot;
-    transformation_matrix[0].x = 1.2f * std::cos(rot);
+    transformation_matrix[0].x = 1.3f * std::cos(rot);
     transformation_matrix[0].y = std::sin(rot);
     transformation_matrix[1].x = -std::sin(rot);
-    transformation_matrix[1].y = 1.2f * std::cos(rot);
+    transformation_matrix[1].y = 1.3f * std::cos(rot);
 }

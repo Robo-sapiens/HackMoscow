@@ -7,7 +7,6 @@
 
 
 Polygon::Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radius, int32_t mode) :
-    verteces(verteces),
     real_vectors(new std::vector<fPoint>(verteces)),
     vectors(new std::vector<QPoint>(verteces)),
     color(r, g, b),
@@ -16,14 +15,13 @@ Polygon::Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radi
     rotation(0) {}
 
 Polygon::Polygon(const Polygon &other) :
-    verteces(other.verteces),
-    real_vectors(new std::vector<fPoint>(verteces)),
-    vectors(new std::vector<QPoint>(verteces)),
+    real_vectors(new std::vector<fPoint>(other.real_vectors->size())),
+    vectors(new std::vector<QPoint>(other.vectors->size())),
     color(other.color),
     radius(other.radius),
     mode(other.mode),
     rotation(other.rotation) {
-    for (size_t kI = 0; kI < verteces; ++kI) {
+    for (size_t kI = 0; kI < other.vectors->size(); ++kI) {
         this->real_vectors->at(kI) = other.real_vectors->at(kI);
         this->vectors->at(kI) = other.vectors->at(kI);
     }
@@ -35,7 +33,7 @@ Polygon::~Polygon() {
 }
 
 void Polygon::set_items(const fPoint *matrix) {
-    for (size_t kI = 0; kI < verteces; ++kI) {
+    for (size_t kI = 0; kI < vectors->size(); ++kI) {
         real_vectors->at(kI) = matrix[kI];
         vectors->at(kI).setX((int32_t) real_vectors->at(kI).x);
         vectors->at(kI).setY((int32_t) real_vectors->at(kI).y);
@@ -43,29 +41,25 @@ void Polygon::set_items(const fPoint *matrix) {
 }
 
 void Polygon::operator*=(const fPoint *tr_matrix) {
-    auto new_matrix = new std::vector<fPoint>(verteces);
+    auto tmp_matrix = std::vector<fPoint>(this->real_vectors->begin(), this->real_vectors->end());
 
-    for (size_t j = 0; j < verteces; ++j) {
-        new_matrix->at(j).x = tr_matrix[0].x * real_vectors->at(j).x + tr_matrix[1].x * real_vectors->at(j).y;
-        new_matrix->at(j).y = tr_matrix[0].y * real_vectors->at(j).x + tr_matrix[1].y * real_vectors->at(j).y;
+    for (size_t j = 0; j < vectors->size(); ++j) {
+        real_vectors->at(j).x = tr_matrix[0].x * tmp_matrix.at(j).x + tr_matrix[1].x * tmp_matrix.at(j).y;
+        real_vectors->at(j).y = tr_matrix[0].y * tmp_matrix.at(j).x + tr_matrix[1].y * tmp_matrix.at(j).y;
     }
 
-    delete real_vectors;
-    real_vectors = new_matrix;
-    for (size_t j = 0; j < verteces; ++j) {
+    for (size_t j = 0; j < vectors->size(); ++j) {
         vectors->at(j).setX((int32_t) real_vectors->at(j).x);
         vectors->at(j).setY((int32_t) real_vectors->at(j).y);
     }
 }
 
 void Polygon::push_back(fPoint item) {
-    ++verteces;
     real_vectors->push_back(item);
     vectors->push_back(QPoint((int32_t) item.x, (int32_t) item.y));
 }
 
 void Polygon::pop_back() {
-    --verteces;
     real_vectors->pop_back();
     vectors->pop_back();
 }

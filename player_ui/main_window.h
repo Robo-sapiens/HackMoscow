@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <player.h>
 #include "polygon.h"
-#include <deque>
-
+#include "fixed_queue.h"
+#define POLYGON_AMOUNT 30
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -40,7 +40,7 @@ private:
     Ui::MainWindow *ui;
     Player *player;
     Polygon *base_polygon;
-    std::deque<Polygon> *polygons;
+    fixed_queue<Polygon *, POLYGON_AMOUNT> *polygons;
     fPoint *transformation_matrix;
 };
 

@@ -7,6 +7,7 @@ SaveNewDial::SaveNewDial(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SaveNewDial) {
     ui->setupUi(this);
+    ui->editNewName->setPlainText("cool_edm_preset");
 }
 
 SaveNewDial::~SaveNewDial() {

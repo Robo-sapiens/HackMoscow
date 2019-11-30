@@ -20,7 +20,6 @@ Presets::~Presets() {
 }
 
 void Presets::dispatch_filename(QString filename) {
-//    write_to_file(get_param_string());
     qDebug() << get_param_string();
     qDebug() << filename + identifier();
 }
@@ -54,7 +53,7 @@ QString ColorsPresets::get_param_string() {
 }
 
 void AnimationPresets::set_params(Polygon *params) {
-
+    _params = params;
 }
 
 void AnimationPresets::on_buttonApply_clicked() {
@@ -67,7 +66,7 @@ QString AnimationPresets::identifier() const {
 
 QString AnimationPresets::get_param_string() {
     std::stringstream stream;
-    stream << _params->verteces << std::endl;
+    stream << _params->vectors->size() << std::endl;
     for (auto &real_vector: *_params->real_vectors) {
         stream << real_vector.x << std::endl;
         stream << real_vector.y << std::endl;

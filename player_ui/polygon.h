@@ -21,7 +21,7 @@ struct fPoint {
 
 class Polygon {
 public:
-    Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radius = 0, int32_t mode = 0);
+    explicit Polygon(int32_t verteces = 0, int32_t r = 0, int32_t g = 0, int32_t b = 0, float_t radius = 0, int32_t mode = 0);
     Polygon(const Polygon &other);
     ~Polygon();
 
@@ -30,7 +30,6 @@ public:
     void push_back(fPoint item);
     void pop_back();
 
-    int32_t verteces;
     std::vector<fPoint> *real_vectors;
     std::vector<QPoint> *vectors;
     QColor color;

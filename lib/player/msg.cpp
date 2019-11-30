@@ -64,8 +64,6 @@ void Msg::set_settings(int32_t mode, int32_t verteces, const float *x, const flo
     text[2] = '0' + (sum / 100 % 10);
     text[3] = '0' + (sum / 10 % 10);
     text[4] = '0' + (sum % 10);
-    std::cout << sum << std::endl;
-    std::cout << text << std::endl;
 }
 
 void Msg::set_new_led(int32_t width, int32_t length) {
@@ -79,5 +77,4 @@ void Msg::set_new_led(int32_t width, int32_t length) {
     text[8] = width % 10;
     text[9] = length / 10;
     text[10] = length % 10;
-    std::cout << text << std::endl;
 }
