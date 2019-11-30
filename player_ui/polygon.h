@@ -12,14 +12,16 @@
 #include <cmath>
 #include <vector>
 
+
 struct fPoint {
     float x;
     float y;
 };
 
+
 class Polygon {
 public:
-    Polygon(size_t verteces, int32_t r, int32_t g, int32_t b, float_t radius = 0, int32_t mode = 0);
+    Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radius = 0, int32_t mode = 0);
     Polygon(const Polygon &other);
     ~Polygon();
 
@@ -28,11 +30,10 @@ public:
     void push_back(fPoint item);
     void pop_back();
 
-    size_t verteces;
+    int32_t verteces;
     std::vector<fPoint> *real_vectors;
     std::vector<QPoint> *vectors;
-    float_t max_item;
-    QColor  color;
+    QColor color;
     float_t radius;
     int32_t mode;
     float_t rotation;
@@ -40,5 +41,6 @@ public:
     // mode == 1 - circle
     // mode == 2 - basic
 };
+
 
 #endif //PLAYER_UI_POLYGON_H

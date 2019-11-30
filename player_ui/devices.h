@@ -6,6 +6,7 @@
 #include <QSerialPort>
 #include "player.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class devices; }
 QT_END_NAMESPACE
@@ -35,5 +36,6 @@ private:
     QStringListModel *sound_card_list;
     QStringListModel *ports_list;
 };
+
 
 #endif // DEVICES_H

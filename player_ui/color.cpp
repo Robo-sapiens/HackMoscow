@@ -5,6 +5,7 @@
 #include <QPainter>
 #include "presets.h"
 
+
 Color::Color(QWidget *parent, Player *player) :
     QWidget(parent),
     ui(new Ui::color),
@@ -66,7 +67,7 @@ void Color::on_nobSensitivity_valueChanged(int value) {
 }
 
 void Color::on_nobFilter_valueChanged(int value) {
-    player->rgb_parameters.filter = (float_t)value / 400;
+    player->rgb_parameters.filter = (float_t) value / 400;
 }
 
 void Color::on_checkMinFilter_stateChanged(int arg1) {
@@ -129,7 +130,7 @@ void Color::paintEvent(QPaintEvent *) {
     painter->setPen(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
     for (int32_t i = 0; i < player->msg.actual_size(); ++i) {
         qpoints[i] = QPoint(i * ui->sliderBlue->width() / player->msg.actual_size(),
-                            -(int32_t)(player->msg.fft[i] * (float_t)i * snstv));
+                            -(int32_t) (player->msg.fft[i] * (float_t) i * snstv));
     }
 
     painter->drawPolyline(qpoints, player->msg.actual_size());
@@ -167,8 +168,8 @@ void Color::paintEvent(QPaintEvent *) {
                       (int32_t) (-100 * player->rgb_parameters.blue_imp));
 
     painter->setPen(QColor(0, 0, 0));
-    painter->drawLine(0, -(int32_t)(snstv * smpls / 8 * player->rgb_parameters.filter),
-        ui->sliderBlue->width(), -(int32_t)(snstv * smpls / 8 * player->rgb_parameters.filter));
+    painter->drawLine(0, -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter),
+                      ui->sliderBlue->width(), -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter));
 
     painter->restore();
     delete painter;

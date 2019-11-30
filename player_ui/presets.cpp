@@ -10,8 +10,8 @@ Presets::Presets(QWidget *parent) :
     dialog(new SaveNewDial) {
     ui->setupUi(this);
     QObject::connect(ui->buttonSaveNew, SIGNAL(clicked()), dialog, SLOT(show()));
-    QObject::connect( dialog, SIGNAL(new_filename(QString)),
-        this, SLOT(dispatch_filename(QString)));
+    QObject::connect(dialog, SIGNAL(new_filename(QString)),
+                     this, SLOT(dispatch_filename(QString)));
 }
 
 Presets::~Presets() {
@@ -24,7 +24,6 @@ void Presets::dispatch_filename(QString filename) {
     qDebug() << get_param_string();
     qDebug() << filename + identifier();
 }
-
 
 void ColorsPresets::set_params(RGBParameters *params) {
     this->_params = params;

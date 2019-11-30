@@ -3,13 +3,13 @@
 
 #include <QDialog>
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class SaveNewDial; }
 QT_END_NAMESPACE
 
-class SaveNewDial : public QDialog
-{
-    Q_OBJECT
+class SaveNewDial : public QDialog {
+Q_OBJECT
 
 public:
     explicit SaveNewDial(QWidget *parent = nullptr);
@@ -25,5 +25,6 @@ private slots:
 private:
     Ui::SaveNewDial *ui;
 };
+
 
 #endif // SAVENEWDIAL_H

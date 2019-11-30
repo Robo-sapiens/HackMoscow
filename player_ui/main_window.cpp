@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent, Player *player) :
     ui(new Ui::MainWindow),
     player(player),
     base_polygon(new Polygon(5, 0, 0, 0)),
-    polygons(new std::deque<Polygon *>),
+    polygons(new std::deque<Polygon>),
     transformation_matrix(new fPoint[2]) {
     ui->setupUi(this);
 
@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent, Player *player) :
     transformation_matrix[1].x = -std::sin(phi);
     transformation_matrix[1].y = 1.2f * std::cos(phi);
 
-    fPoint base_matrix[5] = {10, 0,3.09, -9.51,-8.09, -5.88,-8.09, 5.88,3.09, 9.51};
+    fPoint base_matrix[5] = {10, 0, 3.09, -9.51, -8.09, -5.88, -8.09, 5.88, 3.09, 9.51};
     base_polygon->set_items(base_matrix);
 }
 
@@ -51,34 +51,33 @@ void MainWindow::paintEvent(QPaintEvent *) {
     painter->save();
     painter->translate((float) width() / 2, (float) height() / 2);
 
-    auto tmp = new Polygon(*base_polygon);
-    tmp->color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
+    auto tmp = Polygon(*base_polygon);
+    tmp.color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
     polygons->push_back(tmp);
 
     for (auto &polygon: *polygons) {
-        painter->setBrush(polygon->color);
-        painter->setPen(polygon->color);
+        painter->setBrush(polygon.color);
+        painter->setPen(polygon.color);
 
-        if (polygon->mode == 0) {
-            painter->drawPolygon(polygon->vectors->data(), polygon->verteces);
-            *polygon *= transformation_matrix;
-        } else if (polygon->mode == 1) {
+        if (polygon.mode == 0) {
+            painter->drawPolygon(polygon.vectors->data(), polygon.verteces);
+            polygon *= transformation_matrix;
+        } else if (polygon.mode == 1) {
             auto center = QPoint(0, 0);
             if (base_polygon->verteces > 0) {
-                center.setX(polygon->vectors->data()->x());
-                center.setY(polygon->vectors->data()->y());
+                center.setX(polygon.vectors->data()->x());
+                center.setY(polygon.vectors->data()->y());
             }
-            painter->drawEllipse(center, (int32_t)(polygon->radius), (int32_t)(polygon->radius));
-            polygon->radius *= 1.2;
+            painter->drawEllipse(center, (int32_t) (polygon.radius), (int32_t) (polygon.radius));
+            polygon.radius *= 1.2;
         }
 
     }
-    auto last_item = polygons->front();
-    if (last_item->max_item > 2.f * (float_t)width()) {
+    while (polygons->size() > 49) {
+        auto last_item = polygons->front();
         polygons->pop_front();
-        delete last_item;
+//        delete last_item;
     }
-    usleep(5000000 / player->rgb_parameters.bpm);
 
     painter->restore();
     delete painter;

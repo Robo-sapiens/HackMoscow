@@ -5,6 +5,7 @@
 #include "fft_thread.h"
 #include <QDebug>
 
+
 FFTWThread::FFTWThread(Player *player) : player(player), qMutex(new QMutex()) {}
 
 void FFTWThread::run() {
@@ -17,8 +18,7 @@ void FFTWThread::run() {
                 r += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.red_peak - (float) i))
                     * i
-                    / (player->rgb_parameters.width)
-                    ;
+                    / (player->rgb_parameters.width);
             }
         }
         for (int32_t i = std::max(0, player->rgb_parameters.green_peak - player->rgb_parameters.width);
@@ -28,8 +28,7 @@ void FFTWThread::run() {
                 g += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.green_peak - (float) i))
                     * i
-                    / (player->rgb_parameters.width)
-                    ;
+                    / (player->rgb_parameters.width);
             }
         }
         for (int32_t i = std::max(0, player->rgb_parameters.blue_peak - player->rgb_parameters.width);
@@ -39,8 +38,7 @@ void FFTWThread::run() {
                 b += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.blue_peak - (float) i))
                     * i
-                    / (player->rgb_parameters.width)
-                    ;
+                    / (player->rgb_parameters.width);
             }
         }
 
@@ -64,12 +62,12 @@ void FFTWThread::run() {
         player->rgb.b = b;
         if (!player->msg.is_settings) {
             //TODO: remake somehow
-            player->msg.text[2]  = '0' + ((r + g + b) / 100);
-            player->msg.text[3]  = '0' + ((r + g + b) / 10 % 10);
-            player->msg.text[4]  = '0' + ((r + g + b) % 10);
-            player->msg.text[7]  = '0' + (r / 100);
-            player->msg.text[8]  = '0' + (r / 10 % 10);
-            player->msg.text[9]  = '0' + (r % 10);
+            player->msg.text[2] = '0' + ((r + g + b) / 100);
+            player->msg.text[3] = '0' + ((r + g + b) / 10 % 10);
+            player->msg.text[4] = '0' + ((r + g + b) % 10);
+            player->msg.text[7] = '0' + (r / 100);
+            player->msg.text[8] = '0' + (r / 10 % 10);
+            player->msg.text[9] = '0' + (r % 10);
             player->msg.text[10] = '0' + (g / 100);
             player->msg.text[11] = '0' + (g / 10 % 10);
             player->msg.text[12] = '0' + (g % 10);

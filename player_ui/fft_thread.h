@@ -9,6 +9,7 @@
 #include <QMutex>
 #include "player.h"
 
+
 class FFTWThread : public QThread {
 Q_OBJECT
 public:
@@ -21,5 +22,6 @@ public:
 signals:
     void new_data();
 };
+
 
 #endif //PLAYER_UI_FFT_THREAD_H

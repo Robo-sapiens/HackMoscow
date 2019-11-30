@@ -24,23 +24,25 @@ signals:
     void change_verteces(int verteces, const fPoint *vectors, float radius, int mode);
     void change_rotation(float rot);
 
+public slots:
+    void on_buttonSubmit_clicked();
+    void on_new_mode(int mode);
 private slots:
     void on_spinBox_valueChanged(int arg1);
     void on_value_changed();
-    void on_checkCircle_stateChanged(int arg1);
     void on_editRadius_textChanged();
     void on_editRotation_textChanged();
-    void on_buttonSubmit_clicked();
 
 protected:
     void paintEvent(QPaintEvent *) override;
 
 private:
+    Polygon *base_polygon;
     Ui::animation *ui;
     Player *player;
     std::vector<std::pair<QTextEdit *, QTextEdit *>> *vertices;
-    Polygon *base_polygon;
     AnimationPresets *presets;
 };
+
 
 #endif // ANIMATION_H

@@ -42,4 +42,5 @@ private:
     ColorsPresets *presets;
 };
 
+
 #endif // COLOR_H

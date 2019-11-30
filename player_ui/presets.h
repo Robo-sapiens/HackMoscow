@@ -6,13 +6,13 @@
 #include "polygon.h"
 #include "savenewdial.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class Presets; }
 QT_END_NAMESPACE
 
-class Presets : public QWidget
-{
-    Q_OBJECT
+class Presets : public QWidget {
+Q_OBJECT
 public:
     explicit Presets(QWidget *parent = nullptr);
     ~Presets() override;
@@ -28,9 +28,8 @@ private:
 };
 
 
-class ColorsPresets : public Presets
-{
-    Q_OBJECT
+class ColorsPresets : public Presets {
+Q_OBJECT
 public:
     void set_params(RGBParameters *params);
     [[nodiscard]] QString identifier() const override;
@@ -42,9 +41,9 @@ private:
     RGBParameters *_params;
 };
 
-class AnimationPresets : public Presets
-{
-    Q_OBJECT
+
+class AnimationPresets : public Presets {
+Q_OBJECT
 public:
     void set_params(Polygon *params);
     [[nodiscard]] QString identifier() const override;

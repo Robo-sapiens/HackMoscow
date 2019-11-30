@@ -6,6 +6,7 @@
 #include "polygon.h"
 #include <deque>
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -35,14 +36,13 @@ private slots:
     void on_devices_clicked();
     void on_animation_clicked();
 
-//    void on_MainWindow_destroyed();
-
 private:
     Ui::MainWindow *ui;
     Player *player;
     Polygon *base_polygon;
-    std::deque<Polygon *> *polygons;
+    std::deque<Polygon> *polygons;
     fPoint *transformation_matrix;
 };
+
 
 #endif // MAINWINDOW_H

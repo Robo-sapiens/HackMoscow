@@ -5,6 +5,7 @@
 #include "audio_thread.h"
 #include <QDebug>
 
+
 AudioThread::AudioThread(Player *player)
     : player(player) {}
 

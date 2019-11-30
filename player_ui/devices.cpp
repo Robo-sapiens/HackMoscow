@@ -3,6 +3,7 @@
 #include <QSerialPortInfo>
 #include <pulse_device/list_devices.h>
 
+
 #define POSSIBLE_AMOUNT_OF_DEVICES 32
 
 Devices::Devices(QWidget *parent, Player *player) :

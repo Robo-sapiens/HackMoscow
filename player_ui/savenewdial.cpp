@@ -2,6 +2,7 @@
 #include "ui_savenewdial.h"
 #include <QKeyEvent>
 
+
 SaveNewDial::SaveNewDial(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SaveNewDial) {

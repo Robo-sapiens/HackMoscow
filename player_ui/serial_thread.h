@@ -11,6 +11,7 @@
 #include <QString>
 #include "player.h"
 
+
 class SerialThread : public QThread {
 Q_OBJECT
 public:
@@ -27,5 +28,6 @@ public:
     QSerialPortInfo *serial_port_info;
     bool isConnected;
 };
+
 
 #endif //PLAYER_QTHREAD_H
