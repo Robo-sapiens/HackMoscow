@@ -114,9 +114,53 @@ void LED::show_figure_on_led(Polygon *polygon) {
             draw_line(polygon->vectors[i], polygon->vectors[0], polygon->color);
         } else {
             draw_line(polygon->vectors[i], polygon->vectors[i + 1], polygon->color);
-	    }
+	}
     }
 }
+
+float_t LED::check_missing(float_t rad) {
+    float_t x = (1 + std::sqrt(1 + 2 * rad)) / 2;
+    if ((x - std::floor(x) < 0.5000001f) && (x - std::floor(x) > 0.4999999f)) {
+	return std::floor(x) + 0.5f;
+    }	
+    return -1;
+}
+
+void LED::draw_eight_points(float_t x0, float_t y0, float_t x, float_t y, RGB &color) {
+    if (check_coord(std::round(x0 + x), std::round(y0 + y))) {
+        ledstring.channel[0].leds[transform_coord(x0 + x, y0 + y)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 + y), std::round(y0 + x))) {
+        ledstring.channel[0].leds[transform_coord(x0 + y, y0 + x)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 + x), std::round(y0 - y))) {
+        ledstring.channel[0].leds[transform_coord(x0 + x, y0 - y)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 + y), std::round(y0 - x))) {
+        ledstring.channel[0].leds[transform_coord(x0 + y, y0 - x)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 - x), std::round(y0 + y))) {
+        ledstring.channel[0].leds[transform_coord(x0 - x, y0 + y)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 - y), std::round(y0 + x))) {
+        ledstring.channel[0].leds[transform_coord(x0 - y, y0 + x)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 - x), std::round(y0 - y))) {
+        ledstring.channel[0].leds[transform_coord(x0 - x, y0 - y)] =
+            rgb_to_hex(color);
+    }
+    if (check_coord(std::round(x0 - y), std::round(y0 - x))) {
+        ledstring.channel[0].leds[transform_coord(x0 - y, y0 - x)] =
+            rgb_to_hex(color);
+    }    
+}
+
 
 void LED::show_circle_on_led(Polygon *polygon) {
     float_t x0 = polygon->vectors[0].x + 0.5f;
@@ -132,6 +176,7 @@ void LED::show_circle_on_led(Polygon *polygon) {
     }
 
     if (!mode) {
+	std::cout << "hui" <<std::endl;
         int x = 0;
         int y = static_cast<int>(polygon->radius);
         int delta = 1 - 2 * y;
@@ -178,43 +223,12 @@ void LED::show_circle_on_led(Polygon *polygon) {
         float_t d = 0;
         float_t v = 0;
         float_t g = 0;
-        while (y >= (rad + 0.5) / 2) {
-	    //std::cout << "rad : " << rad << ' ' << x + x0 << ' ' << y + y0 << std::endl;
-            if (check_coord(std::floor(x0 + x), std::floor(y0 + y))) {
-                ledstring.channel[0].leds[transform_coord(x0 + x, y0 + y)] =
-                        rgb_to_hex(polygon->color);
-            }
-	    if (check_coord(std::floor(x0 + y), std::floor(y0 + x))) {
-                ledstring.channel[0].leds[transform_coord(x0 + y, y0 + x)] =
-                        rgb_to_hex(polygon->color);
-            }
-            if (check_coord(std::round(x0 + x), std::round(y0 - y))) {
-                ledstring.channel[0].leds[transform_coord(x0 + x, y0 - y)] =
-                        rgb_to_hex(polygon->color);
-            }
- 	    if (check_coord(std::round(x0 + y), std::round(y0 - x))) {
-                ledstring.channel[0].leds[transform_coord(x0 + y, y0 - x)] =
-                        rgb_to_hex(polygon->color);
-            }
-            if (check_coord(std::round(x0 - x), std::round(y0 + y))) {
-                ledstring.channel[0].leds[transform_coord(x0 - x, y0 + y)] =
-                        rgb_to_hex(polygon->color);
-            }
-	    if (check_coord(std::round(x0 - y), std::round(y0 + x))) {
-                ledstring.channel[0].leds[transform_coord(x0 - y, y0 + x)] =
-                        rgb_to_hex(polygon->color);
-            }
-
-            if (check_coord(std::round(x0 - x), std::round(y0 - y))) {
-                ledstring.channel[0].leds[transform_coord(x0 - x, y0 - y)] =
-                        rgb_to_hex(polygon->color);
-            }
-	    if (check_coord(std::round(x0 - y), std::round(y0 - x))) {
-                ledstring.channel[0].leds[transform_coord(x0 - y, y0 - x)] =
-                        rgb_to_hex(polygon->color);
-            }
-
-
+	float_t x_mis = check_missing(rad);
+	if (x_mis != -1) {
+	    draw_eight_points(x0, y0, x_mis, y, polygon->color);
+	}
+        while (y >= (rad + 0.5) / 2) { 
+	    draw_eight_points(x0, y0, x, y, polygon->color);
             g = (x + 0.5f) * (x + 0.5f) + y * y - rad * rad;
             v = x * x + (y - 0.5f) * (y - 0.5f) - rad * rad;
             d = (x + 0.5f) * (x + 0.5f) + (y - 0.5f) * (y - 0.5f) - rad * rad;

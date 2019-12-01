@@ -25,6 +25,8 @@ public:
     void show_figure_on_led(Polygon *polygon);
     void show_circle_on_led(Polygon *polygon);
     void draw_line(Point &a, Point &b, RGB &led_rgb);
+    float_t check_missing(float_t rad);
+    void draw_eight_points(float_t x0, float_t y0, float_t x, float_t y, RGB &color);
     [[nodiscard]] int32_t get_width() const;
     [[nodiscard]] int32_t get_length() const;
     void change_settings(int32_t width, int32_t length);
