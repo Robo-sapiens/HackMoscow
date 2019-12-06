@@ -184,7 +184,7 @@ void Color::on_new_preset() {
     ui->checkMinFilter->setCheckState(Qt::CheckState(((int) player->rgb_parameters.tweak_by_min) * 2));
     ui->nobBPM->setSliderPosition(player->rgb_parameters.bpm);
     ui->editBPM->setPlainText(std::to_string(player->rgb_parameters.bpm).data());
-    ui->nobImpactR->setSliderPosition((int)(player->rgb_parameters.red_imp * 400.f));
-    ui->nobImpactG->setSliderPosition((int)(player->rgb_parameters.green_imp * 400.f));
-    ui->nobImpactB->setSliderPosition((int)(player->rgb_parameters.blue_imp * 400.f));
+    ui->nobImpactR->setSliderPosition((int) (player->rgb_parameters.red_imp * 400.f));
+    ui->nobImpactG->setSliderPosition((int) (player->rgb_parameters.green_imp * 400.f));
+    ui->nobImpactB->setSliderPosition((int) (player->rgb_parameters.blue_imp * 400.f));
 }

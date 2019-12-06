@@ -1,21 +1,18 @@
-#include "main_window.h"
-#include "ui_main_window.h"
+#include "animation_view.h"
+#include "ui_animation_view.h"
 #include <QPainter>
-#include <QDebug>
 #include <cmath>
-#include <QKeyEvent>
 #include <unistd.h>
 
 
-MainWindow::MainWindow(QWidget *parent, Player *player) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
+AnimationView::AnimationView(QWidget *parent, Player *player) :
+    QWidget(parent),
+    ui(new Ui::AnimationView),
     player(player),
     base_polygon(new Polygon(5, 0, 0, 0)),
     polygons(new fixed_queue<Polygon *, POLYGON_AMOUNT>),
     transformation_matrix(new fPoint[2]) {
     ui->setupUi(this);
-
     float_t phi = -0.1;
     transformation_matrix[0].x = 1.3f * std::cos(phi);
     transformation_matrix[0].y = std::sin(phi);
@@ -24,28 +21,17 @@ MainWindow::MainWindow(QWidget *parent, Player *player) :
 
     fPoint base_matrix[5] = {1, 0, 0.3, -0.9, -0.8, -0.6, -0.8, 0.6, 0.3, 0.9};
     base_polygon->set_items(base_matrix);
+    setUpdatesEnabled(false);
 }
 
-MainWindow::~MainWindow() {
+AnimationView::~AnimationView() {
     delete ui;
     delete base_polygon;
     delete polygons;
     delete[] transformation_matrix;
 }
 
-void MainWindow::on_colors_clicked() {
-    emit open_colors();
-}
-
-void MainWindow::on_devices_clicked() {
-    emit open_devices();
-}
-
-void MainWindow::on_animation_clicked() {
-    emit open_animation();
-}
-
-void MainWindow::paintEvent(QPaintEvent *) {
+void AnimationView::paintEvent(QPaintEvent *) {
     auto painter = new QPainter(this);
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->save();
@@ -79,7 +65,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
     delete painter;
 }
 
-void MainWindow::animation_changed(int verteces, const fPoint *vectors, float radius, int mode) {
+void AnimationView::animation_changed(int verteces, const fPoint *vectors, float radius, int mode) {
     if (mode == 2) {
         return;
     }
@@ -93,17 +79,7 @@ void MainWindow::animation_changed(int verteces, const fPoint *vectors, float ra
     base_polygon->set_items(tmp_vectors);
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_F11) {
-        if (this->isFullScreen()) {
-            this->showMaximized();
-        } else {
-            this->showFullScreen();
-        }
-    }
-}
-
-void MainWindow::rotation_changed(float rot) {
+void AnimationView::rotation_changed(float rot) {
     base_polygon->rotation = rot;
     transformation_matrix[0].x = 1.3f * std::cos(rot);
     transformation_matrix[0].y = std::sin(rot);

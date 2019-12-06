@@ -6,14 +6,15 @@
 #define PLAYER_UI_PLAYER_UI_FIXED_QUEUE_H_
 #include <array>
 
-template <typename T, std::size_t N>
+
+template<typename T, std::size_t N>
 class fixed_queue {
 public:
 //    explicit fixed_queue(unsigned size);
     fixed_queue();
 //    ~fixed_queue();
 
-    void push_back(const T& item);
+    void push_back(const T &item);
     T &at(unsigned id);
 
     [[nodiscard]] unsigned size() const;
@@ -55,6 +56,5 @@ template<typename T, std::size_t N>
 unsigned fixed_queue<T, N>::size() const {
     return _current_size;
 }
-
 
 #endif //PLAYER_UI_PLAYER_UI_FIXED_QUEUE_H_

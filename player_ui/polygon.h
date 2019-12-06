@@ -21,7 +21,12 @@ struct fPoint {
 
 class Polygon {
 public:
-    explicit Polygon(int32_t verteces = 0, int32_t r = 0, int32_t g = 0, int32_t b = 0, float_t radius = 0, int32_t mode = 0);
+    explicit Polygon(int32_t verteces = 0,
+                     int32_t r = 0,
+                     int32_t g = 0,
+                     int32_t b = 0,
+                     float_t radius = 0,
+                     int32_t mode = 0);
     Polygon(const Polygon &other);
     ~Polygon();
 

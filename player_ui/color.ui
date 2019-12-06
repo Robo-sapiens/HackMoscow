@@ -369,13 +369,6 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonPresets">
-           <property name="text">
-            <string>presets</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="buttonReset">
            <property name="maximumSize">
             <size>
@@ -385,6 +378,13 @@
            </property>
            <property name="text">
             <string>reset</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonPresets">
+           <property name="text">
+            <string>presets</string>
            </property>
           </widget>
          </item>

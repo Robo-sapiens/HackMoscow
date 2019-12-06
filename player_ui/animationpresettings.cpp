@@ -8,10 +8,9 @@ AnimationPreSettings::AnimationPreSettings(QWidget *parent, Player *player) :
     QWidget(parent),
     animation_(Animation(nullptr, player)),
     ui(new Ui::AnimationPreSettings),
-    _player(player){
+    _player(player) {
     ui->setupUi(this);
-    QObject::connect(ui->buttonAdvanced, SIGNAL(clicked()), &animation_, SLOT(show()));
-    QObject::connect(ui->buttonSubmit, SIGNAL(clicked()), &animation_, SLOT(on_buttonSubmit_clicked()));
+    ui->gridLayout->addWidget(&animation_, 6, 0);
     QObject::connect(this, SIGNAL(new_mode(int)), &animation_, SLOT(on_new_mode(int)));
     emit new_mode(2);
 }
