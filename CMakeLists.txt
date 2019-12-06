@@ -45,10 +45,13 @@ find_package(Qt5 COMPONENTS Widgets Core Gui SerialPort REQUIRED)
 
 file(GLOB UI_SRC
         player_ui/*.cpp
-        player_ui/*.h
         player_ui/*.ui
+        player_ui/*/*.cpp
+        player_ui/*/*.ui
         )
 
+file(GLOB UI_INCLUDE player_ui/*/)
+include_directories(${UI_INCLUDE})
 add_executable(player_ui ${UI_SRC})
 
 target_link_libraries(player_ui
