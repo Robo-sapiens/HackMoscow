@@ -32,15 +32,21 @@ private slots:
     void on_value_changed();
     void on_editRadius_textChanged();
     void on_editRotation_textChanged();
+    void update_settings();
+private:
+    void push_point(fPoint point);
+    void pop_point();
 
 protected:
     void paintEvent(QPaintEvent *) override;
 
-private:
+public:
     Polygon *base_polygon;
+private:
     Ui::animation *ui;
     Player *player;
     std::vector<std::pair<QTextEdit *, QTextEdit *>> *vertices;
+public:
     AnimationPresets *presets;
 };
 

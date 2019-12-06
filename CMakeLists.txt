@@ -50,9 +50,9 @@ file(GLOB UI_SRC
         player_ui/*/*.ui
         )
 
-file(GLOB UI_INCLUDE player_ui/*/)
+file(GLOB UI_INCLUDE player_ui/*)
 include_directories(${UI_INCLUDE})
-add_executable(player_ui ${UI_SRC})
+add_executable(player_ui ${UI_SRC} src/main.cpp)
 
 target_link_libraries(player_ui
         player

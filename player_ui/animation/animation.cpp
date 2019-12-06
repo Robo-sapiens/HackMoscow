@@ -1,8 +1,7 @@
 #include "animation.h"
 #include "ui_animation.h"
-#include <QDebug>
 #include <QPainter>
-#include <zconf.h>
+#include <unistd.h>
 
 
 Animation::Animation(QWidget *parent, Player *player) :
@@ -15,6 +14,8 @@ Animation::Animation(QWidget *parent, Player *player) :
     ui->setupUi(this);
     // presets window
     QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
+    QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(raise()));
+    QObject::connect(presets, SIGNAL(new_setting()), this, SLOT(update_settings()));
     presets->set_params(base_polygon);
     on_spinBox_valueChanged(1);
     ui->editRadius->setPlainText("1");
@@ -34,25 +35,12 @@ Animation::~Animation() {
 }
 
 void Animation::on_spinBox_valueChanged(int arg1) {
-    while (arg1 > base_polygon->vectors->size()) {
-        auto t1 = new QTextEdit();
-        auto t2 = new QTextEdit();
-        t1->setFixedSize(71, 27);
-        t2->setFixedSize(71, 27);
-        t1->setPlainText("0");
-        t2->setPlainText("0");
-        QObject::connect(t1, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
-        QObject::connect(t2, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
-        vertices->push_back({t1, t2});
-        ui->mainLayout->addWidget(t1, (int32_t) base_polygon->vectors->size() + 4, 0);
-        ui->mainLayout->addWidget(t2, (int32_t) base_polygon->vectors->size() + 4, 1);
+    while (arg1 > vertices->size()) {
+        push_point({0, 0});
         base_polygon->push_back({0, 0});
     }
-    while (arg1 < base_polygon->vectors->size()) {
-        auto tmp = vertices->back();
-        vertices->pop_back();
-        delete tmp.first;
-        delete tmp.second;
+    while (arg1 < vertices->size()) {
+        pop_point();
         base_polygon->pop_back();
     }
 }
@@ -151,7 +139,8 @@ void Animation::on_editRotation_textChanged() {
         if (std::abs(text_tmp.toFloat()) > 20) {
             ui->editRotation->setText("20");
         }
-        emit change_rotation((float_t) (ui->editRotation->toPlainText().toDouble() * M_PI / 180));
+        base_polygon->rotation = ui->editRotation->toPlainText().toFloat();
+        emit change_rotation(base_polygon->rotation * 3.14f / 180);
     }
 }
 
@@ -159,7 +148,6 @@ void Animation::on_new_mode(int mode) {
     // mode == 0 - polygon
     // mode == 1 - circle
     // mode == 2 - basic
-    qDebug() << mode;
     base_polygon->mode = mode;
     if (mode == 0) {
         ui->editRadius->setDisabled(true);
@@ -192,4 +180,42 @@ void Animation::on_new_mode(int mode) {
             vector.second->setDisabled(true);
         }
     }
+}
+
+void Animation::update_settings() {
+    ui->editRotation->setPlainText(QString::number(base_polygon->rotation));
+    on_new_mode(base_polygon->mode);
+    while (!vertices->empty()) {
+        pop_point();
+    }
+    for (auto & real_vector: *base_polygon->real_vectors) {
+        push_point(real_vector);
+    }
+    for (auto kI = 0; kI < vertices->size(); ++kI) {
+        vertices->at(kI).first->setPlainText(QString::number(base_polygon->real_vectors->at(kI).x));
+        vertices->at(kI).second->setPlainText(QString::number(base_polygon->real_vectors->at(kI).y));
+    }
+    on_buttonSubmit_clicked();
+    ui->spinBox->setValue(base_polygon->real_vectors->size());
+}
+
+void Animation::push_point(fPoint point) {
+    auto t1 = new QTextEdit();
+    auto t2 = new QTextEdit();
+    t1->setFixedSize(71, 27);
+    t2->setFixedSize(71, 27);
+    t1->setPlainText(QString::number(point.x));
+    t2->setPlainText(QString::number(point.y));
+    QObject::connect(t1, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
+    QObject::connect(t2, SIGNAL(textChanged()), this, SLOT(on_value_changed()));
+    vertices->push_back({t1, t2});
+    ui->mainLayout->addWidget(t1, (int32_t) vertices->size() + 4, 0);
+    ui->mainLayout->addWidget(t2, (int32_t) vertices->size() + 4, 1);
+}
+
+void Animation::pop_point() {
+    auto tmp = vertices->back();
+    vertices->pop_back();
+    delete tmp.first;
+    delete tmp.second;
 }

@@ -1,6 +1,5 @@
 #include "presets.h"
 #include "ui_presets.h"
-#include <QDebug>
 #include <sstream>
 #include <QDir>
 
@@ -23,7 +22,7 @@ Presets::~Presets() {
 void Presets::dispatch_filename(QString filename) {
     QString params = get_param_string();
     QFile presets_file("presets/" + filename + identifier());
-    qDebug() << presets_file.open(QIODevice::WriteOnly);
+    presets_file.open(QIODevice::WriteOnly);
     presets_file.write(params.toUtf8());
     parse_files();
     presets_file.close();
@@ -95,7 +94,28 @@ void AnimationPresets::set_params(Polygon *params) {
 }
 
 void AnimationPresets::on_buttonApply_clicked() {
-
+    QStringList param_list;
+    QString filename = ui->listCfgs->currentItem()->text();
+    QFile presets_file("presets/" + filename);
+    presets_file.open(QIODevice::ReadOnly);
+    auto tmp_mode = QString(presets_file.readLine()).toInt();
+    if (tmp_mode != 2) {
+        auto tmp_vertices = QString(presets_file.readLine()).toInt();
+        std::vector<fPoint> tmp_real_vector(tmp_vertices);
+        for (auto &kI : tmp_real_vector) {
+            auto tmp_x = QString(presets_file.readLine()).toFloat();
+            auto tmp_y = QString(presets_file.readLine()).toFloat();
+            kI = {tmp_x, tmp_y};
+        }
+        auto tmp_radius = QString(presets_file.readLine()).toFloat();
+        auto tmp_rot = QString(presets_file.readLine()).toFloat();
+        _params->set_items(tmp_real_vector.data(), tmp_real_vector.size());
+        _params->rotation = tmp_rot;
+        _params->radius = tmp_radius;
+        _params->mode = tmp_mode;
+    }
+    emit new_setting();
+    presets_file.close();
 }
 
 QString AnimationPresets::identifier() const {
@@ -104,13 +124,13 @@ QString AnimationPresets::identifier() const {
 
 QString AnimationPresets::get_param_string() {
     std::stringstream stream;
+    stream << _params->mode << std::endl;
     stream << _params->vectors->size() << std::endl;
     for (auto &real_vector: *_params->real_vectors) {
         stream << real_vector.x << std::endl;
         stream << real_vector.y << std::endl;
     }
     stream << _params->radius << std::endl
-           << _params->mode << std::endl
            << _params->rotation << std::endl;
     return QString(stream.str().c_str());
 }

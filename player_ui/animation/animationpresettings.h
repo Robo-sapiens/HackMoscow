@@ -22,6 +22,7 @@ signals:
 private slots:
     void on_buttonSetWL_clicked();
     void on_selectMode_currentIndexChanged(int index);
+    void on_new_setting();
 
 public:
     Animation animation_;

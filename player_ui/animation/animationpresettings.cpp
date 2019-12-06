@@ -1,7 +1,6 @@
 #include <unistd.h>
 #include "animationpresettings.h"
 #include "ui_animationpresettings.h"
-#include <QDebug>
 
 
 AnimationPreSettings::AnimationPreSettings(QWidget *parent, Player *player) :
@@ -12,6 +11,7 @@ AnimationPreSettings::AnimationPreSettings(QWidget *parent, Player *player) :
     ui->setupUi(this);
     ui->gridLayout->addWidget(&animation_, 6, 0);
     QObject::connect(this, SIGNAL(new_mode(int)), &animation_, SLOT(on_new_mode(int)));
+    QObject::connect(animation_.presets, SIGNAL(new_setting()), this, SLOT(on_new_setting()));
     emit new_mode(2);
 }
 
@@ -33,4 +33,8 @@ void AnimationPreSettings::on_selectMode_currentIndexChanged(int index) {
     if (index >= 0 && index <= 2) {
         emit new_mode(index);
     }
+}
+
+void AnimationPreSettings::on_new_setting() {
+    ui->selectMode->setCurrentIndex(animation_.base_polygon->mode);
 }

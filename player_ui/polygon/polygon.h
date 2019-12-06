@@ -31,6 +31,7 @@ public:
     ~Polygon();
 
     void set_items(const fPoint *matrix);
+    void set_items(const fPoint *matrix, size_t new_size);
     void operator*=(const fPoint *tr_matrix);
     void push_back(fPoint item);
     void pop_back();

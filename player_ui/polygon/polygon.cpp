@@ -3,7 +3,8 @@
 //
 
 #include "polygon.h"
-#include <QDebug>
+#include <QMutex>
+QMutex g_mutex_poly;
 
 
 Polygon::Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radius, int32_t mode) :
@@ -38,6 +39,14 @@ void Polygon::set_items(const fPoint *matrix) {
         vectors->at(kI).setX((int32_t) real_vectors->at(kI).x);
         vectors->at(kI).setY((int32_t) real_vectors->at(kI).y);
     }
+}
+
+void Polygon::set_items(const fPoint *matrix, size_t new_size) {
+    g_mutex_poly.lock();
+    real_vectors->resize(new_size);
+    vectors->resize(new_size);
+    set_items(matrix);
+    g_mutex_poly.unlock();
 }
 
 void Polygon::operator*=(const fPoint *tr_matrix) {
