@@ -5,15 +5,15 @@
 #include "serial_thread.h"
 #include "audio_thread.h"
 #include "fft_thread.h"
-#include "animation.h"
 #include "color.h"
 #include "devices.h"
 #include "animationpresettings.h"
-#include <iostream>
+#include <QDebug>
 
 #define DELAY 5000
 
 int main(int argc, char *argv[]) {
+
     QApplication a(argc, argv);
     Player player(DELAY);
 

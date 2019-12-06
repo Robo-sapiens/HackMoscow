@@ -2,6 +2,7 @@
 #include "ui_presets.h"
 #include <QDebug>
 #include <sstream>
+#include <QDir>
 
 
 Presets::Presets(QWidget *parent) :
@@ -20,8 +21,30 @@ Presets::~Presets() {
 }
 
 void Presets::dispatch_filename(QString filename) {
-    qDebug() << get_param_string();
-    qDebug() << filename + identifier();
+    QString params = get_param_string();
+    QFile presets_file("presets/" + filename + identifier());
+    qDebug() << presets_file.open(QIODevice::WriteOnly);
+    presets_file.write(params.toUtf8());
+    parse_files();
+    presets_file.close();
+}
+
+void Presets::parse_files() {
+    QString path("presets/");
+    QDir presets_dir(path);
+    if (!presets_dir.exists()) {
+        presets_dir.mkpath(presets_dir.absolutePath());
+    }
+    QStringList filter;
+    filter << "*" + identifier();
+    presets_dir.setNameFilters(filter);
+    ui->listCfgs->clear();
+    ui->listCfgs->addItems(presets_dir.entryList());
+}
+
+void Presets::showEvent(QShowEvent *event) {
+    parse_files();
+    QWidget::showEvent(event);
 }
 
 void ColorsPresets::set_params(RGBParameters *params) {
@@ -29,7 +52,22 @@ void ColorsPresets::set_params(RGBParameters *params) {
 }
 
 void ColorsPresets::on_buttonApply_clicked() {
-    qDebug() << "inherited";
+    QStringList param_list;
+    QString filename = ui->listCfgs->currentItem()->text();
+    QFile presets_file("presets/" + filename);
+    presets_file.open(QIODevice::ReadOnly);
+    _params->width = QString(presets_file.readLine()).toInt();
+    _params->red_peak = QString(presets_file.readLine()).toInt();
+    _params->green_peak = QString(presets_file.readLine()).toInt();
+    _params->blue_peak = QString(presets_file.readLine()).toInt();
+    _params->bpm = QString(presets_file.readLine()).toInt();
+    _params->red_imp = QString(presets_file.readLine()).toInt();
+    _params->green_imp = QString(presets_file.readLine()).toInt();
+    _params->blue_imp = QString(presets_file.readLine()).toInt();
+    _params->filter = QString(presets_file.readLine()).toInt();
+    _params->sensitivity = QString(presets_file.readLine()).toFloat();
+    _params->tweak_by_min = QString(presets_file.readLine()).toInt();
+    emit new_setting();
 }
 
 QString ColorsPresets::identifier() const {

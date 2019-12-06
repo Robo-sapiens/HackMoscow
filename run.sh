@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/bin/zsh
 
-./out/player 6000 /dev/ttyUSB0
+./*build*/player_ui

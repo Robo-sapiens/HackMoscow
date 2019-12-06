@@ -38,6 +38,7 @@ Color::Color(QWidget *parent, Player *player) :
     // presets window
     QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
     presets->set_params(&player->rgb_parameters);
+    QObject::connect(presets, SIGNAL(new_setting()), this, SLOT(on_new_preset()));
 }
 
 Color::~Color() {
@@ -173,4 +174,17 @@ void Color::paintEvent(QPaintEvent *) {
 
     painter->restore();
     delete painter;
+}
+
+void Color::on_new_preset() {
+    ui->sliderBlue->setSliderPosition(player->rgb_parameters.blue_peak);
+    ui->sliderGreen->setSliderPosition(player->rgb_parameters.green_peak);
+    ui->sliderRed->setSliderPosition(player->rgb_parameters.red_peak);
+    ui->sliderWidth->setSliderPosition(player->rgb_parameters.width);
+    ui->checkMinFilter->setCheckState(Qt::CheckState(((int) player->rgb_parameters.tweak_by_min) * 2));
+    ui->nobBPM->setSliderPosition(player->rgb_parameters.bpm);
+    ui->editBPM->setPlainText(std::to_string(player->rgb_parameters.bpm).data());
+    ui->nobImpactR->setSliderPosition((int)(player->rgb_parameters.red_imp * 400.f));
+    ui->nobImpactG->setSliderPosition((int)(player->rgb_parameters.green_imp * 400.f));
+    ui->nobImpactB->setSliderPosition((int)(player->rgb_parameters.blue_imp * 400.f));
 }

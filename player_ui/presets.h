@@ -17,13 +17,15 @@ public:
     explicit Presets(QWidget *parent = nullptr);
     ~Presets() override;
     [[nodiscard]] virtual QString identifier() const = 0;
+    virtual void showEvent(QShowEvent *);
 protected slots:
     virtual void dispatch_filename(QString filename);
     virtual void on_buttonApply_clicked() = 0;
+    virtual void parse_files();
 protected:
     virtual QString get_param_string() = 0;
-private:
     Ui::Presets *ui;
+private:
     SaveNewDial *dialog;
 };
 
@@ -33,6 +35,8 @@ Q_OBJECT
 public:
     void set_params(RGBParameters *params);
     [[nodiscard]] QString identifier() const override;
+signals:
+    void new_setting();
 protected slots:
     void on_buttonApply_clicked() override;
 protected:
@@ -47,6 +51,8 @@ Q_OBJECT
 public:
     void set_params(Polygon *params);
     [[nodiscard]] QString identifier() const override;
+signals:
+    void new_setting();
 protected slots:
     void on_buttonApply_clicked() override;
 protected:

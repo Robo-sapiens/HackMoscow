@@ -14,7 +14,7 @@ Q_OBJECT
 
 public:
     explicit AnimationPreSettings(QWidget *parent = nullptr, Player *player = nullptr);
-    ~AnimationPreSettings();
+    ~AnimationPreSettings() override;
 
 signals:
     void new_mode(int mode);
