@@ -34,7 +34,7 @@ public:
 private:
     int32_t transform_coord(int32_t x, int32_t y);
     bool check_coord(int32_t x, int32_t y);
-    ws2811_t ledstring;
+    ws2811_t *ledstring;
     int32_t width;
     int32_t length;
 };

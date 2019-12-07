@@ -16,11 +16,12 @@ static inline int32_t rgb_to_hex(RGB &led_rgb) {
 
 LED::LED(int32_t width, int32_t length) :
     width(width),
-    length(length) {
-    ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
+    length(length),
+    ledstring(new ws2811_t) {
+    *ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
     try {
         ws2811_return_t ret;
-        if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS) {
+        if ((ret = ws2811_init(ledstring)) != WS2811_SUCCESS) {
             throw ret;
         }
     }
@@ -29,27 +30,28 @@ LED::LED(int32_t width, int32_t length) :
     }
 
     for (int i = 0; i < width * length; ++i) {
-        ledstring.channel[0].leds[i] = 0x000000;
+        ledstring->channel[0].leds[i] = 0x000000;
     }
 }
 
 LED::~LED() {
-    ws2811_fini(&ledstring);
+    ws2811_fini(ledstring);
+    delete ledstring;
 }
 
 void LED::show_led_on_pi(RGB &led_rgb) {
     // left
 //	std::cout << led_rgb.r << ' ' << led_rgb.g << ' ' << led_rgb.b << std::endl;
     for (int i = width * length - 1; i >= width + width * length / 2; --i) {
-        ledstring.channel[0].leds[i] = ledstring.channel[0].leds[i - width];
+        ledstring->channel[0].leds[i] = ledstring->channel[0].leds[i - width];
     }
     // right
     for (int i = 0; i < width * length / 2 - width; ++i) {
-        ledstring.channel[0].leds[i] = ledstring.channel[0].leds[i + width];
+        ledstring->channel[0].leds[i] = ledstring->channel[0].leds[i + width];
     }
     // Set the left most updateLEDs with the new color
     for (int i = width * length / 2 - width; i < width * length / 2 + width; ++i) {
-        ledstring.channel[0].leds[i] = rgb_to_hex(led_rgb);
+        ledstring->channel[0].leds[i] = rgb_to_hex(led_rgb);
     }
 }
 
@@ -94,11 +96,11 @@ void LED::draw_line(Point &a_real, Point &b_real, RGB &led_rgb) {
     for (int x = static_cast<int>(a.x); x <= max_x; x++) {
         if (steep) {
             if (check_coord(y, x)) {
-                ledstring.channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb);
+                ledstring->channel[0].leds[transform_coord(y, x)] = rgb_to_hex(led_rgb);
             }
         } else {
             if (check_coord(x, y)) {
-                ledstring.channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb);
+                ledstring->channel[0].leds[transform_coord(x, y)] = rgb_to_hex(led_rgb);
             }
         }
         error -= dy;
@@ -129,35 +131,35 @@ float_t LED::check_missing(float_t rad) {
 
 void LED::draw_eight_points(float_t x0, float_t y0, float_t x, float_t y, RGB &color) {
     if (check_coord(std::round(x0 + x), std::round(y0 + y))) {
-        ledstring.channel[0].leds[transform_coord(x0 + x, y0 + y)] =
+        ledstring->channel[0].leds[transform_coord(x0 + x, y0 + y)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 + y), std::round(y0 + x))) {
-        ledstring.channel[0].leds[transform_coord(x0 + y, y0 + x)] =
+        ledstring->channel[0].leds[transform_coord(x0 + y, y0 + x)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 + x), std::round(y0 - y))) {
-        ledstring.channel[0].leds[transform_coord(x0 + x, y0 - y)] =
+        ledstring->channel[0].leds[transform_coord(x0 + x, y0 - y)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 + y), std::round(y0 - x))) {
-        ledstring.channel[0].leds[transform_coord(x0 + y, y0 - x)] =
+        ledstring->channel[0].leds[transform_coord(x0 + y, y0 - x)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 - x), std::round(y0 + y))) {
-        ledstring.channel[0].leds[transform_coord(x0 - x, y0 + y)] =
+        ledstring->channel[0].leds[transform_coord(x0 - x, y0 + y)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 - y), std::round(y0 + x))) {
-        ledstring.channel[0].leds[transform_coord(x0 - y, y0 + x)] =
+        ledstring->channel[0].leds[transform_coord(x0 - y, y0 + x)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 - x), std::round(y0 - y))) {
-        ledstring.channel[0].leds[transform_coord(x0 - x, y0 - y)] =
+        ledstring->channel[0].leds[transform_coord(x0 - x, y0 - y)] =
             rgb_to_hex(color);
     }
     if (check_coord(std::round(x0 - y), std::round(y0 - x))) {
-        ledstring.channel[0].leds[transform_coord(x0 - y, y0 - x)] =
+        ledstring->channel[0].leds[transform_coord(x0 - y, y0 - x)] =
             rgb_to_hex(color);
     }
 }
@@ -184,19 +186,19 @@ void LED::show_circle_on_led(Polygon *polygon) {
         auto y_i = static_cast<int>(y0);
         while (y >= 0) {
             if (check_coord(x_i + x, y_i + y)) {
-                ledstring.channel[0].leds[transform_coord(x_i + x, y_i + y)] =
+                ledstring->channel[0].leds[transform_coord(x_i + x, y_i + y)] =
                     rgb_to_hex(polygon->color);
             }
             if (check_coord(x_i + x, y_i - y)) {
-                ledstring.channel[0].leds[transform_coord(x_i + x, y_i - y)] =
+                ledstring->channel[0].leds[transform_coord(x_i + x, y_i - y)] =
                     rgb_to_hex(polygon->color);
             }
             if (check_coord(x_i - x, x_i + y)) {
-                ledstring.channel[0].leds[transform_coord(x_i - x, y_i + y)] =
+                ledstring->channel[0].leds[transform_coord(x_i - x, y_i + y)] =
                     rgb_to_hex(polygon->color);
             }
             if (check_coord(x_i - x, y_i - y)) {
-                ledstring.channel[0].leds[transform_coord(x_i - x, y_i - y)] =
+                ledstring->channel[0].leds[transform_coord(x_i - x, y_i - y)] =
                     rgb_to_hex(polygon->color);
             }
             error = 2 * (delta + y) - 1;
@@ -260,16 +262,18 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
     if (tmp_width <= 0 || tmp_length <= 0) {
         return;
     }
-    for (int i = 0; i < width * length; ++i) {
-        ledstring.channel[0].leds[i] = 0x000000;
-    }
+//    for (int i = 0; i < width * length; ++i) {
+//        ledstring->channel[0].leds[i] = 0x000000;
+//    }
+    ws2811_fini(ledstring);
     width = tmp_width;
     length = tmp_length;
-    ws2811_fini(&ledstring);
-    ledstring.channel->count = tmp_width * tmp_length;
+    delete ledstring;
+    ledstring = new ws2811_t;
+    *ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
     try {
         ws2811_return_t ret;
-        if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS) {
+        if ((ret = ws2811_init(ledstring)) != WS2811_SUCCESS) {
             throw ret;
         }
     }
@@ -281,7 +285,7 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
 void LED::render() {
     try {
         ws2811_return_t ret;
-        if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS) {
+        if ((ret = ws2811_render(ledstring)) != WS2811_SUCCESS) {
             throw ret;
         }
     }
