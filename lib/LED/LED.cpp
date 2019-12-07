@@ -260,6 +260,11 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
     if (tmp_width <= 0 || tmp_length <= 0) {
         return;
     }
+    for (int i = 0; i < width * length; ++i) {
+        ledstring.channel[0].leds[i] = 0x000000;
+    }
+    width = tmp_width;
+    length = tmp_length;
     ws2811_fini(&ledstring);
     ledstring.channel->count = tmp_width * tmp_length;
     try {
@@ -271,11 +276,6 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
     catch (ws2811_return_t ret) {
         std::cout << "ws2811_init failed: " << ws2811_get_return_t_str(ret) << std::endl;
     }
-    for (int i = 0; i < width * length; ++i) {
-        ledstring.channel[0].leds[i] = 0x000000;
-    }
-    width = tmp_width;
-    length = tmp_length;
 }
 
 void LED::render() {
