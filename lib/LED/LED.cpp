@@ -256,7 +256,6 @@ void LED::show_circle_on_led(Polygon *polygon) {
 }
 
 void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
-    std::cout << width << ' ' << length << std::endl;
     if (tmp_width <= 0 || tmp_length <= 0) {
         return;
     }
