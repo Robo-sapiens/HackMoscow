@@ -116,11 +116,10 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
 static bool parse_new_led(const char *buf, Player &player, int32_t sum) {
     int32_t tmp_width = 0;
     int32_t tmp_length = 0;
-    tmp_width += buf[0] * 10;
-    tmp_width += buf[1];
-    tmp_length += buf[2] * 10;
-    tmp_length += buf[3];
-    std::cout << buf << std::endl;
+    tmp_width += (buf[0] - '0') * 10;
+    tmp_width += (buf[1] - '0');
+    tmp_length += (buf[2] - '0') * 10;
+    tmp_length += (buf[3] - '0');
     if (tmp_length + tmp_width == sum) {
         player.led_.change_settings(tmp_width, tmp_length);
         return true;
