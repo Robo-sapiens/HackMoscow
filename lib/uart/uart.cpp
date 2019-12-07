@@ -121,7 +121,9 @@ static bool parse_new_led(const char *buf, Player &player, int32_t sum) {
     tmp_length += (buf[2] - '0') * 10;
     tmp_length += (buf[3] - '0');
     if (tmp_length + tmp_width == sum) {
+        g_mutex.lock();
         player.led_.change_settings(tmp_width, tmp_length);
+        g_mutex.unlock();
         return true;
     }
     return false;
