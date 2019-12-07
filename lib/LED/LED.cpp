@@ -256,11 +256,12 @@ void LED::show_circle_on_led(Polygon *polygon) {
 }
 
 void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
+    std::cout << tmp_width << ' ' << tmp_length;
     if (tmp_width <= 0 || tmp_length <= 0) {
         return;
     }
     ws2811_fini(&ledstring);
-    ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, tmp_width * tmp_length, STRIP_TYPE, 0, MAX_BRGHT}};
+    ledstring.channel->count = tmp_width * tmp_length;
     try {
         ws2811_return_t ret;
         if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS) {
