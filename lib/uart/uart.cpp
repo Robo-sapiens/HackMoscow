@@ -95,7 +95,6 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         delete player.base_polygon;
         player.base_polygon = new Polygon(verteces, 0, 0, 0);
         player.base_polygon->set_items(tmp_pts, verteces);
-	std::cout << verteces <<std::endl;
         player.delay = 1000000 / bpm;
         player.verteces = verteces;
         auto true_rot = (rotation - 20) * M_PI / 180;
@@ -107,7 +106,6 @@ static bool parse_config(const char *buf, Player &player, int32_t sum) {
         delete[] player.tr_matrix;
         player.tr_matrix = tr_matrix;
         player.mode = mode;
-        std::cout << "true rotation in radians: "<< true_rot << std::endl;
         g_mutex.unlock();
         return true;
     }
@@ -122,6 +120,7 @@ static bool parse_new_led(const char *buf, Player &player, int32_t sum) {
     tmp_width += buf[1];
     tmp_length += buf[2] * 10;
     tmp_length += buf[3];
+    std::cout << buf << std::endl;
     if (tmp_length + tmp_width == sum) {
         player.led_.change_settings(tmp_width, tmp_length);
         return true;
