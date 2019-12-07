@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cmath>
 
+
 class Player {
     typedef struct RGB {
         int32_t r;
@@ -38,5 +39,6 @@ private:
 
     Player(Player const &);
 };
+
 
 #endif

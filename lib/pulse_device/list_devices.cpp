@@ -1,5 +1,6 @@
 #include "list_devices.h"
 
+
 // This callback gets called when our context changes state. We really only
 // care about when it's ready or if it has failed
 static void pa_state_cb(pa_context *c, void *userdata) {

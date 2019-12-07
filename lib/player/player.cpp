@@ -4,6 +4,7 @@
 
 #include "player.h"
 
+
 #define FREQ 44100
 
 Player::Player(size_t delay)

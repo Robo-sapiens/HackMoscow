@@ -99,6 +99,7 @@ void AnimationPresets::on_buttonApply_clicked() {
     QFile presets_file("presets/" + filename);
     presets_file.open(QIODevice::ReadOnly);
     auto tmp_mode = QString(presets_file.readLine()).toInt();
+    _params->mode = tmp_mode;
     if (tmp_mode != 2) {
         auto tmp_vertices = QString(presets_file.readLine()).toInt();
         std::vector<fPoint> tmp_real_vector(tmp_vertices);
@@ -112,7 +113,6 @@ void AnimationPresets::on_buttonApply_clicked() {
         _params->set_items(tmp_real_vector.data(), tmp_real_vector.size());
         _params->rotation = tmp_rot;
         _params->radius = tmp_radius;
-        _params->mode = tmp_mode;
     }
     emit new_setting();
     presets_file.close();

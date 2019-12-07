@@ -6,17 +6,15 @@
 #include "polygon.h"
 #include "fixed_queue.h"
 
-#define POLYGON_AMOUNT 30
 
+#define POLYGON_AMOUNT 30
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class AnimationView; }
 QT_END_NAMESPACE
 
-
-class AnimationView : public QWidget
-{
-    Q_OBJECT
+class AnimationView : public QWidget {
+Q_OBJECT
 
 public:
     explicit AnimationView(QWidget *parent = nullptr, Player *player = nullptr);
@@ -36,5 +34,6 @@ private:
     fixed_queue<Polygon *, POLYGON_AMOUNT> *polygons;
     fPoint *transformation_matrix;
 };
+
 
 #endif // ANIMATION_VIEW_H

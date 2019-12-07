@@ -13,14 +13,23 @@
 typedef unsigned __int64 QWORD;
 #else
 #include <stdint.h>
+
+
 #define WINAPI
 #define CALLBACK
+
 typedef uint8_t BYTE;
+
 typedef uint16_t WORD;
+
 typedef uint32_t DWORD;
+
 typedef uint64_t QWORD;
+
 #ifndef __OBJC__
+
 typedef int BOOL;
+
 #endif
 #ifndef TRUE
 #define TRUE 1
@@ -416,7 +425,9 @@ typedef struct {
 // 3D vector (for 3D positions/velocities/orientations)
 typedef struct BASS_3DVECTOR {
 #ifdef __cplusplus
+
     BASS_3DVECTOR() {};
+
     BASS_3DVECTOR(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
 #endif
     float x;    // +=right, -=left

@@ -6,6 +6,7 @@
 #include <pulse/pulseaudio.h>
 #include <vector>
 
+
 typedef struct pa_devicelist {
     uint8_t initialized;
     char name[512];

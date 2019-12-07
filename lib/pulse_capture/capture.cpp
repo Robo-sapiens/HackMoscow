@@ -9,6 +9,7 @@
 
 #include "capture.h"
 
+
 pa::Capture::Capture() : isSet(false),
                          ss({.format = PA_SAMPLE_FLOAT32,
                                 .rate = 44100,

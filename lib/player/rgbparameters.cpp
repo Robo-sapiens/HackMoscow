@@ -16,8 +16,7 @@ RGBParameters::RGBParameters() :
     blue_imp(1),
     filter(0),
     sensitivity(255. / 5000),
-    tweak_by_min(true)
-    {}
+    tweak_by_min(true) {}
 
 void RGBParameters::tweak(RGBParameters rgb_params) {
     *this = rgb_params;

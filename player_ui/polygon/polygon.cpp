@@ -4,8 +4,9 @@
 
 #include "polygon.h"
 #include <QMutex>
-QMutex g_mutex_poly;
 
+
+QMutex g_mutex_poly;
 
 Polygon::Polygon(int32_t verteces, int32_t r, int32_t g, int32_t b, float_t radius, int32_t mode) :
     real_vectors(new std::vector<fPoint>(verteces)),

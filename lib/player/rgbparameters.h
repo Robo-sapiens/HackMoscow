@@ -7,7 +7,10 @@
 
 #include <cstdint>
 #include <cmath>
+
+
 #define SAMPLE_SIZE 512  // connected to BASS_FFT_1024
+
 
 class RGBParameters {
 public:
@@ -25,5 +28,6 @@ public:
     float_t sensitivity;
     bool tweak_by_min;
 };
+
 
 #endif //PLAYER_UI_RGBPARAMETERS_H

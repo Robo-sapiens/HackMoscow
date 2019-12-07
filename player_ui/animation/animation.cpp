@@ -188,7 +188,7 @@ void Animation::update_settings() {
     while (!vertices->empty()) {
         pop_point();
     }
-    for (auto & real_vector: *base_polygon->real_vectors) {
+    for (auto &real_vector: *base_polygon->real_vectors) {
         push_point(real_vector);
     }
     for (auto kI = 0; kI < vertices->size(); ++kI) {

@@ -10,6 +10,7 @@
 #include "audio_thread.h"
 #include "fft_thread.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class TabbableMainWindow; }
 QT_END_NAMESPACE

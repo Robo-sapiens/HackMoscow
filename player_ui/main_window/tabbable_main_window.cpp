@@ -2,8 +2,8 @@
 #include "ui_tabbable_main_window.h"
 #include "animation_view.h"
 
-#define DELAY 5000
 
+#define DELAY 5000
 
 TabbableMainWindow::TabbableMainWindow(QWidget *parent) :
     QWidget(parent),
@@ -13,23 +13,27 @@ TabbableMainWindow::TabbableMainWindow(QWidget *parent) :
     audio_thread(&player),
     fftw_thread(&player) {
     ui->setupUi(this);
-    auto devices =  new Devices(this, &player);
+    auto devices = new Devices(this, &player);
     auto color = new Color(this, &player);
     auto animation_pre_settings = new AnimationPreSettings(this, &player);
     auto animation_view = new AnimationView(this, &player);
 
     QObject::connect(devices, SIGNAL(start_capture()), &audio_thread, SLOT(start()));
     QObject::connect(devices, SIGNAL(start_capture()), &fftw_thread, SLOT(start()));
-    QObject::connect(devices, SIGNAL(start_port(const QSerialPortInfo &)),
-        &serial_thread, SLOT(start_port(const QSerialPortInfo &)));
+    QObject::connect(devices, SIGNAL(start_port(
+                                         const QSerialPortInfo &)),
+                     &serial_thread, SLOT(start_port(
+                                              const QSerialPortInfo &)));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), color, SLOT(update()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()),
-        &animation_pre_settings->animation_, SLOT(update()));
+                     &animation_pre_settings->animation_, SLOT(update()));
     QObject::connect(ui->buttonSubmit, SIGNAL(clicked()),
-        &animation_pre_settings->animation_, SLOT(on_buttonSubmit_clicked()));
+                     &animation_pre_settings->animation_, SLOT(on_buttonSubmit_clicked()));
     QObject::connect(&fftw_thread, SIGNAL(new_data()), animation_view, SLOT(update()));
-    QObject::connect(&animation_pre_settings->animation_, SIGNAL(change_verteces(int, const fPoint *, float, int)),
-                     animation_view, SLOT(animation_changed(int, const fPoint *, float, int)));
+    QObject::connect(&animation_pre_settings->animation_, SIGNAL(change_verteces(int,
+                                                                     const fPoint *, float, int)),
+                     animation_view, SLOT(animation_changed(int,
+                                              const fPoint *, float, int)));
     QObject::connect(&animation_pre_settings->animation_, SIGNAL(change_rotation(float)),
                      animation_view, SLOT(rotation_changed(float)));
 

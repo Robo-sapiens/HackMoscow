@@ -8,6 +8,7 @@
 #include <string>
 #include <cmath>
 
+
 class Msg {
 public:
     explicit Msg(size_t size);
@@ -21,5 +22,6 @@ public:
     std::string text;
     bool is_settings;
 };
+
 
 #endif //PLAYER_UI_LIB_PLAYER_MSG_H_

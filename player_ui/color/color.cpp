@@ -37,6 +37,7 @@ Color::Color(QWidget *parent, Player *player) :
 
     // presets window
     QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(show()));
+    QObject::connect(ui->buttonPresets, SIGNAL(clicked()), presets, SLOT(raise()));
     presets->set_params(&player->rgb_parameters);
     QObject::connect(presets, SIGNAL(new_setting()), this, SLOT(on_new_preset()));
 }
