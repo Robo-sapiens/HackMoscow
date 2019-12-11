@@ -1,9 +1,4 @@
-#include <iostream>
-#include <cmath>
-#include <utility>
-
 #include "player.h"
-
 
 #define FREQ 44100
 
@@ -16,6 +11,8 @@ Player::Player(size_t delay)
       hstream(),
       rgb_parameters(),
       capture_device() {
+//    HINSTANCE bass = LoadLibrary("BASS.DLL"); // load BASS
+//    BASS_Init = reinterpret_cast<WINBOOL (*)(int, DWORD, DWORD, HWND, const GUID *)>(GetProcAddress(bass, "BASS_Init")); // get BASS_Init
     if (!(BASS_Init(0, FREQ, BASS_DEVICE_LOOPBACK, NULL, NULL))) {
         error_handler();
     }

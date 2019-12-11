@@ -1,6 +1,6 @@
-#include <unistd.h>
 #include "animationpresettings.h"
 #include "ui_animationpresettings.h"
+#include <windows.h>
 
 
 AnimationPreSettings::AnimationPreSettings(QWidget *parent, Player *player) :
@@ -24,7 +24,7 @@ void AnimationPreSettings::on_buttonSetWL_clicked() {
     auto tmplength = ui->editLength->toPlainText().toInt();
     if (tmplength > 0 && tmpwidth > 0) {
         _player->msg.set_new_led(tmpwidth, tmplength);
-        usleep(500000);
+        Sleep(500);
         _player->msg.set_default();
     }
 }

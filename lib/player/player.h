@@ -4,12 +4,14 @@
 #include "rgbparameters.h"
 #include "capture.h"
 #include "msg.h"
-#include "bass.h"
 #include <thread>
 #include <mutex>
 #include <string>
 #include <cstdint>
 #include <cmath>
+#include <utility>
+#include <iostream>
+#include "bass.h"
 
 
 class Player {
@@ -32,7 +34,7 @@ public:
     HSAMPLE hsample;
     HSTREAM hstream;
     RGBParameters rgb_parameters;
-    pa::Capture capture_device;
+    WindCapture capture_device;
 private:
     // singleton
     Player &operator=(Player const &);

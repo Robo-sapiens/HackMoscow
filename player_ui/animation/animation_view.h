@@ -30,8 +30,8 @@ protected:
 private:
     Ui::AnimationView *ui;
     Player *player;
-    Polygon *base_polygon;
-    fixed_queue<Polygon *, POLYGON_AMOUNT> *polygons;
+    class Polygon *base_polygon;
+    fixed_queue<class Polygon *, POLYGON_AMOUNT> *polygons;
     fPoint *transformation_matrix;
 };
 

@@ -49,7 +49,7 @@ private:
 class AnimationPresets : public Presets {
 Q_OBJECT
 public:
-    void set_params(Polygon *params);
+    void set_params(class Polygon *params);
     [[nodiscard]] QString identifier() const override;
 signals:
     void new_setting();
@@ -58,7 +58,7 @@ protected slots:
 protected:
     QString get_param_string() override;
 private:
-    Polygon *_params;
+    class Polygon *_params;
 };
 
 

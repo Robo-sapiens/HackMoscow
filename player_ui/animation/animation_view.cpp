@@ -2,15 +2,16 @@
 #include "ui_animation_view.h"
 #include <QPainter>
 #include <cmath>
-#include <unistd.h>
+#include <windows.h>
+#include <vector>
 
 
 AnimationView::AnimationView(QWidget *parent, Player *player) :
     QWidget(parent),
     ui(new Ui::AnimationView),
     player(player),
-    base_polygon(new Polygon(5, 0, 0, 0)),
-    polygons(new fixed_queue<Polygon *, POLYGON_AMOUNT>),
+    base_polygon(new class Polygon(5, 0, 0, 0)),
+    polygons(new fixed_queue<class Polygon *, POLYGON_AMOUNT>),
     transformation_matrix(new fPoint[2]) {
     ui->setupUi(this);
     float_t phi = -0.1;
@@ -37,7 +38,7 @@ void AnimationView::paintEvent(QPaintEvent *) {
     painter->save();
     painter->translate((float) width() / 2, (float) height() / 2);
 
-    auto tmp = new Polygon(*base_polygon);
+    auto tmp = new class Polygon(*base_polygon);
     tmp->color = QColor(player->rgb.r, player->rgb.g, player->rgb.b);
     polygons->push_back(tmp);
 
@@ -60,7 +61,7 @@ void AnimationView::paintEvent(QPaintEvent *) {
         }
 
     }
-    usleep(800000 / player->rgb_parameters.bpm);
+    Sleep(800 / player->rgb_parameters.bpm);
     painter->restore();
     delete painter;
 }
@@ -70,13 +71,13 @@ void AnimationView::animation_changed(int verteces, const fPoint *vectors, float
         return;
     }
     delete base_polygon;
-    base_polygon = new Polygon(verteces, 0, 0, 0, 10 * radius, mode);
-    fPoint tmp_vectors[verteces];
+    base_polygon = new class Polygon(verteces, 0, 0, 0, 10 * radius, mode);
+    std::vector<fPoint> tmp_vectors(verteces);
     for (int kI = 0; kI < verteces; ++kI) {
         tmp_vectors[kI].x = 16 * vectors[kI].x;
         tmp_vectors[kI].y = 16 * vectors[kI].y;
     }
-    base_polygon->set_items(tmp_vectors);
+    base_polygon->set_items(tmp_vectors.data());
 }
 
 void AnimationView::rotation_changed(float rot) {

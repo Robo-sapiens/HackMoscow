@@ -41,7 +41,7 @@ protected:
     void paintEvent(QPaintEvent *) override;
 
 public:
-    Polygon *base_polygon;
+    class Polygon *base_polygon;
 private:
     Ui::animation *ui;
     Player *player;

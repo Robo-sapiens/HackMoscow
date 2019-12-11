@@ -4,6 +4,11 @@
 #include <QDebug>
 #include <QPainter>
 #include "presets.h"
+#include <algorithm>
+using std::max;
+using std::min;
+using std::abs;
+
 
 
 Color::Color(QWidget *parent, Player *player) :
@@ -137,33 +142,33 @@ void Color::paintEvent(QPaintEvent *) {
 
     painter->drawPolyline(qpoints, player->msg.actual_size());
     painter->setPen(QColor(255, 0, 0));
-    painter->drawLine(std::max((int32_t) ((float_t) ui->sliderBlue->width() * (rpeak - width / 2) / smpls), 0),
+    painter->drawLine(max((int32_t) ((float_t) ui->sliderBlue->width() * (rpeak - width / 2) / smpls), 0),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * rpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.red_imp));
-    painter->drawLine(std::min((int32_t) ((float_t) ui->sliderBlue->width() * (rpeak + width / 2) / smpls),
+    painter->drawLine(min((int32_t) ((float_t) ui->sliderBlue->width() * (rpeak + width / 2) / smpls),
                                ui->sliderBlue->width()),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * rpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.red_imp));
 
     painter->setPen(QColor(0, 255, 0));
-    painter->drawLine(std::max((int32_t) ((float_t) ui->sliderBlue->width() * (gpeak - width / 2) / smpls), 0),
+    painter->drawLine(max((int32_t) ((float_t) ui->sliderBlue->width() * (gpeak - width / 2) / smpls), 0),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * gpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.green_imp));
-    painter->drawLine(std::min((int32_t) ((float_t) ui->sliderBlue->width() * (gpeak + width / 2) / smpls),
+    painter->drawLine(min((int32_t) ((float_t) ui->sliderBlue->width() * (gpeak + width / 2) / smpls),
                                ui->sliderBlue->width()),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * gpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.green_imp));
 
     painter->setPen(QColor(0, 0, 255));
-    painter->drawLine(std::max((int32_t) ((float_t) ui->sliderBlue->width() * (bpeak - width / 2) / smpls), 0),
+    painter->drawLine(max((int32_t) ((float_t) ui->sliderBlue->width() * (bpeak - width / 2) / smpls), 0),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * bpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.blue_imp));
-    painter->drawLine(std::min((int32_t) ((float_t) ui->sliderBlue->width() * (bpeak + width / 2) / smpls),
+    painter->drawLine(min((int32_t) ((float_t) ui->sliderBlue->width() * (bpeak + width / 2) / smpls),
                                ui->sliderBlue->width()),
                       0,
                       (int32_t) ((float_t) ui->sliderBlue->width() * bpeak / smpls),

@@ -1,10 +1,8 @@
 #include "devices.h"
 #include "ui_devices.h"
 #include <QSerialPortInfo>
-#include <pulse_device/list_devices.h>
+#include "capture.h"
 
-
-#define POSSIBLE_AMOUNT_OF_DEVICES 32
 
 Devices::Devices(QWidget *parent, Player *player) :
     QWidget(parent),
@@ -47,26 +45,8 @@ void Devices::load_ports() {
 
 void Devices::load_cards() {
     QStringList deviceStringList;
-
-    auto pa_input_devicelist = (pa_devicelist_t *) calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
-    auto pa_output_devicelist = (pa_devicelist_t *) calloc(POSSIBLE_AMOUNT_OF_DEVICES, sizeof(pa_devicelist_t));
-    if (pa_get_devicelist(pa_input_devicelist, pa_output_devicelist) < 0) {
-        return;
-    }
-    for (int32_t i = 0; i < POSSIBLE_AMOUNT_OF_DEVICES; i++) {
-        if (!pa_output_devicelist[i].initialized) {
-            break;
-        }
-        deviceStringList << pa_output_devicelist[i].name;
-    }
-    for (int32_t i = 0; i < POSSIBLE_AMOUNT_OF_DEVICES; i++) {
-        if (!pa_input_devicelist[i].initialized) {
-            break;
-        }
-        deviceStringList << pa_input_devicelist[i].name;
-    }
-    free(pa_input_devicelist);
-    free(pa_output_devicelist);
+    deviceStringList << "WIP";
+    //TODO
     sound_card_list->setStringList(deviceStringList);
     ui->soundCardList->setModel(sound_card_list);
 }

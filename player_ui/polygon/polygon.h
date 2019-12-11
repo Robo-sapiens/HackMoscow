@@ -5,7 +5,7 @@
 #ifndef PLAYER_UI_POLYGON_H
 #define PLAYER_UI_POLYGON_H
 
-#include <stdint-gcc.h>
+#include <stdint.h>
 #include <cstdlib>
 #include <QPoint>
 #include <QtGui/QColor>

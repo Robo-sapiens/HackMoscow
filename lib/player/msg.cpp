@@ -3,6 +3,10 @@
 //
 #include "msg.h"
 
+#ifndef M_1_PI
+    #define M_1_PI 0.31830988618
+#endif
+
 
 Msg::Msg(size_t size) :
     sample_size(size),

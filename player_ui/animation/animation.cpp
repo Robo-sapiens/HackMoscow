@@ -1,12 +1,17 @@
 #include "animation.h"
 #include "ui_animation.h"
 #include <QPainter>
-#include <unistd.h>
+#include <windows.h>
+#include <algorithm>
+#include <vector>
+using std::max;
+using std::min;
+using std::abs;
 
 
 Animation::Animation(QWidget *parent, Player *player) :
     QWidget(parent),
-    base_polygon(new Polygon(0, 0, 0, 0)),
+    base_polygon(new class Polygon(0, 0, 0, 0)),
     ui(new Ui::animation),
     player(player),
     vertices(new std::vector<std::pair<QTextEdit *, QTextEdit *>>),
@@ -46,18 +51,18 @@ void Animation::on_spinBox_valueChanged(int arg1) {
 }
 
 void Animation::on_value_changed() {
-    fPoint new_matrix[base_polygon->vectors->size()];
+    std::vector<fPoint> new_matrix(base_polygon->vectors->size());
     for (size_t kI = 0; kI < base_polygon->vectors->size(); ++kI) {
-        if (std::abs(vertices->at(kI).first->toPlainText().toFloat()) > 20) {
+        if (abs(vertices->at(kI).first->toPlainText().toFloat()) > 20) {
             vertices->at(kI).first->setText("20");
         }
-        if (std::abs(vertices->at(kI).second->toPlainText().toFloat()) > 20) {
+        if (abs(vertices->at(kI).second->toPlainText().toFloat()) > 20) {
             vertices->at(kI).second->setText("20");
         }
         new_matrix[kI].x = vertices->at(kI).first->toPlainText().toFloat();
         new_matrix[kI].y = vertices->at(kI).second->toPlainText().toFloat();
     }
-    base_polygon->set_items(new_matrix);
+    base_polygon->set_items(new_matrix.data());
 }
 
 void Animation::on_editRadius_textChanged() {
@@ -106,8 +111,9 @@ void Animation::on_buttonSubmit_clicked() {
     // mode == 0 => polygon
     // mode == 1 => circle
     // mode == 2 => basic
-    float_t x[std::max(1ul, base_polygon->vectors->size())];
-    float_t y[std::max(1ul, base_polygon->vectors->size())];
+
+    std::vector<float_t> x(max(1ull, base_polygon->vectors->size()));
+    std::vector<float_t> y(max(1ull, base_polygon->vectors->size()));
     int32_t verteces = 0;
     if (base_polygon->mode == 0) {
         verteces = base_polygon->vectors->size();
@@ -125,9 +131,9 @@ void Animation::on_buttonSubmit_clicked() {
             y[0] = base_polygon->real_vectors->data()->y;
         }
     }
-    player->msg.set_settings(base_polygon->mode, verteces, x, y,
+    player->msg.set_settings(base_polygon->mode, verteces, x.data(), y.data(),
                              player->rgb_parameters.bpm, base_polygon->rotation);
-    usleep(500000);
+    Sleep(500);
     player->msg.set_default();
     emit change_verteces(base_polygon->vectors->size(), base_polygon->real_vectors->data(),
                          base_polygon->radius, base_polygon->mode);
@@ -136,7 +142,7 @@ void Animation::on_buttonSubmit_clicked() {
 void Animation::on_editRotation_textChanged() {
     auto text_tmp = ui->editRotation->toPlainText();
     if (text_tmp != "") {
-        if (std::abs(text_tmp.toFloat()) > 20) {
+        if (abs(text_tmp.toFloat()) > 20) {
             ui->editRotation->setText("20");
         }
         base_polygon->rotation = ui->editRotation->toPlainText().toFloat();
