@@ -1,3 +1,5 @@
 #!/bin/bash
 
-sudo ./build/out/player_usage
+while true; do 
+	sudo ./build/out/player_usage
+done

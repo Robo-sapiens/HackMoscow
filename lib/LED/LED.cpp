@@ -268,8 +268,8 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
     delete ledstring;
     ledstring = new ws2811_t;
     *ledstring = {0, 0, 0, TARGET_FREQ, DMA, {GPIO_PIN, 0, width * length, STRIP_TYPE, 0, MAX_BRGHT}};
+    ws2811_return_t ret;
     try {
-        ws2811_return_t ret;
         if ((ret = ws2811_init(ledstring)) != WS2811_SUCCESS) {
             throw ret;
         }
@@ -277,10 +277,11 @@ void LED::change_settings(int32_t tmp_width, int32_t tmp_length) {
     catch (ws2811_return_t ret) {
         std::cout << "ws2811_init failed: " << ws2811_get_return_t_str(ret) << std::endl;
     }
+    throw ret;
 }
 
 void LED::render() {
-    ws2811_render(ledstring));
+    ws2811_render(ledstring);
 }
 
 int32_t LED::get_width() const {
