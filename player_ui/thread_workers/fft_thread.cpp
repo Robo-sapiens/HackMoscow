@@ -4,7 +4,7 @@
 
 #include "fft_thread.h"
 #include <QDebug>
-
+#define MULT_COEF 2
 
 FFTWThread::FFTWThread(Player *player) : player(player), qMutex(new QMutex()) {}
 
@@ -17,7 +17,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 r += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.red_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }
@@ -27,7 +27,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 g += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.green_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }
@@ -37,7 +37,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 b += player->msg.fft[i]
                     * std::abs(player->rgb_parameters.width - (player->rgb_parameters.blue_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }

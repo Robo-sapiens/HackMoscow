@@ -31,8 +31,8 @@ void Devices::on_select_card_clicked() {
 }
 
 void Devices::on_select_port_clicked() {
-    if (ui->portsList->currentIndex().data().toString() != "") {
-        emit start_port(QSerialPortInfo::availablePorts()[ui->soundCardList->currentIndex().data().toInt()]);
+    if (ui->portsList->currentIndex().row() < QSerialPortInfo::availablePorts().count()) {
+        emit start_port(QSerialPortInfo::availablePorts()[ui->portsList->currentIndex().row()]);
     }
 }
 
