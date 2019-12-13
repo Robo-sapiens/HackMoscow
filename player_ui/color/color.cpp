@@ -22,7 +22,7 @@ Color::Color(QWidget *parent, Player *player) :
     ui->sliderGreen->setRange(0, player->msg.actual_size() - 1);
     ui->sliderRed->setRange(0, player->msg.actual_size() - 1);
     ui->sliderWidth->setRange(0, player->msg.actual_size() - 1);
-    ui->nobSensitivity->setRange(-50, 50);
+    ui->nobSensitivity->setRange(-100, 100);
     ui->nobFilter->setRange(0, 400);
     ui->nobBPM->setRange(1, 240);
     ui->nobImpactR->setRange(0, 400);
@@ -132,7 +132,7 @@ void Color::paintEvent(QPaintEvent *) {
     float bpeak = player->rgb_parameters.blue_peak;
     float width = player->rgb_parameters.width;
     float smpls = player->msg.actual_size();
-    float snstv = player->rgb_parameters.sensitivity * 5000 / 255;
+    float snstv = player->rgb_parameters.sensitivity * 10000 / 255;
 
     painter->setPen(QColor(player->rgb.r, player->rgb.g, player->rgb.b));
     for (int32_t i = 0; i < player->msg.actual_size(); ++i) {
@@ -174,10 +174,11 @@ void Color::paintEvent(QPaintEvent *) {
                       (int32_t) ((float_t) ui->sliderBlue->width() * bpeak / smpls),
                       (int32_t) (-100 * player->rgb_parameters.blue_imp));
 
-    painter->setPen(QColor(0, 0, 0));
-    painter->drawLine(0, -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter),
-                      ui->sliderBlue->width(), -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter));
-
+    if (player->rgb_parameters.filter) {
+        painter->setPen(QColor(0, 0, 0));
+        painter->drawLine(0, -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter),
+                          ui->sliderBlue->width(), -(int32_t) (snstv * smpls / 8 * player->rgb_parameters.filter));
+    }
     painter->restore();
     delete painter;
 }
@@ -189,6 +190,7 @@ void Color::on_new_preset() {
     ui->sliderWidth->setSliderPosition(player->rgb_parameters.width);
     ui->checkMinFilter->setCheckState(Qt::CheckState(((int) player->rgb_parameters.tweak_by_min) * 2));
     ui->nobBPM->setSliderPosition(player->rgb_parameters.bpm);
+    ui->nobSensitivity->setSliderPosition((int)(player->rgb_parameters.sensitivity * 5000 / 255.));
     ui->editBPM->setPlainText(std::to_string(player->rgb_parameters.bpm).data());
     ui->nobImpactR->setSliderPosition((int) (player->rgb_parameters.red_imp * 400.f));
     ui->nobImpactG->setSliderPosition((int) (player->rgb_parameters.green_imp * 400.f));

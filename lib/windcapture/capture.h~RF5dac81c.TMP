@@ -1,0 +1,32 @@
+#ifndef WINDCAPTURE_H
+#define WINDCAPTURE_H
+
+#define LOG(format, ...) wprintf(format L"\n", __VA_ARGS__)
+#define ERR(format, ...) LOG(L"Error: " format, __VA_ARGS__)
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <cstdio>
+#include <cstdint>
+#include <windows.h>
+#include <mmsystem.h>
+#include <mmdeviceapi.h>
+#include <audioclient.h>
+#include <avrt.h>
+#include <Functiondiscoverykeys_devpkey.h>
+
+class WindCapture
+{
+public:
+    WindCapture();
+    ~WindCapture();
+    void get_device_list();
+    void get_sample(float *pDouble, int i);
+    void set_device(char *sound_device_name);
+
+    bool isSet;
+};
+
+#endif // WINDCAPTURE_H

@@ -5,6 +5,7 @@
 #include "fft_thread.h"
 #include <QDebug>
 #include <algorithm>
+#define MULT_COEF 2
 using std::max;
 using std::min;
 using std::abs;
@@ -20,7 +21,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 r += player->msg.fft[i]
                     * abs(player->rgb_parameters.width - (player->rgb_parameters.red_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }
@@ -30,7 +31,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 g += player->msg.fft[i]
                     * abs(player->rgb_parameters.width - (player->rgb_parameters.green_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }
@@ -40,7 +41,7 @@ void FFTWThread::run() {
             if (player->msg.fft[i] > player->rgb_parameters.filter) {
                 b += player->msg.fft[i]
                     * abs(player->rgb_parameters.width - (player->rgb_parameters.blue_peak - (float) i))
-                    * i
+                    * i * MULT_COEF
                     / (player->rgb_parameters.width);
             }
         }

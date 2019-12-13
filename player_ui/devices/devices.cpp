@@ -1,7 +1,6 @@
 #include "devices.h"
 #include "ui_devices.h"
-#include <QSerialPortInfo>
-#include "capture.h"
+#include <QDebug>
 
 
 Devices::Devices(QWidget *parent, Player *player) :
@@ -24,13 +23,13 @@ Devices::~Devices() {
 
 void Devices::on_select_card_clicked() {
     player->capture_device.isSet = false;
-    player->capture_device.set_device(ui->soundCardList->currentIndex().data().toString().toUtf8().data());
+    player->capture_device.set_device(ui->soundCardList->currentIndex().row());
     emit start_capture();
 }
 
 void Devices::on_select_port_clicked() {
     if (ui->portsList->currentIndex().data().toString() != "") {
-        emit start_port(QSerialPortInfo::availablePorts()[ui->soundCardList->currentIndex().data().toInt()]);
+        emit start_port(QSerialPortInfo::availablePorts()[ui->portsList->currentIndex().row()]);
     }
 }
 
@@ -45,8 +44,7 @@ void Devices::load_ports() {
 
 void Devices::load_cards() {
     QStringList deviceStringList;
-    deviceStringList << "WIP";
-    //TODO
+    player->capture_device.get_device_list(deviceStringList);
     sound_card_list->setStringList(deviceStringList);
     ui->soundCardList->setModel(sound_card_list);
 }

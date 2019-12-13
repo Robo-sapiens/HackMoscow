@@ -12,6 +12,7 @@
 #include <utility>
 #include <iostream>
 #include "bass.h"
+#include "basswasapi/c/basswasapi.h"
 
 
 class Player {
@@ -31,8 +32,6 @@ public:
     Msg msg;
     RGB rgb;
     int8_t error_code;
-    HSAMPLE hsample;
-    HSTREAM hstream;
     RGBParameters rgb_parameters;
     WindCapture capture_device;
 private:

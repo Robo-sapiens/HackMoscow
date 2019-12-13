@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QtCore/QStringListModel>
 #include <QSerialPort>
+#include <QSerialPortInfo>
 #include "player.h"
+#include "capture.h"
 
 
 QT_BEGIN_NAMESPACE

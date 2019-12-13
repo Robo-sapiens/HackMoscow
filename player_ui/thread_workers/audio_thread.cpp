@@ -10,15 +10,9 @@ AudioThread::AudioThread(Player *player)
     : player(player) {}
 
 void AudioThread::run() {
-    auto in = (float *) calloc(player->msg.sample_size, sizeof(float));
     while (player->capture_device.isSet) {
-        player->capture_device.get_sample(in, player->msg.sample_size);
-        BASS_StreamPutData(player->hstream, in, player->msg.sample_size);
-        if (BASS_ChannelGetData(player->hstream, player->msg.fft, BASS_DATA_FFT1024) == -1) {
-            break;
-        }
+        player->capture_device.get_sample(player->msg.fft);
     }
-    free(in);
     player->error_handler();
 }
 

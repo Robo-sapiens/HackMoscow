@@ -3,7 +3,6 @@ QT       += core gui serialport
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
-
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -90,3 +89,13 @@ INCLUDEPATH += $$PWD/bass/x64
 DEPENDPATH += $$PWD/bass/x64
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
+
+LIBS += -lole32 -loleaut32
+
+win32: LIBS += -L$$PWD/basswasapi/c/x64/ -lbasswasapi
+win32: LIBS += -L$$PWD/basswasapi/x64/ -lbasswasapi
+
+INCLUDEPATH += $$PWD/basswasapi/c/x64
+DEPENDPATH += $$PWD/basswasapi/c/x64
+INCLUDEPATH += $$PWD/basswasapi/x64
+DEPENDPATH += $$PWD/basswasapi/x64

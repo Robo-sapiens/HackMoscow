@@ -7,18 +7,8 @@ Player::Player(size_t delay)
       msg(SAMPLE_SIZE),
       rgb({0, 0, 0}),
       error_code(0),
-      hsample(),
-      hstream(),
       rgb_parameters(),
-      capture_device() {
-//    HINSTANCE bass = LoadLibrary("BASS.DLL"); // load BASS
-//    BASS_Init = reinterpret_cast<WINBOOL (*)(int, DWORD, DWORD, HWND, const GUID *)>(GetProcAddress(bass, "BASS_Init")); // get BASS_Init
-    if (!(BASS_Init(0, FREQ, BASS_DEVICE_LOOPBACK, NULL, NULL))) {
-        error_handler();
-    }
-    hstream = BASS_StreamCreate(44100, 2, BASS_STREAM_DECODE | BASS_SAMPLE_FLOAT, STREAMPROC_PUSH, NULL);
-    error_handler();
-}
+      capture_device() {}
 
 Player::~Player() {
     BASS_Free();
